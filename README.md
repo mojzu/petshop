@@ -1,6 +1,7 @@
 # petshop
 
-[![licence](https://img.shields.io/github/license/mojzu/petshop?label=licence&style=flat-square)](https://github.com/mojzu/petshop/blob/master/LICENCE)
+[![licence](https://img.shields.io/github/license/mojzu/petshop?label=licence)](https://github.com/mojzu/petshop/blob/master/LICENCE)
+![CI](https://github.com/mojzu/petshop/workflows/CI/badge.svg?branch=main)
 
 Template for Rust API server with gRPC and OpenAPI (V2) interfaces
 
