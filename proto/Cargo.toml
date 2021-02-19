@@ -1,0 +1,14 @@
+[package]
+name = "petshop_proto"
+version = "0.1.0"
+authors = ["Sam Ward <mail@mojzu.net>"]
+edition = "2018"
+
+[lib]
+
+[dependencies]
+prost = "0.7"
+tonic = "0.4"
+
+[build-dependencies]
+tonic-build = "0.4"

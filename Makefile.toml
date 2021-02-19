@@ -1,0 +1,194 @@
+
+# Build Docker Image Tasks
+
+[tasks.docker-build-envoy]
+workspace = false
+script = '''
+echo Building petshop/envoy:latest
+docker build --tag petshop/envoy:latest --file docker/envoy/dockerfile .
+'''
+
+[tasks.docker-build-go-tools]
+workspace = false
+script = '''
+echo Building petshop/go-tools:latest
+docker build --tag petshop/go-tools:latest --file docker/go-tools/dockerfile .
+'''
+
+[tasks.docker-build-rust-tools]
+workspace = false
+script = '''
+echo Building petshop/rust-tools:latest
+docker build --tag petshop/rust-tools:latest --file docker/rust-tools.dockerfile .
+'''
+
+[tasks.docker-build-rust-cache]
+workspace = false
+script = '''
+echo Building petshop/rust-cache:latest
+docker build --tag petshop/rust-cache:latest --file docker/rust-cache.dockerfile .
+'''
+
+[tasks.docker-build-tools]
+workspace = false
+dependencies = [
+    "docker-build-go-tools",
+    "docker-build-rust-tools"
+]
+
+[tasks.docker-build]
+workspace = false
+dependencies = [
+    "docker-build-tools",
+    "docker-build-rust-cache"
+]
+script = '''
+echo Building petshop/petshop:latest
+docker build --tag petshop/petshop:latest --file docker/dockerfile .
+'''
+
+# Run Docker Container Tasks
+
+[tasks.go-tools]
+workspace = false
+script = '''
+echo Running petshop/go-tools:latest
+docker run --rm -it -v "$(pwd):/src" --user "$(id -u):$(id -g)" petshop/go-tools:latest ${@}
+'''
+
+[tasks.rust-tools]
+workspace = false
+script = '''
+echo Running petshop/rust-tools:latest
+docker run --rm -it -v "$(pwd):/src" --user "$(id -u):$(id -g)" petshop/rust-tools:latest ${@}
+'''
+
+# Protobuf/OpenAPI Generator Tasks
+
+[tasks.generate-protoc-protobuf]
+workspace = false
+script = '''
+echo Generating protobuf descriptor set dist/api.pb
+mkdir -p ./dist
+cargo make go-tools -- protoc -I/usr/local/include -I/go/src -I/src/proto/proto \
+    --include_imports --include_source_info \
+    --descriptor_set_out=/src/dist/api.pb /src/proto/proto/api.proto
+'''
+
+[tasks.generate-protoc-openapi]
+workspace = false
+script = '''
+echo Generating openapi v2 specification dist/api.swagger.json
+mkdir -p ./dist
+cargo make go-tools -- protoc -I/usr/local/include -I/go/src -I/src/proto/proto \
+    --openapiv2_out /src/dist --openapiv2_opt \
+    logtostderr=true /src/proto/proto/api.proto
+'''
+
+[tasks.generate-typescript-axios-client]
+workspace = false
+script = '''
+echo Generating typescript-axios client dist/typescript-axios
+rm -rf ./dist/typescript-axios
+mkdir -p ./dist/typescript-axios
+docker run --rm -v "$(pwd):/workspace" --user "$(id -u):$(id -g)" openapitools/openapi-generator-cli:v5.0.1 \
+    generate -i /workspace/dist/api.swagger.json \
+    -g typescript-axios \
+    -o /workspace/dist/typescript-axios
+(cd ./dist/typescript-axios \
+    && rm -rf .openapi-generator .gitignore .npmignore .openapi-generator-ignore git_push.sh)
+'''
+
+[tasks.generate-grpc-web-client]
+workspace = false
+script = '''
+echo Generating grpc-web client dist/grpc-web
+rm -rf ./dist/grpc-web
+mkdir -p ./dist/grpc-web
+cargo make go-tools -- protoc -I/usr/local/include -I/go/src -I/src/proto/proto \
+    --js_out=import_style=commonjs:/src/dist/grpc-web \
+    --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:/src/dist/grpc-web \
+    /src/proto/proto/api.proto \
+    /src/proto/proto/google/api/annotations.proto \
+    /src/proto/proto/google/api/field_behavior.proto \
+    /src/proto/proto/google/api/http.proto \
+    /src/proto/proto/protoc-gen-openapiv2/options/annotations.proto \
+    /src/proto/proto/protoc-gen-openapiv2/options/openapiv2.proto
+'''
+
+[tasks.generate-flow]
+workspace = false
+dependencies = [
+    "generate-protoc-protobuf",
+    "generate-protoc-openapi",
+    "generate-typescript-axios-client",
+    "generate-grpc-web-client",
+    "docker-build-envoy"
+]
+
+# Development Tasks
+
+[tasks.dev-envoy]
+workspace = false
+dependencies = [
+    "generate-protoc-protobuf",
+    "docker-build-envoy"
+]
+script = '''
+echo Running petshop/envoy:latest
+docker run --rm -it --network=host petshop/envoy:latest
+'''
+
+[tasks.dev-petshop-server]
+workspace = false
+script = '''
+echo Running petshop-server
+export RUST_LOG="petshop_server=debug"
+cargo run --bin petshop-server
+'''
+
+# Distribution Tasks
+
+[tasks.dist-clean]
+workspace = false
+script = '''
+rm -rf ./dist
+'''
+
+[tasks.dist-flow]
+workspace = false
+dependencies = [
+    "dist-clean",
+    "docker-build",
+    "generate-flow"
+]
+
+# Default Tasks
+
+[tasks.format-toml]
+[tasks.clippy]
+[tasks.check]
+[tasks.audit]
+[tasks.docs]
+[tasks.dev-test-flow]
+[tasks.test-flow]
+[tasks.ci-flow]
+
+[tasks.print-cargo-make-env]
+[tasks.print-project-env]
+[tasks.print-ci-env]
+[tasks.print-git-env]
+[tasks.print-rust-env]
+[tasks.print-cargo-env]
+[tasks.print-crate-env]
+[tasks.print-env]
+workspace = false
+dependencies = [
+    "print-cargo-make-env",
+    "print-project-env",
+    "print-ci-env",
+    "print-git-env",
+    "print-rust-env",
+    "print-cargo-env",
+    "print-crate-env"
+]

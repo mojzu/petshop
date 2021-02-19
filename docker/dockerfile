@@ -1,0 +1,27 @@
+FROM petshop/rust-cache:latest as build
+
+# depend: docker pull debian:10.8
+# <https://hub.docker.com/_/debian>
+FROM debian:10.8
+
+# Avoid warnings by switching to noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install packages
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy binaries
+COPY --from=build /build/target/release/petshop-server /usr/local/bin/petshop-server
+RUN chmod +x /usr/local/bin/petshop-server
+
+# Copy wait-for-it script
+COPY ./docker/wait-for-it.sh /wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
+
+EXPOSE 5000
+RUN mkdir -p /config
+WORKDIR /config
+ENTRYPOINT ["petshop-server"]
+CMD []
