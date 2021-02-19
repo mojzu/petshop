@@ -1,4 +1,4 @@
-# depend: docker pull envoyproxy/envoy:v1.17.0
+# DEPEND: docker pull envoyproxy/envoy:v1.17.0
 # <https://hub.docker.com/r/envoyproxy/envoy>
 FROM envoyproxy/envoy:v1.17.0
 

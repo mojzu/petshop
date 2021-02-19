@@ -43,8 +43,8 @@ dependencies = [
     "docker-build-rust-cache"
 ]
 script = '''
-echo Building petshop/petshop:latest
-docker build --tag petshop/petshop:latest --file docker/dockerfile .
+echo Building petshop/server:latest
+docker build --tag petshop/server:latest --file docker/dockerfile .
 '''
 
 # Run Docker Container Tasks
@@ -139,12 +139,12 @@ echo Running petshop/envoy:latest
 docker run --rm -it --network=host petshop/envoy:latest
 '''
 
-[tasks.dev-petshop-server]
+[tasks.dev-server]
 workspace = false
 script = '''
-echo Running petshop-server
+echo Running petshop_server
 export RUST_LOG="petshop_server=debug"
-cargo run --bin petshop-server
+cargo run --bin petshop_server
 '''
 
 # Distribution Tasks

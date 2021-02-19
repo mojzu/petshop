@@ -8,42 +8,49 @@ import "google/api/field_behavior.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
-  info: {
-    title: "Petshop API";
-    version: "v1";
-  };
+    info: {
+        title: "Petshop API";
+        version: "v1";
+    };
 };
 
 service Petshop {
-  rpc PetPut (Pet) returns (Pet) {
-    option (google.api.http) = {
-      post: "/petshop.Petshop/PetPut"
-      body: "*"
+    rpc PetPost (Pet) returns (Pet) {
+        option (google.api.http) = {
+            post: "/petshop.Petshop/PetPost"
+            body: "*"
+        };
+    }
+
+    rpc PetPut (Pet) returns (Pet) {
+        option (google.api.http) = {
+            post: "/petshop.Petshop/PetPut"
+            body: "*"
+        };
     };
-  };
 }
 
 message Category {
-  int64 id = 1;
-  string name = 2;
+    int64 id = 1;
+    string name = 2;
 }
 
 message Tag {
-  int64 id = 1;
-  string name = 2;
+    int64 id = 1;
+    string name = 2;
 }
 
 enum Status {
-  AVAILABLE = 0;
-  PENDING = 1;
-  SOLD = 2;
+    AVAILABLE = 0;
+    PENDING = 1;
+    SOLD = 2;
 }
 
 message Pet {
-  int64 id = 1;
-  Category category = 2;
-  string name = 3 [(google.api.field_behavior) = REQUIRED];
-  repeated string photo_urls = 4 [(google.api.field_behavior) = REQUIRED];
-  repeated Tag tags = 5;
-  Status status = 6;
+    int64 id = 1;
+    Category category = 2;
+    string name = 3 [(google.api.field_behavior) = REQUIRED];
+    repeated string photo_urls = 4 [(google.api.field_behavior) = REQUIRED];
+    repeated Tag tags = 5;
+    Status status = 6;
 }

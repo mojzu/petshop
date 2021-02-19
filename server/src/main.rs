@@ -1,3 +1,5 @@
+//! # petshop_server
+//!
 #[macro_use]
 extern crate log;
 
@@ -11,24 +13,13 @@ pub struct MyPetshop {}
 
 #[tonic::async_trait]
 impl Petshop for MyPetshop {
+    async fn pet_post(&self, request: Request<Pet>) -> Result<Response<Pet>, Status> {
+        println!("pet_post request: {:?}", request);
+        Ok(Response::new(request.into_inner()))
+    }
+
     async fn pet_put(&self, request: Request<Pet>) -> Result<Response<Pet>, Status> {
-        println!("Got a request: {:?}", request);
-
-        let reply = Pet {
-            id: 42,
-            category: Some(Category {
-                id: 12,
-                name: "category1".to_string(),
-            }),
-            name: "pet1".to_string(),
-            photo_urls: vec!["photoUrl1".to_string()],
-            status: PetshopStatus::Available as i32,
-            tags: vec![Tag {
-                id: 52,
-                name: "tag1".to_string(),
-            }],
-        };
-
+        println!("pet_put request: {:?}", request);
         Ok(Response::new(request.into_inner()))
     }
 }

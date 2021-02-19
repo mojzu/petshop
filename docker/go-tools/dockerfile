@@ -1,4 +1,4 @@
-# depend: docker pull golang:1.16.0-buster
+# DEPEND: docker pull golang:1.16.0-buster
 # <https://hub.docker.com/_/golang>
 FROM golang:1.16.0-buster
 
@@ -10,7 +10,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends unzip \
 	&& rm -rf /var/lib/apt/lists/*
 
-# depend: Install protocol buffers
+# DEPEND: Install protocol buffers
 # <https://github.com/protocolbuffers/protobuf>
 RUN wget -O protoc.zip -q "https://github.com/protocolbuffers/protobuf/releases/download/v3.15.0/protoc-3.15.0-linux-x86_64.zip" \
     && unzip -o protoc.zip -d /usr/local bin/protoc \
@@ -18,17 +18,10 @@ RUN wget -O protoc.zip -q "https://github.com/protocolbuffers/protobuf/releases/
     && chmod +x /usr/local/bin/protoc \
     && rm protoc.zip
 
-# depend: Install gnostic
-# <https://github.com/google/gnostic>
-RUN wget -O gnostic.zip -q "https://github.com/google/gnostic/archive/v0.5.3.zip" \
-    && unzip -o gnostic.zip -d /tmp \
-    && (cd /tmp/gnostic-0.5.3 && make) \
-    && rm -rf gnostic.zip /tmp/gnostic-0.5.3
-
-# depend: Install grpc-gateway
+# DEPEND: Install grpc-gateway
 # <https://github.com/grpc-ecosystem/grpc-gateway>
 #
-# fix: update go.sum by deleting file commenting out COPY below, then after build remember
+# FIXME: update go.sum by deleting file commenting out COPY below, then after build remember
 # to copy the file back by running `cargo make go-tools -- cp /go/src/go.sum /src/docker/go-tools/go.sum`
 COPY ./docker/go-tools/go.mod /go/src/go.mod
 COPY ./docker/go-tools/tools.go /go/src/tools.go
@@ -40,12 +33,12 @@ RUN (cd /go/src && go mod tidy) \
         google.golang.org/protobuf/cmd/protoc-gen-go \
         google.golang.org/grpc/cmd/protoc-gen-go-grpc)
 
-# depend: Install gRPC web generator
+# DEPEND: Install gRPC web generator
 # <https://github.com/grpc/grpc-web>
 RUN wget -O /usr/local/bin/protoc-gen-grpc-web -q "https://github.com/grpc/grpc-web/releases/download/1.2.1/protoc-gen-grpc-web-1.2.1-linux-x86_64" \
     && chmod +x /usr/local/bin/protoc-gen-grpc-web
 
-# fix: root ownership issues when using protoc with local user
+# FIXME: root ownership issues when using protoc with local user
 RUN chmod 777 -R /usr/local/include /go/src
 
 RUN mkdir -p /src
