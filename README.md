@@ -44,9 +44,18 @@ cargo make --version
 # Run distribution tasks
 cargo make dist-flow
 
-# Run development tasks
+# Run envoy docker image in host networking mode
 cargo make dev-envoy
+
+# Run server binary with cargo
 cargo make dev-server
+
+# Run release server binary in docker image
+cargo make dev-server-release
+
+# Run envoy and server using docker-compose
+docker-compose up
+docker-compose down
 
 # Make HTTP requests
 curl -v --header "Content-Type: application/json" \

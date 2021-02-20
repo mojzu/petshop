@@ -19,12 +19,15 @@ COPY --from=build /build/target/release/petshop_server /usr/local/bin/petshop_se
 RUN chmod +x /usr/local/bin/petshop_server
 
 # Copy wait-for-it script
-COPY ./docker/wait-for-it.sh /wait-for-it.sh
-RUN chmod +x /wait-for-it.sh
+COPY ./docker/server/wait-for-it.sh /usr/local/bin/wait-for-it
+RUN chmod +x /usr/local/bin/wait-for-it
 
 # Create configuration directory
 RUN mkdir -p /config
 WORKDIR /config
+
+# Log information by default
+ENV RUST_LOG="info"
 
 # Expose ports
 EXPOSE 5000

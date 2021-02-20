@@ -4,14 +4,15 @@
 workspace = false
 script = '''
 echo Building petshop/envoy:latest
-docker build --tag petshop/envoy:latest --file docker/envoy/dockerfile .
+docker build --tag petshop/envoy:latest --file docker/envoy.dockerfile .
+docker build --tag petshop/envoy-compose:latest --file docker/envoy-compose.dockerfile .
 '''
 
 [tasks.docker-build-go-tools]
 workspace = false
 script = '''
 echo Building petshop/go-tools:latest
-docker build --tag petshop/go-tools:latest --file docker/go-tools/dockerfile .
+docker build --tag petshop/go-tools:latest --file docker/go-tools.dockerfile .
 '''
 
 [tasks.docker-build-rust-tools]
@@ -43,7 +44,7 @@ dependencies = [
 ]
 script = '''
 echo Building petshop/server:latest
-docker build --tag petshop/server:latest --file docker/dockerfile .
+docker build --tag petshop/server:latest --file docker/server.dockerfile .
 '''
 
 # Run Docker Container Tasks
@@ -90,6 +91,8 @@ script = '''
 echo Generating typescript-axios client dist/typescript-axios
 rm -rf ./dist/typescript-axios
 mkdir -p ./dist/typescript-axios
+# DEPEND: docker pull openapitools/openapi-generator-cli:v5.0.1
+# <https://hub.docker.com/r/openapitools/openapi-generator-cli>
 docker run --rm -v "$(pwd):/workspace" --user "$(id -u):$(id -g)" openapitools/openapi-generator-cli:v5.0.1 \
     generate -i /workspace/dist/api.swagger.json \
     -g typescript-axios \

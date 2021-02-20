@@ -1,6 +1,0 @@
-# DEPEND: docker pull envoyproxy/envoy-alpine:v1.17.0
-# <https://hub.docker.com/r/envoyproxy/envoy-alpine>
-FROM envoyproxy/envoy-alpine:v1.17.0
-
-COPY ./docker/envoy/envoy.yaml /etc/envoy/envoy.yaml
-COPY ./dist/api.pb /etc/envoy/api.pb
