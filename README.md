@@ -50,17 +50,26 @@ cargo make dev-envoy
 # Run server binary with cargo
 cargo make dev-server
 
-# Run release server binary in docker image
+# Run server docker image in host networking mode
 cargo make dev-server-release
 
 # Run envoy and server using docker-compose
+docker-compose build
 docker-compose up
 docker-compose down
 
-# Make HTTP requests
+# Example HTTP requests
 curl -v --header "Content-Type: application/json" \
   -XPOST --data '{id:32,name:"Name1",category:{id:23,name:"Cat1"},photoUrls:["Photo1"],tags:[{id:45,name:"Tag1"}],status:"PENDING"}' \
   localhost:10000/petshop.Petshop/PetPut
+
+curl -v --header "Content-Type: application/json" \
+  -XPOST --data '{status:"PENDING"}' \
+  localhost:10000/petshop.Petshop/PetFindByStatus
+
+curl -v --header "Content-Type: application/json" \
+  -XPOST --data '{"contentType":"text/plain","data":"48656c6c6f2c20776f726c6421"}' \
+  localhost:10000/petshop.Petshop/HttpBody
 ```
 
 ## Notes

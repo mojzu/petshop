@@ -177,6 +177,7 @@ dependencies = [
 
 # Default Tasks
 
+[tasks.format]
 [tasks.format-toml]
 [tasks.clippy]
 [tasks.check]

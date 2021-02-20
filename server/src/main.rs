@@ -3,7 +3,7 @@
 #[macro_use]
 extern crate log;
 
-use tonic::{transport::Server};
+use tonic::transport::Server;
 
 use api::Api;
 use petshop_proto::petshop_server::PetshopServer;
@@ -26,6 +26,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+#[cfg(target_family = "unix")]
+async fn shutdown_signal() {
+    tokio::signal::unix::signal(tokio::signal::unix::SignalKind::terminate())
+        .expect("shutdown_signal failed")
+        .recv()
+        .await;
+    debug!("received shutdown signal");
+}
+
+#[cfg(not(target_family = "unix"))]
 async fn shutdown_signal() {
     tokio::signal::ctrl_c()
         .await

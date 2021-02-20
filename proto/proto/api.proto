@@ -5,6 +5,7 @@ option go_package = "petshop/petshop";
 
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
+import "google/api/httpbody.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
@@ -15,6 +16,14 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 };
 
 service Petshop {
+  rpc HttpBody (petshop.HttpBody) returns (petshop.HttpBody) {
+    // FIXME: Using `petshop.HttpBody` here due to fix in httpbody.proto
+    option (google.api.http) = {
+      post: "/petshop.Petshop/HttpBody"
+      body: "*"
+    };
+  }
+
   rpc PetPost (Pet) returns (Pet) {
     option (google.api.http) = {
       post: "/petshop.Petshop/PetPost"
@@ -28,6 +37,13 @@ service Petshop {
       body: "*"
     };
   };
+
+  rpc PetFindByStatus (FindByStatus) returns (Pets) {
+    option (google.api.http) = {
+      post: "/petshop.Petshop/PetFindByStatus"
+      body: "*"
+    };
+  }
 }
 
 message Category {
@@ -53,4 +69,12 @@ message Pet {
   repeated string photo_urls = 4 [(google.api.field_behavior) = REQUIRED];
   repeated Tag tags = 5;
   Status status = 6;
+}
+
+message Pets {
+  repeated Pet pets = 1;
+}
+
+message FindByStatus {
+  repeated Status status = 1 [(google.api.field_behavior) = REQUIRED];
 }

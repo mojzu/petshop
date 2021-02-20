@@ -1,5 +1,7 @@
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    tonic_build::compile_protos("proto/api.proto")?;
+    tonic_build::configure()
+        .compile(&["proto/api.proto"], &["proto"])
+        .expect("tonic_build failed");
     Ok(())
 }
 
@@ -16,3 +18,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 // TODO: Openapi doc generator from specification?
 // TODO: Add examples for rust tests/examples/benches?
 // TODO: More comments/explanation in proto and server files?
+// TODO: Read the docs docker image for docs?
+// <https://docs.readthedocs.io/en/stable/intro/getting-started-with-sphinx.html#quick-start-video>
+// TODO: Double check how bytes is being deserialised from json in httpbody, add note for this (base64?)
