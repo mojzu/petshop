@@ -29,11 +29,7 @@ option java_outer_classname = "HttpBodyProto";
 option java_package = "com.google.api";
 option objc_class_prefix = "GAPI";
 
-// Message that represents an arbitrary HTTP body. It should only be used for
-// payload formats that can't be represented as JSON, such as raw binary or
-// an HTML page.
-//
-//
+// FIXME: Dissociate this from message, or rustdoc tests will try to run the examples and fail
 // This message can be used both in streaming and non-streaming API methods in
 // the request as well as the response.
 //
@@ -68,6 +64,10 @@ option objc_class_prefix = "GAPI";
 //
 // Use of this type only changes how the request and response bodies are
 // handled, all other features will continue to work unchanged.
+
+// Message that represents an arbitrary HTTP body. It should only be used for
+// payload formats that can't be represented as JSON, such as raw binary or
+// an HTML page.
 message HttpBody {
   // The HTTP Content-Type header value specifying the content type of the body.
   string content_type = 1;
