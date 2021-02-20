@@ -1,4 +1,3 @@
-
 # Build Docker Image Tasks
 
 [tasks.docker-build-envoy]
@@ -145,6 +144,16 @@ script = '''
 echo Running petshop_server
 export RUST_LOG="petshop_server=debug"
 cargo run --bin petshop_server
+'''
+
+[tasks.dev-server-release]
+workspace = false
+dependencies = [
+    "docker-build"
+]
+script = '''
+echo Running petshop/server:latest
+docker run --rm -it --network=host petshop/server:latest
 '''
 
 # Distribution Tasks

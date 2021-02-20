@@ -11,9 +11,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 // TODO: Auth integrations, mtls and other options using envoy?
 // TODO: Database integrations, migrations crate/binary?
 // TODO: Rust docs output in dist? cargo make --no-workspace docs-flow
-// TODO: Use alpine docker versions in image outputs? Research podman?
-// TODO: Graceful exit support for server
+// TODO: Use alpine image for server docker image? Research podman?
 // TODO: Running in k8s/nomad examples?
-// TODO: Structure server crate better, split traits into own file
 // TODO: Openapi doc generator from specification?
 // TODO: Add examples for rust tests/examples/benches?
+// TODO: More comments/explanation in proto and server files?

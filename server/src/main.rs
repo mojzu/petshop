@@ -3,39 +3,32 @@
 #[macro_use]
 extern crate log;
 
-use tonic::{transport::Server, Request, Response, Status};
+use tonic::{transport::Server};
 
-use petshop_proto::petshop_server::{Petshop, PetshopServer};
-use petshop_proto::{Category, Pet, Status as PetshopStatus, Tag};
+use api::Api;
+use petshop_proto::petshop_server::PetshopServer;
 
-#[derive(Debug, Default)]
-pub struct MyPetshop {}
-
-#[tonic::async_trait]
-impl Petshop for MyPetshop {
-    async fn pet_post(&self, request: Request<Pet>) -> Result<Response<Pet>, Status> {
-        println!("pet_post request: {:?}", request);
-        Ok(Response::new(request.into_inner()))
-    }
-
-    async fn pet_put(&self, request: Request<Pet>) -> Result<Response<Pet>, Status> {
-        println!("pet_put request: {:?}", request);
-        Ok(Response::new(request.into_inner()))
-    }
-}
+mod api;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     env_logger::init();
 
     let addr = "0.0.0.0:5000".parse()?;
-    let petshop = MyPetshop::default();
+    let petshop = Api::default();
 
     debug!("listening on {}", addr);
     Server::builder()
         .add_service(PetshopServer::new(petshop))
-        .serve(addr)
+        .serve_with_shutdown(addr, shutdown_signal())
         .await?;
 
     Ok(())
+}
+
+async fn shutdown_signal() {
+    tokio::signal::ctrl_c()
+        .await
+        .expect("shutdown_signal failed");
+    debug!("received shutdown signal");
 }
