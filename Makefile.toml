@@ -72,7 +72,7 @@ echo Generating protobuf descriptor set dist/api.pb
 mkdir -p ./dist
 cargo make go-tools -- protoc -I/usr/local/include -I/go/src -I/src/proto/proto \
     --include_imports --include_source_info \
-    --descriptor_set_out=/src/dist/api.pb /src/proto/proto/api.proto
+    --descriptor_set_out=/src/dist/api.pb /src/proto/proto/api.proto /src/proto/proto/health.proto
 '''
 
 [tasks.generate-protoc-openapi]

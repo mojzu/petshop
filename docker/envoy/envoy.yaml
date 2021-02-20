@@ -21,14 +21,14 @@ static_resources:
                     - name: local_service
                       domains: [ "*" ]
                       routes:
-                        - match: { prefix: "/petshop.Petshop" }
+                        - match: { prefix: "/" }
                           route: { cluster: grpc, timeout: { seconds: 60 } }
                 http_filters:
                   - name: envoy.filters.http.grpc_json_transcoder
                     typed_config:
                       "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_json_transcoder.v3.GrpcJsonTranscoder
                       proto_descriptor: "/config/api.pb"
-                      services: [ "petshop.Petshop" ]
+                      services: [ "grpc.health.v1.Health", "api.v1.Petshop" ]
                       print_options:
                         add_whitespace: true
                         always_print_primitive_fields: true

@@ -18,7 +18,7 @@ syntax = "proto3";
 // FIXME: Change from `google.api` here, or tonic will generate
 // code including `super::super::...` which fails to compile
 // May be related to <https://github.com/danburkert/prost/issues/440>?
-package petshop;
+package api.v1;
 
 import "google/protobuf/any.proto";
 

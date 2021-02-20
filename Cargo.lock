@@ -402,6 +402,7 @@ dependencies = [
 name = "petshop_proto"
 version = "0.1.0"
 dependencies = [
+ "bytes",
  "prost",
  "prost-types",
  "tonic",
@@ -419,6 +420,7 @@ dependencies = [
  "prost",
  "tokio",
  "tonic",
+ "tonic-health",
 ]
 
 [[package]]
@@ -787,6 +789,21 @@ dependencies = [
  "prost-build",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "tonic-health"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a93d6649c8f5436d65337af08887a516183a096d785ef1fc3acf69ed60dbec6b"
+dependencies = [
+ "async-stream",
+ "bytes",
+ "prost",
+ "tokio",
+ "tokio-stream",
+ "tonic",
+ "tonic-build",
 ]
 
 [[package]]

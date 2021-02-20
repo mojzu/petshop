@@ -1,5 +1,5 @@
 syntax = "proto3";
-package petshop;
+package api.v1;
 
 option go_package = "petshop/petshop";
 
@@ -16,31 +16,31 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 };
 
 service Petshop {
-  rpc HttpBody (petshop.HttpBody) returns (petshop.HttpBody) {
-    // FIXME: Using `petshop.HttpBody` here due to fix in httpbody.proto
+  rpc HttpBody (api.v1.HttpBody) returns (api.v1.HttpBody) {
+    // FIXME: Using `api.v1.HttpBody` here due to fix in httpbody.proto
     option (google.api.http) = {
-      post: "/petshop.Petshop/HttpBody"
+      post: "/api.v1.Petshop/HttpBody"
       body: "*"
     };
   }
 
   rpc PetPost (Pet) returns (Pet) {
     option (google.api.http) = {
-      post: "/petshop.Petshop/PetPost"
+      post: "/api.v1.Petshop/PetPost"
       body: "*"
     };
   }
 
   rpc PetPut (Pet) returns (Pet) {
     option (google.api.http) = {
-      post: "/petshop.Petshop/PetPut"
+      post: "/api.v1.Petshop/PetPut"
       body: "*"
     };
   };
 
   rpc PetFindByStatus (FindByStatus) returns (Pets) {
     option (google.api.http) = {
-      post: "/petshop.Petshop/PetFindByStatus"
+      post: "/api.v1.Petshop/PetFindByStatus"
       body: "*"
     };
   }

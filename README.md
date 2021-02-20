@@ -61,15 +61,19 @@ docker-compose down
 # Example HTTP requests
 curl -v --header "Content-Type: application/json" \
   -XPOST --data '{id:32,name:"Name1",category:{id:23,name:"Cat1"},photoUrls:["Photo1"],tags:[{id:45,name:"Tag1"}],status:"PENDING"}' \
-  localhost:10000/petshop.Petshop/PetPut
+  localhost:10000/api.v1.Petshop/PetPut
 
 curl -v --header "Content-Type: application/json" \
   -XPOST --data '{status:"PENDING"}' \
-  localhost:10000/petshop.Petshop/PetFindByStatus
+  localhost:10000/api.v1.Petshop/PetFindByStatus
 
 curl -v --header "Content-Type: application/json" \
   -XPOST --data '{"contentType":"text/plain","data":"48656c6c6f2c20776f726c6421"}' \
-  localhost:10000/petshop.Petshop/HttpBody
+  localhost:10000/api.v1.Petshop/HttpBody
+
+curl -v --header "Content-Type: application/json" \
+  -XPOST --data '{"service":"api.v1.Petshop"}' \
+  localhost:10000/grpc.health.v1.Health/Check
 ```
 
 ## Notes

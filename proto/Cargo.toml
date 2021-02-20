@@ -7,6 +7,7 @@ edition = "2018"
 [lib]
 
 [dependencies]
+bytes = "1.0"
 prost = "0.7"
 prost-types = "0.7"
 tonic = "0.4"

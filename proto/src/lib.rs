@@ -1,3 +1,3 @@
 //! # petshop_proto
 //!
-tonic::include_proto!("petshop");
+tonic::include_proto!("api.v1");
