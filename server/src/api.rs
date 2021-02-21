@@ -1,8 +1,11 @@
+//! # API
+//!
 use tonic::{Request, Response, Status};
 
 use petshop_proto::petshop_server::Petshop;
 use petshop_proto::{Category, FindByStatus, HttpBody, Pet, Pets, Status as PetStatus, Tag};
 
+/// API Server
 #[derive(Debug, Default)]
 pub struct Api {}
 

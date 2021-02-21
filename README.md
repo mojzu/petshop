@@ -16,6 +16,9 @@ Template for Rust API server with gRPC and OpenAPI (V2) interfaces
   and [cargo-make](https://github.com/sagiegurari/cargo-make)
 - Example proto definitions based (loosely) on [OpenAPI (V2) Petstore](https://petstore.swagger.io/#/)
 - [Cargo workspace](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html) for multiple crates
+- Configuration from file and/or environment variables using [config](https://github.com/mehcode/config-rs)
+- Logs and panic output to `stderr` are optionally formatted as single line JSON objects
+- Handles `SIGINT`, `SIGTERM` and `SIGQUIT` to stop server process
 
 ## Template
 

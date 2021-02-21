@@ -24,6 +24,7 @@ RUN chmod +x /usr/local/bin/wait-for-it
 
 # Create configuration directory
 RUN mkdir -p /config
+COPY ./docker/server/config.toml /config/config.toml
 WORKDIR /config
 
 # Log information by default
@@ -37,4 +38,4 @@ EXPOSE 5501
 RUN groupadd -r petshop && useradd --no-log-init -r -g petshop petshop
 USER petshop:petshop
 
-CMD ["petshop_server"]
+CMD ["petshop_server", "-c", "/config/config.toml"]
