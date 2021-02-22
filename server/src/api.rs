@@ -2,8 +2,8 @@
 //!
 use tonic::{Request, Response, Status};
 
+use petshop_proto::{Category, FindByStatus, FindByTag, HttpBody, Pet, Pets, Status as PetStatus, Tag};
 use petshop_proto::petshop_server::Petshop;
-use petshop_proto::{Category, FindByStatus, HttpBody, Pet, Pets, Status as PetStatus, Tag};
 
 /// API Server
 #[derive(Debug, Default)]
@@ -31,6 +31,28 @@ impl Petshop for Api {
         request: Request<FindByStatus>,
     ) -> Result<Response<Pets>, Status> {
         info!("pet_find_by_status request: {:?}", request);
+        let pet = Pet {
+            id: 1,
+            category: Some(Category {
+                id: 1,
+                name: "CategoryName".to_string(),
+            }),
+            name: "PetName".to_string(),
+            photo_urls: vec!["PhotoUrl".to_string()],
+            tags: vec![Tag {
+                id: 1,
+                name: "TagName".to_string(),
+            }],
+            status: PetStatus::Pending as i32,
+        };
+        Ok(Response::new(Pets { pets: vec![pet] }))
+    }
+
+    async fn pet_find_by_tag(
+        &self,
+        request: Request<FindByTag>,
+    ) -> Result<Response<Pets>, Status> {
+        info!("pet_find_by_tag request: {:?}", request);
         let pet = Pet {
             id: 1,
             category: Some(Category {

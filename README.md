@@ -21,17 +21,6 @@ Template for Rust API server with gRPC and OpenAPI (V2) interfaces
 - Logs and panic output to `stderr` are optionally formatted as single line JSON objects
 - Handles `SIGINT`, `SIGTERM` and `SIGQUIT` to stop server process
 
-## Template
-
-How to use this template:
-
-- Clone this repository
-- Find and replace `petshop` and `Petshop` to rename outputs
-- Change `LICENCE` file
-- Update `proto/proto/api.proto` to change API
-- Implement aysnc trait methods in `server` crate
-- Run `cargo make dist-flow` to build everything
-
 ## Quickstart
 
 ```shell
@@ -71,6 +60,18 @@ docker-compose down
 ```
 
 ## Notes
+
+How to use this template:
+
+- Clone this repository
+- Find and replace `petshop` and `Petshop` to rename outputs
+- Change `LICENCE` file
+
+How to change the API:
+
+- Update `proto/proto/api.proto`
+- Implement aysnc trait methods in `server` crate (run `cargo build` to check)
+- Restart `dev-*` tasks or run `cargo make compose-build` task and restart docker containers to update everything
 
 The following labels are used:
 

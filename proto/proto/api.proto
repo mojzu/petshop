@@ -44,6 +44,13 @@ service Petshop {
       body: "*"
     };
   }
+
+  rpc PetFindByTag (FindByTag) returns (Pets) {
+    option (google.api.http) = {
+      post: "/api.v1.Petshop/PetFindByTag"
+      body: "*"
+    };
+  }
 }
 
 message Category {
@@ -77,4 +84,8 @@ message Pets {
 
 message FindByStatus {
   repeated Status status = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message FindByTag {
+  repeated string tags = 1 [(google.api.field_behavior) = REQUIRED];
 }
