@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Node Tools</title>
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+<h1>Client Playground</h1>
+<p>The variables <b>httpClient</b> and <b>grpcClient</b> are defined globally, use them in the web console</p>
+<p>Or when using <b>dev-client-playground</b> changes to files in <b>docker/node-tools/client-playground</b> will be reloaded live</p>
+
+<h2>Examples</h2>
+
+<h3>httpClient</h3>
+<h4>1</h4>
+<pre>
+req = {
+    id: 32,
+    name: "Name1",
+    category: {id: 23, name: "Cat1"},
+    photoUrls: ["Photo1"],
+    tags: [{id: 45, name: "Tag1"}], status: "PENDING"
+};
+await httpClient.petshopPetPut(req);
+</pre>
+<h4>2</h4>
+<pre>
+req = {status: "PENDING"};
+await httpClient.petshopPetFindByStatus(req);
+</pre>
+<h4>3</h4>
+<pre>
+req = {"contentType": "text/plain", "data": "48656c6c6f2c20776f726c6421"}
+await httpClient.petshopHttpBody(req);
+</pre>
+
+<h3>grpcClient</h3>
+<h4>1</h4>
+<pre>
+category = (new Category()).setId(23).setName("Category1");
+tag = (new Tag()).setId(45).setName("Tag1");
+req = (new Pet())
+    .setId(32)
+    .setName("Name1")
+    .setStatus(Status.PENDING)
+    .setCategory(category)
+    .addPhotoUrls("PhotoUrl1")
+    .setTagsList([tag]);
+await grpcClient.petPut(req);
+</pre>
+<h4>2</h4>
+<pre>
+req = (new FindByStatus()).addStatus(Status.PENDING);
+await grpcClient.petFindByStatus(req);
+</pre>
+<h4>3</h4>
+<pre>
+req = (new HttpBody()).setContentType("text/plain").setData("48656c6c6f2c20776f726c6421");
+await grpcClient.httpBody(req);
+</pre>
+
+<script src="script.ts"></script>
+</body>
+</html>

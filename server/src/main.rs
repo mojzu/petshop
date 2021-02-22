@@ -95,13 +95,11 @@ async fn shutdown_signal() {
     debug!("received shutdown signal");
 }
 
-// TODO: Way of testing typescript clients, parcel for open in browser/run tests using TS? docker image?
-// TODO: Change envoy config to support grpc-web and transcoding? Test this works
 // TODO: Prometheus, Kubernetes endpoints, other best practices?
 // TODO: Better method of caching/vendoring rust docker images to reduce compile times
+// TODO: Docker compose test suite (for dev and CI?)
 
 // TODO: Github actions to build docker images with versions (cd.yml?)
-// TODO: Docker compose test suite (for dev and CI?)
 // TODO: Auth integrations, mtls and other options using envoy?
 // TODO: Database integrations, migrations crate/binary?
 // TODO: Rust docs output in dist? cargo make --no-workspace docs-flow

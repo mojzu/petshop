@@ -15,6 +15,13 @@ echo Building petshop/go-tools:latest
 docker build --tag petshop/go-tools:latest --file docker/go-tools.dockerfile .
 '''
 
+[tasks.docker-build-node-tools]
+workspace = false
+script = '''
+echo Building petshop/node-tools:latest
+docker build --tag petshop/node-tools:latest --file docker/node-tools.dockerfile .
+'''
+
 [tasks.docker-build-rust-tools]
 workspace = false
 script = '''
@@ -27,6 +34,13 @@ workspace = false
 script = '''
 echo Building petshop/rust-cache:latest
 docker build --tag petshop/rust-cache:latest --file docker/rust-cache.dockerfile .
+'''
+
+[tasks.docker-build-client-playground]
+workspace = false
+script = '''
+echo Building petshop/client-playground:latest
+docker build --tag petshop/client-playground:latest --file docker/client-playground.dockerfile .
 '''
 
 [tasks.docker-build-tools]
@@ -53,14 +67,22 @@ docker build --tag petshop/server:latest --file docker/server.dockerfile .
 workspace = false
 script = '''
 echo Running petshop/go-tools:latest
-docker run --rm -it -v "$(pwd):/src" --user "$(id -u):$(id -g)" petshop/go-tools:latest ${@}
+docker run --rm -it -v "$(pwd):/src" --user "$(id -u):$(id -g)" --network=host petshop/go-tools:latest ${@}
+'''
+
+[tasks.node-tools]
+workspace = false
+script = '''
+echo Running petshop/node-tools:latest
+docker run --rm -it -v "$(pwd)/docker/node-tools/client-playground:/home/node/client-playground" \
+    --user "$(id -u):$(id -g)" --network=host petshop/node-tools:latest ${@}
 '''
 
 [tasks.rust-tools]
 workspace = false
 script = '''
 echo Running petshop/rust-tools:latest
-docker run --rm -it -v "$(pwd):/src" --user "$(id -u):$(id -g)" petshop/rust-tools:latest ${@}
+docker run --rm -it -v "$(pwd):/src" --user "$(id -u):$(id -g)" --network=host petshop/rust-tools:latest ${@}
 '''
 
 # Protobuf/OpenAPI Generator Tasks
@@ -99,6 +121,8 @@ docker run --rm -v "$(pwd):/workspace" --user "$(id -u):$(id -g)" openapitools/o
     -o /workspace/dist/typescript-axios
 (cd ./dist/typescript-axios \
     && rm -rf .openapi-generator .gitignore .npmignore .openapi-generator-ignore git_push.sh)
+rm -rf ./docker/node-tools/typescript-axios
+cp -r ./dist/typescript-axios ./docker/node-tools/typescript-axios
 '''
 
 [tasks.generate-grpc-web-client]
@@ -114,18 +138,35 @@ cargo make go-tools -- protoc -I/usr/local/include -I/go/src -I/src/proto/proto 
     /src/proto/proto/google/api/annotations.proto \
     /src/proto/proto/google/api/field_behavior.proto \
     /src/proto/proto/google/api/http.proto \
+    /src/proto/proto/google/api/httpbody.proto \
     /src/proto/proto/protoc-gen-openapiv2/options/annotations.proto \
     /src/proto/proto/protoc-gen-openapiv2/options/openapiv2.proto
+rm -rf ./docker/node-tools/grpc-web
+cp -r ./dist/grpc-web ./docker/node-tools/grpc-web
 '''
+
+[tasks.generate-envoy-flow]
+workspace = false
+dependencies = [
+    "generate-protoc-protobuf",
+    "docker-build-envoy"
+]
+
+[tasks.generate-client-flow]
+workspace = false
+dependencies = [
+    "generate-protoc-openapi",
+    "generate-typescript-axios-client",
+    "generate-grpc-web-client",
+    "docker-build-node-tools",
+    "docker-build-client-playground"
+]
 
 [tasks.generate-flow]
 workspace = false
 dependencies = [
-    "generate-protoc-protobuf",
-    "generate-protoc-openapi",
-    "generate-typescript-axios-client",
-    "generate-grpc-web-client",
-    "docker-build-envoy"
+    "generate-envoy-flow",
+    "generate-client-flow"
 ]
 
 # Development Tasks
@@ -133,8 +174,7 @@ dependencies = [
 [tasks.dev-envoy]
 workspace = false
 dependencies = [
-    "generate-protoc-protobuf",
-    "docker-build-envoy"
+    "generate-envoy-flow"
 ]
 script = '''
 echo Running petshop/envoy:latest
@@ -164,6 +204,27 @@ dependencies = [
 script = '''
 echo Running petshop/server:latest
 docker run --rm -it --network=host petshop/server:latest
+'''
+
+[tasks.dev-client-playground]
+workspace = false
+dependencies = [
+    "generate-client-flow"
+]
+script = '''
+echo Running node-tools/client-playground
+cargo make node-tools -- npm run client-playground
+'''
+
+# Docker Compose
+
+[tasks.compose-build]
+workspace = false
+dependencies = [
+    "dist-flow"
+]
+script = '''
+docker-compose build
 '''
 
 # Distribution Tasks

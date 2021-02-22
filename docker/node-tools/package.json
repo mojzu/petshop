@@ -1,0 +1,24 @@
+{
+  "name": "test",
+  "version": "0.0.0",
+  "scripts": {
+    "client-playground": "parcel serve --host 0.0.0.0 client-playground/index.html",
+    "client-playground-no-hmr": "parcel serve --host 0.0.0.0 --no-hmr client-playground/index.html",
+    "x-npm-check-updates": "npx npm-check-updates -u"
+  },
+  "devDependencies": {
+    "@parcel/optimizer-cssnano": "^2.0.0-nightly.605",
+    "@parcel/optimizer-htmlnano": "^2.0.0-nightly.605",
+    "@parcel/packager-css": "^2.0.0-nightly.605",
+    "@parcel/packager-html": "^2.0.0-nightly.605",
+    "@parcel/transformer-css": "^2.0.0-nightly.605",
+    "@parcel/transformer-html": "^2.0.0-nightly.605",
+    "@parcel/transformer-postcss": "^2.0.0-nightly.605",
+    "@parcel/transformer-posthtml": "^2.0.0-nightly.605",
+    "axios": "^0.21.1",
+    "google-protobuf": "^3.15.1",
+    "grpc-web": "^1.2.1",
+    "parcel": "^2.0.0-beta.1",
+    "postcss": "^8.2.6"
+  }
+}

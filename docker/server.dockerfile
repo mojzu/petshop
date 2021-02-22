@@ -30,7 +30,6 @@ WORKDIR /config
 # Log information by default
 ENV RUST_LOG="info"
 
-# Expose ports
 EXPOSE 5000
 EXPOSE 5501
 

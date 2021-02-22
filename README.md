@@ -12,6 +12,7 @@ Template for Rust API server with gRPC and OpenAPI (V2) interfaces
 - Builds [Docker](https://docs.docker.com/reference/) images for gRPC server and Envoy proxy
 - [Generated OpenAPI (V2) definitions](https://github.com/grpc-ecosystem/grpc-gateway) from gRPC `.proto` files
 - Generated TypeScript [axios](https://github.com/axios/axios) and [gRPC Web](https://github.com/grpc/grpc-web) clients
+- Client playground for browser with [Parcel](https://v2.parceljs.org/)
 - Continuous integration using [GitHub Actions](https://github.com/features/actions)
   and [cargo-make](https://github.com/sagiegurari/cargo-make)
 - Example proto definitions based (loosely) on [OpenAPI (V2) Petstore](https://petstore.swagger.io/#/)
@@ -43,40 +44,30 @@ cargo --version
 # <https://crates.io/crates/cargo-make>
 cargo install --force cargo-make --version "~0.32"
 cargo make --version
-
 # Run distribution tasks
 cargo make dist-flow
+# ---
 
+# Run on host
 # Run envoy docker image in host networking mode
 cargo make dev-envoy
 
-# Run server binary with cargo
+# Run server binary with cargo or docker image
 cargo make dev-server
-
-# Run server docker image in host networking mode
 cargo make dev-server-release
 
+# Run client playground in development mode
+cargo make dev-client-playground
+# ---
+
+# Or run on docker
 # Run envoy and server using docker-compose
-docker-compose build
+cargo make compose-build
 docker-compose up
 docker-compose down
+# ---
 
-# Example HTTP requests
-curl -v --header "Content-Type: application/json" \
-  -XPOST --data '{id:32,name:"Name1",category:{id:23,name:"Cat1"},photoUrls:["Photo1"],tags:[{id:45,name:"Tag1"}],status:"PENDING"}' \
-  localhost:10000/api.v1.Petshop/PetPut
-
-curl -v --header "Content-Type: application/json" \
-  -XPOST --data '{status:"PENDING"}' \
-  localhost:10000/api.v1.Petshop/PetFindByStatus
-
-curl -v --header "Content-Type: application/json" \
-  -XPOST --data '{"contentType":"text/plain","data":"48656c6c6f2c20776f726c6421"}' \
-  localhost:10000/api.v1.Petshop/HttpBody
-
-curl -v --header "Content-Type: application/json" \
-  -XPOST --data '{"service":"api.v1.Petshop"}' \
-  localhost:10000/grpc.health.v1.Health/Check
+# Open client playground at http://localhost:1234
 ```
 
 ## Notes

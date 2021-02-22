@@ -19,3 +19,12 @@ services:
     ports:
       - 5000:5000
       - 5501:5501
+
+  # Client playground service
+  client-playground:
+    build:
+      context: .
+      dockerfile: ./docker/client-playground.dockerfile
+    image: petshop/client-playground:latest
+    ports:
+      - 1234:1234
