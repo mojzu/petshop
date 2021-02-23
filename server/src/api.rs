@@ -40,7 +40,7 @@ impl Api {
     ///
     /// This lets the application trigger a graceful exit rather than panicking
     pub fn shutdown(&self) {
-        self.shutdown.send(true).expect("send shutdown failed");
+        self.shutdown.send(true).expect("shutdown failed");
     }
 
     /// Returns an error if requests can not be served

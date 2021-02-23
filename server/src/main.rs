@@ -94,9 +94,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 #[cfg(target_family = "unix")]
 async fn shutdown_signal(mut shutdown: broadcast::Receiver<bool>) {
     use tokio::signal::unix::{signal, SignalKind};
-    let mut sigint = signal(SignalKind::interrupt()).expect("SIGINT signal failure");
-    let mut sigterm = signal(SignalKind::terminate()).expect("SIGTERM signal failure");
-    let mut sigquit = signal(SignalKind::quit()).expect("SIGQUIT signal failure");
+
+    let mut sigint = signal(SignalKind::interrupt()).expect("SIGINT signal failed");
+    let mut sigterm = signal(SignalKind::terminate()).expect("SIGTERM signal failed");
+    let mut sigquit = signal(SignalKind::quit()).expect("SIGQUIT signal failed");
 
     let sig = tokio::select! {
         _ = shutdown.recv() => { "SHUTDOWN" }
@@ -109,11 +110,17 @@ async fn shutdown_signal(mut shutdown: broadcast::Receiver<bool>) {
 
 /// Graceful shutdown signal handler
 #[cfg(not(target_family = "unix"))]
-async fn shutdown_signal() {
-    tokio::signal::ctrl_c()
-        .await
-        .expect("shutdown_signal failed");
-    debug!("received shutdown signal");
+async fn shutdown_signal(mut shutdown: broadcast::Receiver<bool>) {
+    let ctrl_c = tokio::signal::ctrl_c();
+
+    let sig = tokio::select! {
+        _ = shutdown.recv() => { "SHUTDOWN" }
+        res = ctrl_c => {
+            res.expect("ctrl_c signal failed");
+            "CTRLC"
+        }
+    };
+    info!("received shutdown signal ({})", sig);
 }
 
 // TODO: Docker compose test suite (for dev and CI?)

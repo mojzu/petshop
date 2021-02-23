@@ -117,7 +117,7 @@ impl Config {
                 "name": NAME,
                 "version": VERSION,
             }))
-            .expect("panic_json failure");
+            .expect("panic_json failed");
             eprintln!("{}", output);
         }));
     }
@@ -141,7 +141,7 @@ impl Config {
                 "name": NAME,
                 "version": VERSION,
             }))
-            .expect("log_json failure");
+            .expect("log_json failed");
 
             writeln!(buf, "{}", output)
         });

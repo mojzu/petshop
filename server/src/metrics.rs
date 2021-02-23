@@ -57,7 +57,7 @@ impl Metrics {
 
         encoder
             .encode(&metric_families, &mut buffer)
-            .expect("encode failed");
+            .expect("encode metrics failed");
 
         (encoder.format_type().to_string(), buffer)
     }
