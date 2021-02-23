@@ -1,5 +1,12 @@
 //! # petshop_server
 //!
+#![recursion_limit = "1024"]
+#![type_length_limit = "65536"]
+#![deny(missing_debug_implementations)]
+#![deny(missing_docs)]
+#![deny(unused_variables)]
+#![warn(clippy::all)]
+
 #[macro_use]
 extern crate log;
 #[macro_use]
@@ -14,6 +21,7 @@ use crate::api::Api;
 use crate::config::Config;
 use crate::internal::*;
 use hyper::service::{make_service_fn, service_fn};
+use tokio::sync::broadcast;
 
 mod api;
 mod config;
@@ -45,8 +53,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let (mut health_reporter, health_service) = tonic_health::server::health_reporter();
     health_reporter.set_serving::<PetshopServer<Api>>().await;
 
+    // Build shutdown broadcast channel
+    let (shutdown_tx, shutdown_rx1) = broadcast::channel::<bool>(8);
+    let shutdown_rx2 = shutdown_tx.subscribe();
+
     // Build API service
-    let petshop = Api::from_config(&config);
+    let petshop = Api::from_config(&config, shutdown_tx);
     let petshop_internal = petshop.clone();
 
     // Build and serve tonic api server
@@ -54,7 +66,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let api_server = tonic::transport::Server::builder()
         .add_service(health_service)
         .add_service(PetshopServer::new(petshop))
-        .serve_with_shutdown(config.api_addr, shutdown_signal());
+        .serve_with_shutdown(config.api_addr, shutdown_signal(shutdown_rx1));
 
     // Build and serve hyper internal server
     info!("internal listening on {}", config.internal_addr);
@@ -69,7 +81,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     });
     let internal_server = hyper::Server::bind(&config.internal_addr)
         .serve(internal_service)
-        .with_graceful_shutdown(shutdown_signal());
+        .with_graceful_shutdown(shutdown_signal(shutdown_rx2));
 
     // Await server termination via signal
     let (api_server, internal_server) = tokio::join!(api_server, internal_server);
@@ -80,13 +92,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 /// Graceful shutdown signal handler
 #[cfg(target_family = "unix")]
-async fn shutdown_signal() {
+async fn shutdown_signal(mut shutdown: broadcast::Receiver<bool>) {
     use tokio::signal::unix::{signal, SignalKind};
     let mut sigint = signal(SignalKind::interrupt()).expect("SIGINT signal failure");
     let mut sigterm = signal(SignalKind::terminate()).expect("SIGTERM signal failure");
     let mut sigquit = signal(SignalKind::quit()).expect("SIGQUIT signal failure");
 
     let sig = tokio::select! {
+        _ = shutdown.recv() => { "SHUTDOWN" }
         _ = sigint.recv() => { "SIGINT" }
         _ = sigterm.recv() => { "SIGTERM" }
         _ = sigquit.recv() => { "SIGQUIT" }
@@ -103,10 +116,9 @@ async fn shutdown_signal() {
     debug!("received shutdown signal");
 }
 
-// TODO: Prometheus, Kubernetes endpoints, other best practices?
 // TODO: Docker compose test suite (for dev and CI?)
-
 // TODO: Github actions to build docker images with versions (cd.yml?)
+
 // TODO: Auth integrations, mtls and other options using envoy?
 // TODO: Database integrations, migrations crate/binary?
 // TODO: Rust docs output in dist? cargo make --no-workspace docs-flow
@@ -118,4 +130,3 @@ async fn shutdown_signal() {
 // TODO: Read the docs docker image for docs?
 // <https://docs.readthedocs.io/en/stable/intro/getting-started-with-sphinx.html#quick-start-video>
 // TODO: Double check how bytes is being deserialised from json in httpbody, add note for this (base64?)
-// TODO: Handle SIGHUP to restart without exit?

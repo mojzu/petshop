@@ -1,5 +1,6 @@
 //! # API
 //!
+use tokio::sync::broadcast;
 use tonic::{Request, Response, Status};
 
 use petshop_proto::petshop_server::Petshop;
@@ -13,17 +14,41 @@ use crate::internal::*;
 #[derive(Clone)]
 pub struct Api {
     metrics: Arc<Metrics>,
+    shutdown: Arc<broadcast::Sender<bool>>,
+}
+
+/// API Errors
+#[derive(thiserror::Error, Debug)]
+pub enum ApiError {
+    // #[error("example error")]
+// Example,
 }
 
 impl Api {
-    pub fn from_config(config: &Config) -> Self {
+    pub fn from_config(config: &Config, shutdown_tx: broadcast::Sender<bool>) -> Self {
         Self {
             metrics: Arc::new(Metrics::from_config(config)),
+            shutdown: Arc::new(shutdown_tx),
         }
     }
 
     pub fn metrics(&self) -> &Metrics {
         &self.metrics
+    }
+
+    /// Sends shutdown signal to stop application
+    ///
+    /// This lets the application trigger a graceful exit rather than panicking
+    pub fn shutdown(&self) {
+        self.shutdown.send(true).expect("send shutdown failed");
+    }
+
+    /// Returns an error if requests can not be served
+    ///
+    /// [More information on liveness/readiness probes](https://blog.colinbreck.com/kubernetes-liveness-and-readiness-probes-how-to-avoid-shooting-yourself-in-the-foot/)
+    pub async fn readiness(&self) -> Result<()> {
+        // Err(ApiError::Example.into())
+        Ok(())
     }
 
     /// Runs before request when using `api_request!` macro

@@ -26,22 +26,39 @@ pub async fn internal_http_request_response(
     api: Api,
     req: Request<Body>,
 ) -> Result<Response<Body>> {
-    // TODO: Handle other requests here?
     match (req.method(), req.uri().path()) {
-        (&Method::GET, "/metrics") => metrics_request_response(api).await,
+        (&Method::GET, "/ping") => liveness_request_response(),
+        (&Method::GET, "/liveness") => liveness_request_response(),
+        (&Method::GET, "/readiness") => readiness_request_response(api).await,
+        (&Method::GET, "/metrics") => metrics_request_response(api),
         _ => Ok(Response::builder()
             .status(StatusCode::NOT_FOUND)
-            .body("Not Found".into())
-            .expect("response builder failure")),
+            .body("not found".into())?),
     }
+    .or_else(|e| {
+        Ok(Response::builder()
+            .status(StatusCode::INTERNAL_SERVER_ERROR)
+            .body(format!("error: {}", e).into())?)
+    })
 }
 
-async fn metrics_request_response(api: Api) -> Result<Response<Body>> {
+fn liveness_request_response() -> Result<Response<Body>> {
+    Ok(Response::builder()
+        .status(StatusCode::OK)
+        .header("Content-Type", "text/plain")
+        .body("ok".into())?)
+}
+
+async fn readiness_request_response(api: Api) -> Result<Response<Body>> {
+    api.readiness().await?;
+    liveness_request_response()
+}
+
+fn metrics_request_response(api: Api) -> Result<Response<Body>> {
     let (content_type, buffer) = api.metrics().export();
 
     Ok(Response::builder()
         .status(StatusCode::OK)
         .header("Content-Type", content_type)
-        .body(buffer.into())
-        .expect("response builder failure"))
+        .body(buffer.into())?)
 }

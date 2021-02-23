@@ -18,9 +18,9 @@ Template for Rust API server with gRPC and OpenAPI (V2) interfaces
 - Example proto definitions based (loosely) on [OpenAPI (V2) Petstore](https://petstore.swagger.io/#/)
 - [Cargo workspace](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html) for multiple crates
 - Configuration from file and/or environment variables using [config](https://github.com/mehcode/config-rs)
+- [Prometheus metrics](https://prometheus.io/) endpoint
+- [Kubernetes liveness and readiness](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/) endpoints
 - Logs and panic output to `stderr` are optionally formatted as single line JSON objects
-- Handles `SIGINT`, `SIGTERM` and `SIGQUIT` to stop server process
-- gRPC server [Prometheus](https://prometheus.io/) metrics endpoint
 
 ## Quickstart
 

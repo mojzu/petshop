@@ -1,13 +1,5 @@
 # Build Docker Image Tasks
 
-[tasks.docker-build-envoy]
-workspace = false
-script = '''
-echo Building petshop/envoy:latest
-docker build --tag petshop/envoy:latest --file docker/envoy.dockerfile .
-docker build --tag petshop/envoy-compose:latest --file docker/envoy-compose.dockerfile .
-'''
-
 [tasks.docker-build-go-tools]
 workspace = false
 script = '''
@@ -36,11 +28,26 @@ echo Building petshop/rust-cache:latest
 docker build --tag petshop/rust-cache:latest --file docker/rust-cache.dockerfile .
 '''
 
+[tasks.docker-build-envoy]
+workspace = false
+script = '''
+echo Building petshop/envoy:latest
+docker build --tag petshop/envoy:latest --file docker/envoy.dockerfile .
+docker build --tag petshop/envoy-compose:latest --file docker/envoy-compose.dockerfile .
+'''
+
 [tasks.docker-build-client-playground]
 workspace = false
 script = '''
 echo Building petshop/client-playground:latest
 docker build --tag petshop/client-playground:latest --file docker/client-playground.dockerfile .
+'''
+
+[tasks.docker-build-prometheus]
+workspace = false
+script = '''
+echo Building petshop/prometheus-compose:latest
+docker build --tag petshop/prometheus-compose:latest --file docker/prometheus-compose.dockerfile .
 '''
 
 [tasks.docker-build-tools]
@@ -54,7 +61,8 @@ dependencies = [
 workspace = false
 dependencies = [
     "docker-build-tools",
-    "docker-build-rust-cache"
+    "docker-build-rust-cache",
+    "docker-build-prometheus"
 ]
 script = '''
 echo Building petshop/server:latest

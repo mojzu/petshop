@@ -7,6 +7,8 @@ edition = "2018"
 
 [lib]
 
+# DEPEND: Update crate dependencies
+
 [dependencies]
 bytes = "1.0"
 prost = "0.7"

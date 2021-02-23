@@ -759,6 +759,7 @@ dependencies = [
  "serde 1.0.123",
  "serde_derive",
  "serde_json",
+ "thiserror",
  "tokio",
  "tonic",
  "tonic-health",

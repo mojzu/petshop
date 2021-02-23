@@ -10,6 +10,15 @@ services:
       - 10000:10000
       - 9901:9901
 
+  # Prometheus service
+  prometheus:
+    build:
+      context: .
+      dockerfile: ./docker/prometheus-compose.dockerfile
+    image: petshop/prometheus-compose:latest
+    ports:
+      - 9090:9090
+
   # Server service
   server:
     build:

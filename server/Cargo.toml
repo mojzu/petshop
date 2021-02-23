@@ -12,8 +12,11 @@ path = "src/main.rs"
 [features]
 default = []
 
+# DEPEND: Update crate dependencies
+
 [dependencies]
 anyhow = "1.0"
+thiserror = "1.0"
 
 petshop_proto = { path = "../proto" }
 prost = "0.7"
@@ -22,7 +25,7 @@ tonic = "0.4"
 tonic-health = "0.3"
 hyper = "0.14"
 
-chrono = { version = "0.4", features = [ "serde" ] }
+chrono = { version = "0.4", features = ["serde"] }
 clap = "2.33"
 config = "0.10"
 env_logger = "0.8"
@@ -31,6 +34,6 @@ serde = "1.0"
 serde_derive = "1.0"
 serde_json = "1.0"
 
-prometheus = { version = "0.11", features = [ "process" ] }
-opentelemetry = { version = "0.12", features = [ "metrics", "serialize" ] }
+prometheus = { version = "0.11", features = ["process"] }
+opentelemetry = { version = "0.12", features = ["metrics", "serialize"] }
 opentelemetry-prometheus = { version = "0.5" }
