@@ -20,6 +20,7 @@ Template for Rust API server with gRPC and OpenAPI (V2) interfaces
 - Configuration from file and/or environment variables using [config](https://github.com/mehcode/config-rs)
 - Logs and panic output to `stderr` are optionally formatted as single line JSON objects
 - Handles `SIGINT`, `SIGTERM` and `SIGQUIT` to stop server process
+- gRPC server [Prometheus](https://prometheus.io/) metrics endpoint
 
 ## Quickstart
 

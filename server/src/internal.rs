@@ -4,10 +4,16 @@
 //!
 //! Internal HTTP server request handlers.
 pub use std::convert::{TryFrom, TryInto};
+pub use std::sync::Arc;
+pub use std::time::SystemTime;
 
 pub use anyhow::{Error, Result};
 pub use chrono::Utc;
 use hyper::{Body, Method, Request, Response, StatusCode};
+
+pub use crate::api::Api;
+pub use crate::config::Config;
+pub use crate::metrics::Metrics;
 
 /// Crate Name
 pub static NAME: &str = env!("CARGO_PKG_NAME");
@@ -16,10 +22,13 @@ pub static NAME: &str = env!("CARGO_PKG_NAME");
 pub static VERSION: &str = env!("CARGO_PKG_VERSION");
 
 /// Internal HTTP request handler for metrics and other private endpoints
-pub async fn internal_http_request_response(req: Request<Body>) -> Result<Response<Body>> {
+pub async fn internal_http_request_response(
+    api: Api,
+    req: Request<Body>,
+) -> Result<Response<Body>> {
     // TODO: Handle other requests here?
     match (req.method(), req.uri().path()) {
-        (&Method::GET, "/metrics") => metrics_request_response().await,
+        (&Method::GET, "/metrics") => metrics_request_response(api).await,
         _ => Ok(Response::builder()
             .status(StatusCode::NOT_FOUND)
             .body("Not Found".into())
@@ -27,11 +36,12 @@ pub async fn internal_http_request_response(req: Request<Body>) -> Result<Respon
     }
 }
 
-async fn metrics_request_response() -> Result<Response<Body>> {
-    // TODO: Return prometheus metrics here
-    let metrics: String = "".to_string();
+async fn metrics_request_response(api: Api) -> Result<Response<Body>> {
+    let (content_type, buffer) = api.metrics().export();
+
     Ok(Response::builder()
         .status(StatusCode::OK)
-        .body(metrics.into())
+        .header("Content-Type", content_type)
+        .body(buffer.into())
         .expect("response builder failure"))
 }

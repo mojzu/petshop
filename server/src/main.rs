@@ -18,6 +18,7 @@ use hyper::service::{make_service_fn, service_fn};
 mod api;
 mod config;
 mod internal;
+mod metrics;
 
 /// Main
 ///
@@ -45,7 +46,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     health_reporter.set_serving::<PetshopServer<Api>>().await;
 
     // Build API service
-    let petshop = Api::default();
+    let petshop = Api::from_config(&config);
+    let petshop_internal = petshop.clone();
 
     // Build and serve tonic api server
     info!("api listening on {}", config.api_addr);
@@ -56,8 +58,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Build and serve hyper internal server
     info!("internal listening on {}", config.internal_addr);
-    let internal_service = make_service_fn(move |_| async {
-        Ok::<_, Error>(service_fn(move |req| internal_http_request_response(req)))
+    let internal_service = make_service_fn(move |_| {
+        let api = petshop_internal.clone();
+        async move {
+            Ok::<_, Error>(service_fn(move |req| {
+                let api = api.clone();
+                internal_http_request_response(api, req)
+            }))
+        }
     });
     let internal_server = hyper::Server::bind(&config.internal_addr)
         .serve(internal_service)
@@ -96,7 +104,6 @@ async fn shutdown_signal() {
 }
 
 // TODO: Prometheus, Kubernetes endpoints, other best practices?
-// TODO: Better method of caching/vendoring rust docker images to reduce compile times
 // TODO: Docker compose test suite (for dev and CI?)
 
 // TODO: Github actions to build docker images with versions (cd.yml?)
