@@ -3,6 +3,8 @@
 use std::fmt;
 use std::net::SocketAddr;
 
+use tracing_subscriber::fmt::time::ChronoUtc;
+
 use crate::internal::*;
 
 /// Configuration
@@ -11,8 +13,7 @@ use crate::internal::*;
 /// `TryFrom<ConfigLoad>` applies defaults/validation, etc.
 #[derive(Debug, Clone)]
 pub struct Config {
-    pub panic_json: bool,
-    pub log_json: bool,
+    pub tracing_json: bool,
     pub api_addr: SocketAddr,
     pub internal_addr: SocketAddr,
 }
@@ -25,8 +26,7 @@ pub struct Config {
 /// or from a configuration file.
 #[derive(Debug, Clone, Deserialize)]
 struct ConfigLoad {
-    panic_json: Option<bool>,
-    log_json: Option<bool>,
+    tracing_json: Option<bool>,
     api_host: Option<String>,
     api_port: Option<u16>,
     internal_host: Option<String>,
@@ -39,9 +39,8 @@ impl TryFrom<ConfigLoad> for Config {
     fn try_from(value: ConfigLoad) -> Result<Config> {
         // This performs the conversion from ConfigLoad to Config
         // Warnings/other information can be printed here to inform users about options
-        // Can't use log macros here because env_logger has not been initialised yet
-        let panic_json = Config::opt_or_default("panic_json", value.panic_json, false);
-        let log_json = Config::opt_or_default("log_json", value.log_json, false);
+        // Can't use log macros here because tracing has not been initialised yet
+        let tracing_json = Config::opt_or_default("tracing_json", value.tracing_json, false);
         let api_host = Config::opt_or_default("api_host", value.api_host, "127.0.0.1".to_string());
         let api_port = Config::opt_or_default("api_port", value.api_port, 5000);
         let api_addr: SocketAddr = format!("{}:{}", api_host, api_port).parse()?;
@@ -54,8 +53,7 @@ impl TryFrom<ConfigLoad> for Config {
         let internal_addr: SocketAddr = format!("{}:{}", internal_host, internal_port).parse()?;
 
         Ok(Config {
-            panic_json,
-            log_json,
+            tracing_json,
             api_addr,
             internal_addr,
         })
@@ -84,69 +82,40 @@ impl Config {
         load.try_into()
     }
 
-    /// Initialise panic and log output to stderr using env_logger and configuration values
-    pub fn init_panic_and_log(&self) {
-        if self.panic_json {
+    /// Initialise panic and log output to stderr using tracing and configuration values
+    pub fn init_panic_and_tracing(&self) {
+        if self.tracing_json {
             Self::init_panic_json();
         }
-        if self.log_json {
-            Self::init_log_json();
+
+        let builder = tracing_subscriber::fmt()
+            .with_timer(ChronoUtc::default())
+            .with_writer(std::io::stderr);
+        if self.tracing_json {
+            builder.json().init();
         } else {
-            env_logger::init();
+            builder.pretty().init();
         }
+
         debug!("{:?}", self);
     }
 
     fn init_panic_json() {
         std::panic::set_hook(Box::new(|info| {
-            let location = info.location().unwrap();
-            let message = match info.payload().downcast_ref::<&'static str>() {
-                Some(s) => *s,
-                None => match info.payload().downcast_ref::<String>() {
-                    Some(s) => &s[..],
-                    None => "Box<Any>",
-                },
-            };
-
+            let location = info.location().expect("panic location failed");
             let output = serde_json::to_string(&json!({
-                "time": Utc::now().to_rfc3339(),
-                "level": log::Level::Error.to_string(),
-                "file": format!("{}:{}:{}", location.file(), location.line(), location.column()),
-                "panic": true,
-                "message": message,
-                "name": NAME,
+                "timestamp": Utc::now().to_rfc3339(),
+                "level": tracing::Level::ERROR.to_string(),
+                "fields": {
+                    "message": format!("{}", info),
+                    "file": format!("{}:{}:{}", location.file(), location.line(), location.column()),
+                },
+                "target": NAME,
                 "version": VERSION,
             }))
-            .expect("panic_json failure");
+                .expect("panic_json failure");
             eprintln!("{}", output);
         }));
-    }
-
-    fn init_log_json() {
-        use std::io::Write;
-
-        let mut builder = env_logger::Builder::from_default_env();
-        builder.format(move |buf, record| {
-            let file = record.file();
-            let line = record.line();
-            let message = record.args();
-
-            let output = serde_json::to_string(&json!({
-                "time": Utc::now().to_rfc3339(),
-                "level": record.level().to_string(),
-                "target": record.target(),
-                "module_path": record.module_path(),
-                "file": format!("{}:{}", file.unwrap_or("none"), line.unwrap_or(0)),
-                "message": message,
-                "name": NAME,
-                "version": VERSION,
-            }))
-            .expect("log_json failure");
-
-            writeln!(buf, "{}", output)
-        });
-
-        builder.init();
     }
 
     fn opt_or_default<T: fmt::Display>(name: &str, value: Option<T>, default_value: T) -> T {

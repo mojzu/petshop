@@ -1,5 +1,4 @@
-panic_json = true
-log_json = true
+tracing_json = true
 api_host = "0.0.0.0"
 api_port = 5000
 internal_host = "0.0.0.0"

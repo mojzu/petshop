@@ -1,27 +1,29 @@
 //! # API
 //!
+use std::fmt;
+
 use tokio::sync::broadcast;
 use tonic::{Request, Response, Status};
 
-use petshop_proto::petshop_server::Petshop;
 use petshop_proto::{
     Category, FindByStatus, FindByTag, HttpBody, Pet, Pets, Status as PetStatus, Tag,
 };
+use petshop_proto::petshop_server::Petshop;
 
 use crate::internal::*;
-
-/// API Server
-#[derive(Clone)]
-pub struct Api {
-    metrics: Arc<Metrics>,
-    shutdown: Arc<broadcast::Sender<bool>>,
-}
 
 /// API Errors
 #[derive(thiserror::Error, Debug)]
 pub enum ApiError {
     // #[error("example error")]
 // Example,
+}
+
+/// API Server
+#[derive(Clone)]
+pub struct Api {
+    metrics: Arc<Metrics>,
+    shutdown: Arc<broadcast::Sender<bool>>,
 }
 
 impl Api {
@@ -78,33 +80,37 @@ macro_rules! api_request {
 
 #[tonic::async_trait]
 impl Petshop for Api {
+    #[tracing::instrument]
     async fn http_body(&self, request: Request<HttpBody>) -> Result<Response<HttpBody>, Status> {
         api_request!(self, &request, async {
-            info!("http_body request: {:?}", request);
+            info!("http_body request");
             Ok(Response::new(request.into_inner()))
         })
     }
 
+    #[tracing::instrument]
     async fn pet_post(&self, request: Request<Pet>) -> Result<Response<Pet>, Status> {
         api_request!(self, &request, async {
-            info!("pet_post request: {:?}", request);
+            info!("pet_post request");
             Ok(Response::new(request.into_inner()))
         })
     }
 
+    #[tracing::instrument]
     async fn pet_put(&self, request: Request<Pet>) -> Result<Response<Pet>, Status> {
         api_request!(self, &request, async {
-            info!("pet_put request: {:?}", request);
+            info!("pet_put request");
             Ok(Response::new(request.into_inner()))
         })
     }
 
+    #[tracing::instrument]
     async fn pet_find_by_status(
         &self,
         request: Request<FindByStatus>,
     ) -> Result<Response<Pets>, Status> {
         api_request!(self, &request, async {
-            info!("pet_find_by_status request: {:?}", request);
+            info!("pet_find_by_status request");
             let pet = Pet {
                 id: 1,
                 category: Some(Category {
@@ -123,9 +129,10 @@ impl Petshop for Api {
         })
     }
 
+    #[tracing::instrument]
     async fn pet_find_by_tag(&self, request: Request<FindByTag>) -> Result<Response<Pets>, Status> {
         api_request!(self, &request, async {
-            info!("pet_find_by_tag request: {:?}", request);
+            info!("pet_find_by_tag request");
             let pet = Pet {
                 id: 1,
                 category: Some(Category {
@@ -142,5 +149,12 @@ impl Petshop for Api {
             };
             Ok(Response::new(Pets { pets: vec![pet] }))
         })
+    }
+}
+
+impl fmt::Debug for Api {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Api")
+            .finish()
     }
 }

@@ -22,6 +22,7 @@ pub static NAME: &str = env!("CARGO_PKG_NAME");
 pub static VERSION: &str = env!("CARGO_PKG_VERSION");
 
 /// Internal HTTP request handler for metrics and other private endpoints
+#[tracing::instrument]
 pub async fn internal_http_request_response(
     api: Api,
     req: Request<Body>,
@@ -50,11 +51,13 @@ fn liveness_request_response() -> Result<Response<Body>> {
 }
 
 async fn readiness_request_response(api: Api) -> Result<Response<Body>> {
+    info!("checking readiness");
     api.readiness().await?;
     liveness_request_response()
 }
 
 fn metrics_request_response(api: Api) -> Result<Response<Body>> {
+    info!("exporting metrics");
     let (content_type, buffer) = api.metrics().export();
 
     Ok(Response::builder()

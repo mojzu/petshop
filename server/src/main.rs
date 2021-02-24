@@ -8,20 +8,21 @@
 #![warn(clippy::all)]
 
 #[macro_use]
-extern crate log;
-#[macro_use]
 extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
+#[macro_use]
+extern crate tracing;
 
 use clap::{App, Arg};
+use hyper::service::{make_service_fn, service_fn};
+use tokio::sync::broadcast;
+
 use petshop_proto::petshop_server::PetshopServer;
 
 use crate::api::Api;
 use crate::config::Config;
 use crate::internal::*;
-use hyper::service::{make_service_fn, service_fn};
-use tokio::sync::broadcast;
 
 mod api;
 mod config;
@@ -47,7 +48,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let config_file = matches.value_of("config");
     let config = Config::load(config_file)?;
-    config.init_panic_and_log();
+    config.init_panic_and_tracing();
 
     // Build gRPC health service
     let (mut health_reporter, health_service) = tonic_health::server::health_reporter();
@@ -64,6 +65,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Build and serve tonic api server
     info!("api listening on {}", config.api_addr);
     let api_server = tonic::transport::Server::builder()
+        .trace_fn(|_| tracing::info_span!(NAME))
         .add_service(health_service)
         .add_service(PetshopServer::new(petshop))
         .serve_with_shutdown(config.api_addr, shutdown_signal(shutdown_rx1));

@@ -194,8 +194,7 @@ workspace = false
 script = '''
 echo Running petshop_server
 export RUST_LOG="petshop_server=debug"
-export CONFIG_PANIC_JSON="false"
-export CONFIG_LOG_JSON="false"
+export CONFIG_TRACING_JSON="false"
 export CONFIG_API_HOST="0.0.0.0"
 export CONFIG_API_PORT="5000"
 export CONFIG_INTERNAL_HOST="0.0.0.0"
