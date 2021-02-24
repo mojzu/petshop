@@ -113,7 +113,7 @@ impl Config {
                 "target": NAME,
                 "version": VERSION,
             }))
-                .expect("panic_json failure");
+                .expect("panic_json failed");
             eprintln!("{}", output);
         }));
     }

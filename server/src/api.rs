@@ -5,10 +5,10 @@ use std::fmt;
 use tokio::sync::broadcast;
 use tonic::{Request, Response, Status};
 
+use petshop_proto::petshop_server::Petshop;
 use petshop_proto::{
     Category, FindByStatus, FindByTag, HttpBody, Pet, Pets, Status as PetStatus, Tag,
 };
-use petshop_proto::petshop_server::Petshop;
 
 use crate::internal::*;
 
@@ -42,7 +42,7 @@ impl Api {
     ///
     /// This lets the application trigger a graceful exit rather than panicking
     pub fn shutdown(&self) {
-        self.shutdown.send(true).expect("send shutdown failed");
+        self.shutdown.send(true).expect("shutdown failed");
     }
 
     /// Returns an error if requests can not be served
@@ -154,7 +154,6 @@ impl Petshop for Api {
 
 impl fmt::Debug for Api {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("Api")
-            .finish()
+        f.debug_struct("Api").finish()
     }
 }
