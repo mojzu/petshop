@@ -13,7 +13,7 @@ use hyper::{Body, Method, Request, Response, StatusCode};
 
 pub use crate::api::Api;
 pub use crate::config::Config;
-pub use crate::metrics::Metrics;
+pub use crate::metrics::{Metrics, MetricsService};
 
 /// Crate Name
 pub static NAME: &str = env!("CARGO_PKG_NAME");

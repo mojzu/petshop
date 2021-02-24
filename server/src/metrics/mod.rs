@@ -1,8 +1,14 @@
+use std::fmt;
+
 use opentelemetry::metrics::{BoundCounter, BoundValueRecorder};
 use opentelemetry_prometheus::PrometheusExporter;
 use prometheus::{Encoder, TextEncoder};
 
+pub use service::MetricsService;
+
 use crate::internal::*;
+
+mod service;
 
 /// Metrics
 ///
@@ -60,5 +66,11 @@ impl Metrics {
             .expect("encode metrics failed");
 
         (encoder.format_type().to_string(), buffer)
+    }
+}
+
+impl fmt::Debug for Metrics {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Api").finish()
     }
 }

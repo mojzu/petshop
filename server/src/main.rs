@@ -50,24 +50,25 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let config = Config::load(config_file)?;
     config.init_panic_and_tracing();
 
-    // Build gRPC health service
-    let (mut health_reporter, health_service) = tonic_health::server::health_reporter();
-    health_reporter.set_serving::<PetshopServer<Api>>().await;
-
     // Build shutdown broadcast channel
     let (shutdown_tx, shutdown_rx1) = broadcast::channel::<bool>(8);
     let shutdown_rx2 = shutdown_tx.subscribe();
 
+    // Build gRPC health service
+    let (mut health_reporter, health_service) = tonic_health::server::health_reporter();
+    health_reporter.set_serving::<PetshopServer<Api>>().await;
+
     // Build API service
     let petshop = Api::from_config(&config, shutdown_tx);
     let petshop_internal = petshop.clone();
+    let petshop_metrics_service = MetricsService::wrap(petshop.metrics(), PetshopServer::new(petshop));
 
     // Build and serve tonic api server
     info!("api listening on {}", config.api_addr);
     let api_server = tonic::transport::Server::builder()
         .trace_fn(|_| tracing::info_span!(NAME))
         .add_service(health_service)
-        .add_service(PetshopServer::new(petshop))
+        .add_service(petshop_metrics_service)
         .serve_with_shutdown(config.api_addr, shutdown_signal(shutdown_rx1));
 
     // Build and serve hyper internal server

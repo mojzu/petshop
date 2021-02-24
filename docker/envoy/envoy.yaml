@@ -13,16 +13,19 @@ static_resources:
             - name: envoy.filters.network.http_connection_manager
               typed_config:
                 "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
-                stat_prefix: grpc_json
                 codec_type: AUTO
+                stat_prefix: grpc_json
                 route_config:
                   name: local_route
                   virtual_hosts:
-                    - name: local_service
+                    - name: upstream
                       domains: [ "*" ]
                       routes:
-                        - match: { prefix: "/" }
-                          route: { cluster: grpc, timeout: { seconds: 60 } }
+                        - match:
+                            prefix: "/"
+                          route:
+                            cluster: upstream-service
+                            timeout: { seconds: 60 }
                       cors:
                         allow_origin_string_match:
                           - prefix: "*"
@@ -45,8 +48,8 @@ static_resources:
                   - name: envoy.filters.http.router
 
   clusters:
-    - name: grpc
-      connect_timeout: 1.25s
+    - name: upstream-service
+      connect_timeout: 1s
       type: logical_dns
       lb_policy: round_robin
       dns_lookup_family: V4_ONLY
@@ -56,7 +59,7 @@ static_resources:
           explicit_http_config:
             http2_protocol_options: { }
       load_assignment:
-        cluster_name: grpc
+        cluster_name: upstream-service
         endpoints:
           - lb_endpoints:
               - endpoint:
