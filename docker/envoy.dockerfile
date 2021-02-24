@@ -6,7 +6,7 @@ FROM envoyproxy/envoy-alpine:v1.17.0
 RUN mkdir -p /config
 WORKDIR /config
 
-COPY ./docker/envoy/envoy.yaml /config/envoy/envoy.yaml
+COPY ./docker/envoy/envoy.yml /config/envoy/envoy.yaml
 COPY ./dist/api.pb /config/api.pb
 
 CMD ["/usr/local/bin/envoy", "-c", "/config/envoy/envoy.yaml"]
