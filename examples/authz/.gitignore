@@ -1,0 +1,3 @@
+# <https://git-scm.com/docs/gitignore>
+/client-oauth2-proxy.cfg
+/server-oauth2-proxy.cfg

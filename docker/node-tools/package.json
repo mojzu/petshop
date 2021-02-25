@@ -4,6 +4,7 @@
   "scripts": {
     "client-playground": "parcel serve --host 0.0.0.0 client-playground/index.html",
     "client-playground-no-hmr": "parcel serve --host 0.0.0.0 --no-hmr client-playground/index.html",
+    "client-playground-build": "parcel build client-playground/index.html",
     "x-npm-check-updates": "npx npm-check-updates -u"
   },
   "devDependencies": {

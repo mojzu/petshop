@@ -43,6 +43,13 @@ echo Building petshop/client-playground:latest
 docker build --tag petshop/client-playground:latest --file docker/client-playground.dockerfile .
 '''
 
+[tasks.docker-build-oauth2-proxy]
+workspace = false
+script = '''
+echo Building petshop/oauth2-proxy:latest
+docker build --tag petshop/oauth2-proxy:latest --file docker/oauth2-proxy.dockerfile .
+'''
+
 [tasks.docker-build-prometheus]
 workspace = false
 script = '''
@@ -167,7 +174,8 @@ dependencies = [
     "generate-typescript-axios-client",
     "generate-grpc-web-client",
     "docker-build-node-tools",
-    "docker-build-client-playground"
+    "docker-build-client-playground",
+    "docker-build-oauth2-proxy"
 ]
 
 [tasks.generate-flow]
