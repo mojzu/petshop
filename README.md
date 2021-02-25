@@ -13,14 +13,14 @@ Template for Rust API server with gRPC and OpenAPI (V2) interfaces
 - [Generated OpenAPI (V2) definitions](https://github.com/grpc-ecosystem/grpc-gateway) from gRPC `.proto` files
 - Generated TypeScript [axios](https://github.com/axios/axios) and [gRPC Web](https://github.com/grpc/grpc-web) clients
 - Client playground for browser with [Parcel](https://v2.parceljs.org/)
-- Continuous integration using [GitHub Actions](https://github.com/features/actions)
-  and [cargo-make](https://github.com/sagiegurari/cargo-make)
+- Continuous integration using [GitHub Actions](https://github.com/features/actions) and [cargo-make](https://github.com/sagiegurari/cargo-make)
 - Example proto definitions based (loosely) on [OpenAPI (V2) Petstore](https://petstore.swagger.io/#/)
 - [Cargo workspace](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html) for multiple crates
 - Configuration from file and/or environment variables using [config](https://github.com/mehcode/config-rs)
 - Logs and panic output to `stderr` are optionally formatted as single line JSON objects with [tracing](https://tracing.rs/tracing/)
 - [Prometheus metrics](https://prometheus.io/) endpoint
 - [Kubernetes liveness and readiness](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/) endpoints
+- Authentication example with [OAuth2 Proxy](https://oauth2-proxy.github.io/oauth2-proxy/) and [Envoy External Authorization](https://www.envoyproxy.io/docs/envoy/latest/api-v2/config/filter/http/ext_authz/v2/ext_authz.proto)
 
 ## Quickstart
 

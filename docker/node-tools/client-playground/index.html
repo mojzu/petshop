@@ -37,10 +37,15 @@ await httpClient.petshopPetFindByTag(req);
 <h4>4</h4>
 <i>WARNING: HttpBody isn't working quite right yet</i>
 <pre>
-req = {"contentType": "text/plain", "data": "48656c6c6f2c20776f726c6421"}
+req = {"contentType": "text/plain", "data": "48656c6c6f2c20776f726c6421"};
 await httpClient.petshopHttpBody(req);
 </pre>
 <h4>5</h4>
+<pre>
+req = { arbitraryJson: true, nestedObject: { sub: "string" } };
+await httpClient.petshopJson(req);
+</pre>
+<h4>6</h4>
 <i>WARNING: This only works with the <b>authz</b> example</i>
 <pre>
 await httpClient.petshopAuthenticationRequired({});
@@ -66,11 +71,17 @@ req = (new FindByStatus()).addStatus(Status.PENDING);
 await grpcClient.petFindByStatus(req);
 </pre>
 <h4>3</h4>
+<i>WARNING: HttpBody isn't working quite right yet</i>
 <pre>
 req = (new HttpBody()).setContentType("text/plain").setData("48656c6c6f2c20776f726c6421");
 await grpcClient.httpBody(req);
 </pre>
 <h4>4</h4>
+<pre>
+req = Struct.fromJavaScript({ arbitraryJson: true, nestedObject: { sub: "string" } });
+await grpcClient.json(req);
+</pre>
+<h4>5</h4>
 <i>WARNING: This only works with the <b>authz</b> example</i>
 <pre>
 req = new Empty();

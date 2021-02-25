@@ -2,6 +2,7 @@
 //!
 use std::fmt;
 
+use prost_types::Struct;
 use tokio::sync::broadcast;
 use tonic::{Request, Response, Status};
 
@@ -53,53 +54,60 @@ impl Api {
         Ok(())
     }
 
-    /// Parses request metadata to extract authentication user (works with authz example)
+    /// Parses request metadata to extract authenticated user (works with authz example)
     fn user_required(&self, request: &Request<()>) -> Result<User, Status> {
         let email = request.metadata().get("x-auth-request-email");
         let user = request.metadata().get("x-auth-request-user");
         match (email, user) {
             (Some(email), Some(user)) => match (email.to_str(), user.to_str()) {
-                (Ok(email), Ok(user)) => {
-                    Ok(User {
-                        email: email.to_string(),
-                        name: user.to_string(),
-                    })
-                }
+                (Ok(email), Ok(user)) => Ok(User {
+                    email: email.to_string(),
+                    name: user.to_string(),
+                }),
                 _ => Err(Status::unauthenticated("user authentication failed")),
-            }
-            _ => Err(Status::unauthenticated("user authentication failed"))
+            },
+            _ => Err(Status::unauthenticated("user authentication failed")),
         }
     }
 }
 
 #[tonic::async_trait]
 impl Petshop for Api {
-    #[tracing::instrument]
+    #[tracing::instrument(skip(self))]
     async fn http_body(&self, request: Request<HttpBody>) -> Result<Response<HttpBody>, Status> {
         info!("http_body request");
         Ok(Response::new(request.into_inner()))
     }
 
-    #[tracing::instrument]
-    async fn authentication_required(&self, request: Request<()>) -> Result<Response<User>, Status> {
+    #[tracing::instrument(skip(self))]
+    async fn json(&self, request: Request<Struct>) -> Result<Response<Struct>, Status> {
+        info!("json request");
+        Ok(Response::new(request.into_inner()))
+    }
+
+    #[tracing::instrument(skip(self))]
+    async fn authentication_required(
+        &self,
+        request: Request<()>,
+    ) -> Result<Response<User>, Status> {
         info!("authentication_required request");
         let user = self.user_required(&request)?;
         Ok(Response::new(user))
     }
 
-    #[tracing::instrument]
+    #[tracing::instrument(skip(self))]
     async fn pet_post(&self, request: Request<Pet>) -> Result<Response<Pet>, Status> {
         info!("pet_post request");
         Ok(Response::new(request.into_inner()))
     }
 
-    #[tracing::instrument]
+    #[tracing::instrument(skip(self))]
     async fn pet_put(&self, request: Request<Pet>) -> Result<Response<Pet>, Status> {
         info!("pet_put request");
         Ok(Response::new(request.into_inner()))
     }
 
-    #[tracing::instrument]
+    #[tracing::instrument(skip(self))]
     async fn pet_find_by_status(
         &self,
         request: Request<FindByStatus>,
@@ -122,7 +130,7 @@ impl Petshop for Api {
         Ok(Response::new(Pets { pets: vec![pet] }))
     }
 
-    #[tracing::instrument]
+    #[tracing::instrument(skip(self))]
     async fn pet_find_by_tag(&self, request: Request<FindByTag>) -> Result<Response<Pets>, Status> {
         info!("pet_find_by_tag request");
         let pet = Pet {

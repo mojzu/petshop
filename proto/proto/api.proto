@@ -4,6 +4,7 @@ package api.v1;
 option go_package = "petshop/petshop";
 
 import "google/protobuf/empty.proto";
+import "google/protobuf/struct.proto";
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/api/httpbody.proto";
@@ -22,6 +23,13 @@ service Petshop {
     // FIXME: I think this prevents envoy handling arbitrary responses using HttpBody?
     option (google.api.http) = {
       post: "/api.v1.Petshop/HttpBody"
+      body: "*"
+    };
+  }
+
+  rpc Json (google.protobuf.Struct) returns (google.protobuf.Struct) {
+    option (google.api.http) = {
+      post: "/api.v1.Petshop/Json"
       body: "*"
     };
   }

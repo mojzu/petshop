@@ -36,11 +36,11 @@ pub async fn internal_http_request_response(
             .status(StatusCode::NOT_FOUND)
             .body("not found".into())?),
     }
-    .or_else(|e| {
-        Ok(Response::builder()
-            .status(StatusCode::INTERNAL_SERVER_ERROR)
-            .body(format!("error: {}", e).into())?)
-    })
+        .or_else(|e| {
+            Ok(Response::builder()
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(format!("error: {}", e).into())?)
+        })
 }
 
 fn liveness_request_response() -> Result<Response<Body>> {

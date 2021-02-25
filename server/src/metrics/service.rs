@@ -1,10 +1,7 @@
 use std::task::{Context, Poll};
 
 use hyper::{Body, Request as HyperRequest, Response as HyperResponse};
-use tonic::{
-    body::BoxBody,
-    transport::NamedService,
-};
+use tonic::{body::BoxBody, transport::NamedService};
 use tower::Service;
 
 use crate::internal::*;
