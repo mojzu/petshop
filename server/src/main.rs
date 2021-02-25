@@ -128,6 +128,7 @@ async fn shutdown_signal(mut shutdown: broadcast::Receiver<bool>) {
 
 // TODO: Docker compose test suite (for dev and CI?)
 // TODO: Github actions to build docker images with versions (cd.yml?)
+// TODO: Exclude cookie values, other sensitive info from tracing
 
 // TODO: Auth integrations, mtls and other options using envoy?
 // TODO: Database integrations, migrations crate/binary?
@@ -140,3 +141,6 @@ async fn shutdown_signal(mut shutdown: broadcast::Receiver<bool>) {
 // TODO: Read the docs docker image for docs?
 // <https://docs.readthedocs.io/en/stable/intro/getting-started-with-sphinx.html#quick-start-video>
 // TODO: Double check how bytes is being deserialised from json in httpbody, add note for this (base64?)
+// TODO: Check HttpBody output works as expected (don't think input will work)
+// TODO: Arbitrary JSON endpoints, internally processed?
+// TODO: OAuth2-proxy multiple provider support, html templates?

@@ -35,9 +35,15 @@ req = {tags: ["Tag1", "Tag2"]};
 await httpClient.petshopPetFindByTag(req);
 </pre>
 <h4>4</h4>
+<i>WARNING: HttpBody isn't working quite right yet</i>
 <pre>
 req = {"contentType": "text/plain", "data": "48656c6c6f2c20776f726c6421"}
 await httpClient.petshopHttpBody(req);
+</pre>
+<h4>5</h4>
+<i>WARNING: This only works with the <b>authz</b> example</i>
+<pre>
+await httpClient.petshopAuthenticationRequired({});
 </pre>
 
 <h3>grpcClient</h3>
@@ -63,6 +69,12 @@ await grpcClient.petFindByStatus(req);
 <pre>
 req = (new HttpBody()).setContentType("text/plain").setData("48656c6c6f2c20776f726c6421");
 await grpcClient.httpBody(req);
+</pre>
+<h4>4</h4>
+<i>WARNING: This only works with the <b>authz</b> example</i>
+<pre>
+req = new Empty();
+await grpcClient.authenticationRequired(req);
 </pre>
 
 <script src="script.ts"></script>

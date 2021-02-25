@@ -244,10 +244,29 @@ docker-compose build
 
 # Distribution Tasks
 
+[tasks.dist-clean-images]
+workspace = false
+script = '''
+docker image rm -f \
+    petshop-authz/client-oauth2-proxy:latest \
+    petshop-authz/envoy:latest \
+    petshop-authz/server-oauth2-proxy:latest \
+    petshop/client-playground:latest \
+    petshop/envoy:latest \
+    petshop/envoy-compose:latest \
+    petshop/go-tools:latest \
+    petshop/node-tools:latest \
+    petshop/oauth2-proxy:latest \
+    petshop/prometheus-compose:latest \
+    petshop/rust-cache:latest \
+    petshop/rust-tools:latest \
+    petshop/server:latest
+'''
+
 [tasks.dist-clean]
 workspace = false
 script = '''
-rm -rf ./dist
+rm -rf ./dist ./docker/node-tools/grpc-web ./docker/node-tools/typescript-axios
 '''
 
 [tasks.dist-flow]

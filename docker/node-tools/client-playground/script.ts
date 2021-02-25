@@ -2,13 +2,20 @@ import {Configuration, PetshopApi} from "../typescript-axios";
 import {Category, FindByStatus, Pet, Status, Tag} from "../grpc-web/api_pb";
 import {PetshopPromiseClient} from "../grpc-web/api_grpc_web_pb";
 import {HttpBody} from "../grpc-web/google/api/httpbody_pb";
+import {Empty} from "google-protobuf/google/protobuf/empty_pb";
 
 window["HttpClientClass"] = PetshopApi;
-window["httpClient"] = new PetshopApi(new Configuration({basePath: "http://localhost:10000"}));
+window["httpClient"] = new PetshopApi(new Configuration({
+    baseOptions: {withCredentials: true},
+    basePath: "http://localhost:10000"
+}));
 
 window["GrpcClientClass"] = PetshopPromiseClient;
-window["grpcClient"] = new PetshopPromiseClient("http://localhost:10000");
+window["grpcClient"] = new PetshopPromiseClient("http://localhost:10000", null, {
+    withCredentials: true,
+});
 
+window["Empty"] = Empty;
 window["Category"] = Category;
 window["FindByStatus"] = FindByStatus;
 window["Pet"] = Pet;
