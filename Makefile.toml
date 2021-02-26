@@ -197,16 +197,28 @@ echo Running petshop/envoy:latest
 docker run --rm -it --network=host petshop/envoy:latest
 '''
 
+[tasks.dev-postgres]
+workspace = false
+script = '''
+echo Running postgres:13.2-alpine
+docker run --rm -it --network=host -e POSTGRES_PASSWORD=postgres postgres:13.2-alpine
+'''
+
 [tasks.dev-server]
 workspace = false
 script = '''
 echo Running petshop_server
-export RUST_LOG="petshop_server=debug"
+export RUST_LOG="petshop_server=debug,tokio_postgres=debug"
 export CONFIG_TRACING_JSON="false"
 export CONFIG_API_HOST="0.0.0.0"
 export CONFIG_API_PORT="5000"
 export CONFIG_INTERNAL_HOST="0.0.0.0"
 export CONFIG_INTERNAL_PORT="5501"
+export CONFIG_POSTGRES__USER="postgres"
+export CONFIG_POSTGRES__PASSWORD="postgres"
+export CONFIG_POSTGRES__DBNAME="postgres"
+export CONFIG_POSTGRES__HOST="localhost"
+export CONFIG_POSTGRES__PORT="5432"
 
 cargo run --bin petshop_server -- ${@}
 '''

@@ -71,6 +71,6 @@ impl Metrics {
 
 impl fmt::Debug for Metrics {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("Api").finish()
+        f.debug_struct("Metrics").finish()
     }
 }

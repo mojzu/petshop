@@ -18,6 +18,7 @@ Template for Rust API server with gRPC and OpenAPI (V2) interfaces
 - [Cargo workspace](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html) for multiple crates
 - Configuration from file and/or environment variables using [config](https://github.com/mehcode/config-rs)
 - Logs and panic output to `stderr` are optionally formatted as single line JSON objects with [tracing](https://tracing.rs/tracing/)
+- Postgres connection pool with [Deadpool](https://github.com/bikeshedder/deadpool) and [tokio-postgres](https://crates.io/crates/tokio-postgres)
 - [Prometheus metrics](https://prometheus.io/) endpoint
 - [Kubernetes liveness and readiness](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/) endpoints
 - Authentication example with [OAuth2 Proxy](https://oauth2-proxy.github.io/oauth2-proxy/) and [Envoy External Authorization](https://www.envoyproxy.io/docs/envoy/latest/api-v2/config/filter/http/ext_authz/v2/ext_authz.proto)
@@ -39,8 +40,9 @@ cargo make dist-flow
 # ---
 
 # Run on host
-# Run envoy docker image in host networking mode
+# Run envoy and postgres docker images in host networking mode
 cargo make dev-envoy
+cargo make dev-postgres
 
 # Run server binary with cargo or docker image
 cargo make dev-server

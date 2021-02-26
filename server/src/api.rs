@@ -7,37 +7,36 @@ use tokio::sync::{broadcast, mpsc};
 use tokio_stream::wrappers::ReceiverStream;
 use tonic::{Request, Response, Status};
 
+use petshop_proto::petshop_server::Petshop;
 use petshop_proto::{
     Category, Echo, FindByStatus, FindByTag, HttpBody, Pet, Pets, Status as PetStatus, Tag, User,
 };
-use petshop_proto::petshop_server::Petshop;
 
 use crate::internal::*;
-
-/// API Errors
-#[derive(thiserror::Error, Debug)]
-pub enum ApiError {
-    // #[error("example error")]
-// Example,
-}
 
 /// API Server
 #[derive(Clone)]
 pub struct Api {
     metrics: Arc<Metrics>,
+    postgres: Arc<Postgres>,
     shutdown: Arc<broadcast::Sender<bool>>,
 }
 
 impl Api {
-    pub fn from_config(config: &Config, shutdown_tx: broadcast::Sender<bool>) -> Self {
-        Self {
+    pub fn from_config(config: &Config, shutdown_tx: broadcast::Sender<bool>) -> Result<Self> {
+        Ok(Self {
             metrics: Arc::new(Metrics::from_config(config)),
+            postgres: Arc::new(Postgres::from_config(config)?),
             shutdown: Arc::new(shutdown_tx),
-        }
+        })
     }
 
     pub fn metrics(&self) -> Arc<Metrics> {
         self.metrics.clone()
+    }
+
+    pub fn postgres(&self) -> Arc<Postgres> {
+        self.postgres.clone()
     }
 
     /// Sends shutdown signal to stop application
@@ -51,7 +50,7 @@ impl Api {
     ///
     /// [More information on liveness/readiness probes](https://blog.colinbreck.com/kubernetes-liveness-and-readiness-probes-how-to-avoid-shooting-yourself-in-the-foot/)
     pub async fn readiness(&self) -> Result<()> {
-        // Err(ApiError::Example.into())
+        self.postgres.readiness().await?;
         Ok(())
     }
 

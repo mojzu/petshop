@@ -28,6 +28,7 @@ mod api;
 mod config;
 mod internal;
 mod metrics;
+mod postgres;
 
 /// Main
 ///
@@ -59,7 +60,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     health_reporter.set_serving::<PetshopServer<Api>>().await;
 
     // Build API service
-    let petshop = Api::from_config(&config, shutdown_tx);
+    let petshop = Api::from_config(&config, shutdown_tx)?;
     let petshop_internal = petshop.clone();
     let petshop_metrics_service =
         MetricsService::wrap(petshop.metrics(), PetshopServer::new(petshop));

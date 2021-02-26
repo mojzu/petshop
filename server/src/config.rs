@@ -4,6 +4,7 @@ use std::fmt;
 use std::net::SocketAddr;
 
 use tracing_subscriber::fmt::time::ChronoUtc;
+use tracing_subscriber::EnvFilter;
 
 use crate::internal::*;
 
@@ -16,6 +17,7 @@ pub struct Config {
     pub tracing_json: bool,
     pub api_addr: SocketAddr,
     pub internal_addr: SocketAddr,
+    pub postgres: deadpool_postgres::Config,
 }
 
 /// Parsed Configuration
@@ -31,6 +33,7 @@ struct ConfigLoad {
     api_port: Option<u16>,
     internal_host: Option<String>,
     internal_port: Option<u16>,
+    postgres: Option<deadpool_postgres::Config>,
 }
 
 impl TryFrom<ConfigLoad> for Config {
@@ -52,10 +55,28 @@ impl TryFrom<ConfigLoad> for Config {
         let internal_port = Config::opt_or_default("internal_port", value.internal_port, 5501);
         let internal_addr: SocketAddr = format!("{}:{}", internal_host, internal_port).parse()?;
 
+        let mut postgres = if let Some(postgres) = value.postgres {
+            postgres
+        } else {
+            println!("Config: postgres is not configured");
+            return Err(XError::Config.into());
+        };
+        if postgres.application_name.is_none() {
+            let application_name = format!("{}", USER_AGENT);
+            postgres.application_name =
+                Config::opt_or_opt_default("postgres.application_name", None, application_name);
+        }
+        if postgres.connect_timeout.is_none() {
+            let connect_timeout = std::time::Duration::from_secs(5);
+            postgres.connect_timeout =
+                Config::opt_or_opt_default("postgres.connect_timeout", None, connect_timeout);
+        }
+
         Ok(Config {
             tracing_json,
             api_addr,
             internal_addr,
+            postgres,
         })
     }
 }
@@ -89,6 +110,7 @@ impl Config {
         }
 
         let builder = tracing_subscriber::fmt()
+            .with_env_filter(EnvFilter::from_default_env())
             .with_timer(ChronoUtc::default())
             .with_writer(std::io::stderr);
         if self.tracing_json {
@@ -118,15 +140,23 @@ impl Config {
         }));
     }
 
-    fn opt_or_default<T: fmt::Display>(name: &str, value: Option<T>, default_value: T) -> T {
+    fn opt_or_default<T: fmt::Debug>(name: &str, value: Option<T>, default_value: T) -> T {
         if let Some(value) = value {
             value
         } else {
             println!(
-                "config: {} is not configured, defaulting to {}",
+                "Config: {} is not configured, defaulting to {:?}",
                 name, default_value
             );
             default_value
         }
+    }
+
+    fn opt_or_opt_default<T: fmt::Debug>(
+        name: &str,
+        value: Option<T>,
+        default_value: T,
+    ) -> Option<T> {
+        Some(Self::opt_or_default(name, value, default_value))
     }
 }

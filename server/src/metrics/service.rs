@@ -23,13 +23,13 @@ impl<S> MetricsService<S> {
 }
 
 impl<S> Service<HyperRequest<Body>> for MetricsService<S>
-    where
-        S: Service<HyperRequest<Body>, Response=HyperResponse<BoxBody>>
+where
+    S: Service<HyperRequest<Body>, Response = HyperResponse<BoxBody>>
         + NamedService
         + Clone
         + Send
         + 'static,
-        S::Future: Send + 'static,
+    S::Future: Send + 'static,
 {
     type Response = S::Response;
     type Error = S::Error;

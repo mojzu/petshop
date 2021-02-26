@@ -14,6 +14,7 @@ use hyper::{Body, Method, Request, Response, StatusCode};
 pub use crate::api::Api;
 pub use crate::config::Config;
 pub use crate::metrics::{Metrics, MetricsService};
+pub use crate::postgres::Postgres;
 
 /// Crate Name
 pub static NAME: &str = env!("CARGO_PKG_NAME");
@@ -21,8 +22,18 @@ pub static NAME: &str = env!("CARGO_PKG_NAME");
 /// Crate Version
 pub static VERSION: &str = env!("CARGO_PKG_VERSION");
 
+/// Crate User Agent
+pub static USER_AGENT: &str = concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"),);
+
+/// Crate Errors
+#[derive(thiserror::Error, Debug)]
+pub enum XError {
+    #[error("configuration error")]
+    Config,
+}
+
 /// Internal HTTP request handler for metrics and other private endpoints
-#[tracing::instrument]
+#[tracing::instrument(skip(api))]
 pub async fn internal_http_request_response(
     api: Api,
     req: Request<Body>,
@@ -36,11 +47,11 @@ pub async fn internal_http_request_response(
             .status(StatusCode::NOT_FOUND)
             .body("not found".into())?),
     }
-        .or_else(|e| {
-            Ok(Response::builder()
-                .status(StatusCode::INTERNAL_SERVER_ERROR)
-                .body(format!("error: {}", e).into())?)
-        })
+    .or_else(|e| {
+        Ok(Response::builder()
+            .status(StatusCode::INTERNAL_SERVER_ERROR)
+            .body(format!("error: {}", e).into())?)
+    })
 }
 
 fn liveness_request_response() -> Result<Response<Body>> {
