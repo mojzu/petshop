@@ -18,25 +18,38 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 };
 
 service Petshop {
-  rpc HttpBody (api.v1.HttpBody) returns (api.v1.HttpBody) {
+  // HTTP body example
+  rpc HttpBodyEx (api.v1.HttpBody) returns (api.v1.HttpBody) {
     // FIXME: Using `api.v1.HttpBody` here due to fix in httpbody.proto
     // FIXME: I think this prevents envoy handling arbitrary responses using HttpBody?
     option (google.api.http) = {
-      post: "/api.v1.Petshop/HttpBody"
+      post: "/api.v1.Petshop/HttpBodyEx"
       body: "*"
     };
   }
 
-  rpc Json (google.protobuf.Struct) returns (google.protobuf.Struct) {
+  // Schemaless JSON example
+  rpc JsonEx (google.protobuf.Struct) returns (google.protobuf.Struct) {
     option (google.api.http) = {
-      post: "/api.v1.Petshop/Json"
+      post: "/api.v1.Petshop/JsonEx"
       body: "*"
     };
   }
 
-  rpc AuthenticationRequired (google.protobuf.Empty) returns (User) {
+  // Authentication required example
+  rpc AuthenticationRequiredEx (google.protobuf.Empty) returns (User) {
     option (google.api.http) = {
-      post: "/api.v1.Petshop/AuthenticationRequired"
+      post: "/api.v1.Petshop/AuthenticationRequiredEx"
+      body: "*"
+    };
+  }
+
+  // Server streaming example
+  //
+  // Bidirectional streaming is not supported in grpc-web
+  rpc StreamingEx (Echo) returns (stream Echo) {
+    option (google.api.http) = {
+      post: "/api.v1.Petshop/StreamingEx"
       body: "*"
     };
   }
@@ -73,6 +86,10 @@ service Petshop {
 message User {
   string email = 1;
   string name = 2;
+}
+
+message Echo {
+  string message = 1;
 }
 
 message Category {

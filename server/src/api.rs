@@ -3,11 +3,12 @@
 use std::fmt;
 
 use prost_types::Struct;
-use tokio::sync::broadcast;
+use tokio::sync::{broadcast, mpsc};
+use tokio_stream::wrappers::ReceiverStream;
 use tonic::{Request, Response, Status};
 
 use petshop_proto::{
-    Category, FindByStatus, FindByTag, HttpBody, Pet, Pets, Status as PetStatus, Tag, User,
+    Category, Echo, FindByStatus, FindByTag, HttpBody, Pet, Pets, Status as PetStatus, Tag, User,
 };
 use petshop_proto::petshop_server::Petshop;
 
@@ -69,30 +70,57 @@ impl Api {
             _ => Err(Status::unauthenticated("user authentication failed")),
         }
     }
+
+    /// Streaming async example task for echoing message on a timer
+    #[tracing::instrument(skip(tx))]
+    async fn streaming_ex_task(tx: mpsc::Sender<Result<Echo, Status>>, echo: Echo) {
+        info!("streaming_ex_task echo {:?}", echo);
+        for _ in 0..3 {
+            info!("echo {:?}", echo);
+            tx.send(Ok(echo.clone())).await.unwrap();
+            tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
+        }
+        info!("echo stream done");
+    }
 }
 
 #[tonic::async_trait]
 impl Petshop for Api {
     #[tracing::instrument(skip(self))]
-    async fn http_body(&self, request: Request<HttpBody>) -> Result<Response<HttpBody>, Status> {
+    async fn http_body_ex(&self, request: Request<HttpBody>) -> Result<Response<HttpBody>, Status> {
         info!("http_body request");
         Ok(Response::new(request.into_inner()))
     }
 
     #[tracing::instrument(skip(self))]
-    async fn json(&self, request: Request<Struct>) -> Result<Response<Struct>, Status> {
+    async fn json_ex(&self, request: Request<Struct>) -> Result<Response<Struct>, Status> {
         info!("json request");
         Ok(Response::new(request.into_inner()))
     }
 
     #[tracing::instrument(skip(self))]
-    async fn authentication_required(
+    async fn authentication_required_ex(
         &self,
         request: Request<()>,
     ) -> Result<Response<User>, Status> {
         info!("authentication_required request");
         let user = self.user_required(&request)?;
         Ok(Response::new(user))
+    }
+
+    type StreamingExStream = ReceiverStream<Result<Echo, Status>>;
+
+    #[tracing::instrument(skip(self))]
+    async fn streaming_ex(
+        &self,
+        request: Request<Echo>,
+    ) -> Result<Response<Self::StreamingExStream>, Status> {
+        info!("streaming request");
+
+        let (tx, rx) = mpsc::channel(4);
+        tokio::spawn(Self::streaming_ex_task(tx, request.into_inner()));
+
+        Ok(Response::new(ReceiverStream::new(rx)))
     }
 
     #[tracing::instrument(skip(self))]

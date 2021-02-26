@@ -129,11 +129,9 @@ async fn shutdown_signal(mut shutdown: broadcast::Receiver<bool>) {
 
 // TODO: Docker compose test suite (for dev and CI?)
 // TODO: Github actions to build docker images with versions (cd.yml?)
-// TODO: gRPC streaming example in proto api
 // TODO: Database integrations, migrations crate/binary?
 
 // TODO: Add examples for rust tests/examples/benches?
-// TODO: More comments/explanation in proto and server files?
 // TODO: Double check how bytes is being deserialised from json in httpbody, add note for this (base64?)
 // TODO: Check HttpBody output works as expected (don't think input will work)
 
@@ -145,5 +143,7 @@ async fn shutdown_signal(mut shutdown: broadcast::Receiver<bool>) {
 // TODO: Use alpine image for server docker image? Research podman?
 // TODO: Running in k8s/nomad examples?
 
-// TODO: OAuth2-proxy multiple provider support, html templates?
+// TODO: OAuth2-proxy multiple provider support, html templates? (metrics support after next release)
 // TODO: Envoy MTLS authentication example(s), other options for auth?
+// TODO: Using X-Request-Id for idempotency tokens for requests? Connect streams to requests this way?
+// TODO: Validation of requests example, validate crate?
