@@ -5,6 +5,7 @@ FROM buildpack-deps:buster as build
 ENV OAUTH2_PROXY_VERSION="oauth2-proxy-v7.0.1.linux-amd64"
 
 # DEPEND: Install Oauth2 Proxy
+# <https://github.com/oauth2-proxy/oauth2-proxy>
 RUN curl -fsSLO --compressed "https://github.com/oauth2-proxy/oauth2-proxy/releases/download/v7.0.1/$OAUTH2_PROXY_VERSION.tar.gz" \
     && tar -xzf $OAUTH2_PROXY_VERSION.tar.gz --strip-components 1 -C /usr/local/bin/
 

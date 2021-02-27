@@ -62,14 +62,20 @@ impl TryFrom<ConfigLoad> for Config {
             return Err(XError::Config.into());
         };
         if postgres.application_name.is_none() {
-            let application_name = format!("{}", USER_AGENT);
-            postgres.application_name =
-                Config::opt_or_opt_default("postgres.application_name", None, application_name);
+            let application_name = USER_AGENT.to_string();
+            postgres.application_name = Some(Config::opt_or_default(
+                "postgres.application_name",
+                None,
+                application_name,
+            ));
         }
         if postgres.connect_timeout.is_none() {
             let connect_timeout = std::time::Duration::from_secs(5);
-            postgres.connect_timeout =
-                Config::opt_or_opt_default("postgres.connect_timeout", None, connect_timeout);
+            postgres.connect_timeout = Some(Config::opt_or_default(
+                "postgres.connect_timeout",
+                None,
+                connect_timeout,
+            ));
         }
 
         Ok(Config {
@@ -150,13 +156,5 @@ impl Config {
             );
             default_value
         }
-    }
-
-    fn opt_or_opt_default<T: fmt::Debug>(
-        name: &str,
-        value: Option<T>,
-        default_value: T,
-    ) -> Option<T> {
-        Some(Self::opt_or_default(name, value, default_value))
     }
 }

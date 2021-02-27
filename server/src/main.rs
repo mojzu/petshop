@@ -130,7 +130,6 @@ async fn shutdown_signal(mut shutdown: broadcast::Receiver<bool>) {
 
 // TODO: Docker compose test suite (for dev and CI?)
 // TODO: Github actions to build docker images with versions (cd.yml?)
-// TODO: Database integrations, migrations crate/binary?
 
 // TODO: Add examples for rust tests/examples/benches?
 // TODO: Double check how bytes is being deserialised from json in httpbody, add note for this (base64?)
