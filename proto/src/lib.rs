@@ -6,7 +6,22 @@
 #![deny(unused_variables)]
 #![warn(clippy::all)]
 
-// FIXME: Enable this to require proto documentation
-// #![deny(missing_docs)]
+// This will require proto files to be commented so
+// that generated types have documentation
+//#![deny(missing_docs)]
 
-tonic::include_proto!("api.v1");
+/// API module
+pub mod api {
+    /// Proto definitions
+    pub mod v1 {
+        tonic::include_proto!("api.v1");
+    }
+}
+
+/// Google module
+pub mod google {
+    /// Proto definitions
+    pub mod api {
+        tonic::include_proto!("google.api");
+    }
+}

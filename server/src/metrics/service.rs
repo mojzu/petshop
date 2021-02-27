@@ -1,10 +1,8 @@
-use std::task::{Context, Poll};
-
+use crate::internal::*;
 use hyper::{Body, Request as HyperRequest, Response as HyperResponse};
+use std::task::{Context, Poll};
 use tonic::{body::BoxBody, transport::NamedService};
 use tower::Service;
-
-use crate::internal::*;
 
 /// Service interceptor to collect counter and latency metrics
 #[derive(Debug, Clone)]

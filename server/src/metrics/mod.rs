@@ -1,12 +1,10 @@
-use std::fmt;
-
+use crate::internal::*;
 use opentelemetry::metrics::{BoundCounter, BoundValueRecorder};
 use opentelemetry_prometheus::PrometheusExporter;
 use prometheus::{Encoder, TextEncoder};
+use std::fmt;
 
 pub use service::MetricsService;
-
-use crate::internal::*;
 
 mod service;
 

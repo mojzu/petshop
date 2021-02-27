@@ -14,15 +14,13 @@ extern crate serde_json;
 #[macro_use]
 extern crate tracing;
 
-use clap::{App, Arg};
-use hyper::service::{make_service_fn, service_fn};
-use tokio::sync::broadcast;
-
-use petshop_proto::petshop_server::PetshopServer;
-
 use crate::api::Api;
 use crate::config::Config;
 use crate::internal::*;
+use clap::{App, Arg};
+use hyper::service::{make_service_fn, service_fn};
+use petshop_proto::api::v1::petshop_server::PetshopServer;
+use tokio::sync::broadcast;
 
 mod api;
 mod config;
@@ -132,9 +130,6 @@ async fn shutdown_signal(mut shutdown: broadcast::Receiver<bool>) {
 // TODO: Github actions to build docker images with versions (cd.yml?)
 
 // TODO: Add examples for rust tests/examples/benches?
-// TODO: Double check how bytes is being deserialised from json in httpbody, add note for this (base64?)
-// TODO: Check HttpBody output works as expected (don't think input will work)
-
 // TODO: Rust docs output in dist? cargo make --no-workspace docs-flow
 // TODO: Openapi doc generator from specification?
 // TODO: Read the docs docker image for docs?

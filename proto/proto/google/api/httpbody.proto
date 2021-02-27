@@ -15,10 +15,7 @@
 
 syntax = "proto3";
 
-// FIXME: Change from `google.api` here, or tonic will generate
-// code including `super::super::...` which fails to compile
-// May be related to <https://github.com/danburkert/prost/issues/440>?
-package api.v1;
+package google.api;
 
 import "google/protobuf/any.proto";
 
@@ -29,7 +26,7 @@ option java_outer_classname = "HttpBodyProto";
 option java_package = "com.google.api";
 option objc_class_prefix = "GAPI";
 
-// FIXME: Dissociate this from message, or rustdoc tests will try to run the examples and fail
+// FIXME: Removed this comment from message, or rustdoc tests will try to run the examples and fail
 // This message can be used both in streaming and non-streaming API methods in
 // the request as well as the response.
 //

@@ -1,4 +1,4 @@
-// FIXME: Modified version of health.proto, added annotations for HTTP support
+// Modified version of health.proto, added annotations for HTTP support
 // <https://github.com/grpc/grpc/blob/master/doc/health-checking.md>
 syntax = "proto3";
 package grpc.health.v1;
@@ -27,5 +27,10 @@ service Health {
     };
   }
 
-  rpc Watch(HealthCheckRequest) returns (stream HealthCheckResponse);
+  rpc Watch(HealthCheckRequest) returns (stream HealthCheckResponse) {
+    option (google.api.http) = {
+      post: "/grpc.health.v1.Health/Watch"
+      body: "*"
+    };
+  }
 }

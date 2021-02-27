@@ -19,9 +19,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 
 service Petshop {
   // HTTP body example
-  rpc HttpBodyEx (api.v1.HttpBody) returns (api.v1.HttpBody) {
-    // FIXME: Using `api.v1.HttpBody` here due to fix in httpbody.proto
-    // FIXME: I think this prevents envoy handling arbitrary responses using HttpBody?
+  rpc HttpBodyEx (google.protobuf.Empty) returns (google.api.HttpBody) {
     option (google.api.http) = {
       post: "/api.v1.Petshop/HttpBodyEx"
       body: "*"

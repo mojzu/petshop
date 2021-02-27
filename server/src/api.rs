@@ -1,18 +1,16 @@
 //! # API
 //!
-use std::fmt;
-
+use crate::internal::*;
+use petshop_proto::api::v1::petshop_server::Petshop;
+use petshop_proto::api::v1::{
+    Category, Echo, FindByStatus, FindByTag, Pet, Pets, Status as PetStatus, Tag, User,
+};
+use petshop_proto::google::api::HttpBody;
 use prost_types::Struct;
+use std::fmt;
 use tokio::sync::{broadcast, mpsc};
 use tokio_stream::wrappers::ReceiverStream;
 use tonic::{Request, Response, Status};
-
-use petshop_proto::petshop_server::Petshop;
-use petshop_proto::{
-    Category, Echo, FindByStatus, FindByTag, HttpBody, Pet, Pets, Status as PetStatus, Tag, User,
-};
-
-use crate::internal::*;
 
 /// API Server
 #[derive(Clone)]
@@ -86,9 +84,14 @@ impl Api {
 #[tonic::async_trait]
 impl Petshop for Api {
     #[tracing::instrument(skip(self))]
-    async fn http_body_ex(&self, request: Request<HttpBody>) -> Result<Response<HttpBody>, Status> {
+    async fn http_body_ex(&self, request: Request<()>) -> Result<Response<HttpBody>, Status> {
         info!("http_body request");
-        Ok(Response::new(request.into_inner()))
+        let body = HttpBody {
+            content_type: "text/html".to_string(),
+            data: "<h1>Hello, world!</h1>".into(),
+            extensions: vec![]
+        };
+        Ok(Response::new(body))
     }
 
     #[tracing::instrument(skip(self))]

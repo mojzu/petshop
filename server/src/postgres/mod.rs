@@ -1,6 +1,5 @@
-use std::fmt;
-
 use crate::internal::*;
+use std::fmt;
 
 /// Postgres
 pub struct Postgres {

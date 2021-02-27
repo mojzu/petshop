@@ -1,12 +1,10 @@
 //! # Configuration
 //!
+use crate::internal::*;
 use std::fmt;
 use std::net::SocketAddr;
-
 use tracing_subscriber::fmt::time::ChronoUtc;
 use tracing_subscriber::EnvFilter;
-
-use crate::internal::*;
 
 /// Configuration
 ///

@@ -10,3 +10,6 @@ COPY ./docker/envoy/envoy.yml /config/envoy/envoy.yaml
 COPY ./dist/api.pb /config/api.pb
 
 CMD ["/usr/local/bin/envoy", "-c", "/config/envoy/envoy.yaml"]
+
+# Enable for debug output
+#CMD ["/usr/local/bin/envoy", "-c", "/config/envoy/envoy.yaml", "--log-level", "debug"]

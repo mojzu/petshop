@@ -61,12 +61,12 @@ await grpcClient.petFindByTag(req);</code></pre>
 
 <div class="example">
     <h2>Example 4 - HttpBody</h2>
-    <i>WARNING: HttpBody isn't working quite right yet</i>
     <h3>httpClient</h3>
-    <pre><code class="language-javascript">req = {"contentType": "text/plain", "data": "48656c6c6f2c20776f726c6421"};
-await httpClient.petshopHttpBodyEx(req);</code></pre>
+    <i>This response will be converted to text/html</i>
+    <pre><code class="language-javascript">await httpClient.petshopHttpBodyEx({});</code></pre>
     <h3>grpcClient</h3>
-    <pre><code class="language-javascript">req = (new HttpBody()).setContentType("text/plain").setData("48656c6c6f2c20776f726c6421");
+    <i>This response will not be converted</i>
+    <pre><code class="language-javascript">req = new Empty();
 await grpcClient.httpBodyEx(req);</code></pre>
 </div>
 

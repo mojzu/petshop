@@ -3,18 +3,17 @@
 //! Some library types made public for easier use in modules.
 //!
 //! Internal HTTP server request handlers.
-pub use std::convert::{TryFrom, TryInto};
-pub use std::sync::Arc;
-pub use std::time::SystemTime;
-
-pub use anyhow::{Error, Result};
-pub use chrono::Utc;
-use hyper::{Body, Method, Request, Response, StatusCode};
-
 pub use crate::api::Api;
 pub use crate::config::Config;
 pub use crate::metrics::{Metrics, MetricsService};
 pub use crate::postgres::Postgres;
+pub use anyhow::{Error, Result};
+pub use chrono::Utc;
+pub use std::convert::{TryFrom, TryInto};
+pub use std::sync::Arc;
+pub use std::time::SystemTime;
+
+use hyper::{Body, Method, Request, Response, StatusCode};
 
 /// Crate Name
 pub static NAME: &str = env!("CARGO_PKG_NAME");
