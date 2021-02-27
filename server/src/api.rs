@@ -52,7 +52,9 @@ impl Api {
     ///
     /// [More information on liveness/readiness probes](https://blog.colinbreck.com/kubernetes-liveness-and-readiness-probes-how-to-avoid-shooting-yourself-in-the-foot/)
     pub async fn readiness(&self) -> Result<(), XError> {
-        self.postgres.readiness().await?;
+        let postgres_ready = self.postgres.readiness().await;
+        self.metrics.api_ready_set(postgres_ready.is_ok());
+        postgres_ready?;
         Ok(())
     }
 

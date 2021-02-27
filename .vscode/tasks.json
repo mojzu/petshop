@@ -1,0 +1,91 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "dist - build",
+      "type": "shell",
+      "command": "cargo make dist-flow",
+      "problemMatcher": []
+    },
+    {
+      "label": "dist - clean",
+      "type": "shell",
+      "command": "cargo make dist-clean",
+      "problemMatcher": []
+    },
+    {
+      "label": "dist - clean images",
+      "type": "shell",
+      "command": "cargo make dist-clean-images",
+      "problemMatcher": []
+    },
+    {
+      "label": "dev - envoy",
+      "type": "shell",
+      "command": "cargo make dev-envoy",
+      "problemMatcher": []
+    },
+    {
+      "label": "dev - postgres",
+      "type": "shell",
+      "command": "cargo make dev-postgres",
+      "problemMatcher": []
+    },
+    {
+      "label": "dev - server",
+      "type": "shell",
+      "command": "cargo make dev-server",
+      "problemMatcher": []
+    },
+    {
+      "label": "dev - server release",
+      "type": "shell",
+      "command": "cargo make dev-server-release",
+      "problemMatcher": []
+    },
+    {
+      "label": "dev - client playground",
+      "type": "shell",
+      "command": "cargo make dev-client-playground",
+      "problemMatcher": []
+    },
+    {
+      "label": "compose - build",
+      "type": "shell",
+      "command": "cargo make compose-build",
+      "problemMatcher": []
+    },
+    {
+      "label": "compose - up",
+      "type": "shell",
+      "command": "docker-compose up",
+      "problemMatcher": []
+    },
+    {
+      "label": "compose - down",
+      "type": "shell",
+      "command": "docker-compose down",
+      "problemMatcher": []
+    },
+    {
+      "label": "examples - authz - build",
+      "type": "shell",
+      "command": "(cd examples/authz && docker-compose build)",
+      "problemMatcher": []
+    },
+    {
+      "label": "examples - authz - up",
+      "type": "shell",
+      "command": "(cd examples/authz && docker-compose up)",
+      "problemMatcher": []
+    },
+    {
+      "label": "examples - authz - down",
+      "type": "shell",
+      "command": "(cd examples/authz && docker-compose down)",
+      "problemMatcher": []
+    }
+  ]
+}

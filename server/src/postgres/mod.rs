@@ -21,17 +21,18 @@ impl Postgres {
     /// Returns an error if queries can not be served
     #[tracing::instrument(skip(self))]
     pub async fn readiness(&self) -> Result<(), XError> {
-        let conn = self.conn().await?;
-        let st = conn.prepare("SELECT 1 + 1").await?;
-        conn.query_one(&st, &[]).await?;
+        let conn_query = self.conn_query_test().await;
+        self.metrics.postgres_ready_set(conn_query.is_ok());
+        conn_query?;
         Ok(())
     }
 
     /// Wraps returning a client from pool to set ready metric
-    async fn conn(&self) -> Result<deadpool_postgres::Client, XError> {
-        let conn = self.pool.get().await;
-        self.metrics.postgres_ready_set(conn.is_ok());
-        Ok(conn?)
+    async fn conn_query_test(&self) -> Result<(), XError> {
+        let conn = self.pool.get().await?;
+        let st = conn.prepare("SELECT 1 + 1").await?;
+        conn.query_one(&st, &[]).await?;
+        Ok(())
     }
 }
 

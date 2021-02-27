@@ -17,6 +17,7 @@ pub struct Metrics {
     exporter: PrometheusExporter,
     api_counter: BoundCounter<'static, u64>,
     api_latency: BoundValueRecorder<'static, f64>,
+    api_ready: BoundValueRecorder<'static, u64>,
     postgres_ready: BoundValueRecorder<'static, u64>,
 }
 
@@ -27,6 +28,9 @@ impl Metrics {
             .init();
         let meter = opentelemetry::global::meter(NAME);
 
+        // TODO: Is value recorder correct for bits here?
+        // TODO: How to prefix metrics output with common prefix?
+
         let api_counter = meter
             .u64_counter("api_request_counter_total")
             .with_description("Total number of API requests made.")
@@ -35,6 +39,11 @@ impl Metrics {
         let api_latency = meter
             .f64_value_recorder("api_request_latency_seconds")
             .with_description("The API request latencies in seconds.")
+            .init()
+            .bind(&[]);
+        let api_ready = meter
+            .u64_value_recorder("api_ready_bit")
+            .with_description("1 if api is ready, else 0.")
             .init()
             .bind(&[]);
         let postgres_ready = meter
@@ -47,6 +56,7 @@ impl Metrics {
             exporter,
             api_counter,
             api_latency,
+            api_ready,
             postgres_ready,
         }
     }
@@ -58,6 +68,11 @@ impl Metrics {
     pub fn api_latency_record(&self, time: SystemTime) {
         self.api_latency
             .record(time.elapsed().map_or(0.0, |d| d.as_secs_f64()));
+    }
+
+    pub fn api_ready_set(&self, ready: bool) {
+        let value = if ready { 1 } else { 0 };
+        self.api_ready.record(value);
     }
 
     pub fn postgres_ready_set(&self, ready: bool) {
