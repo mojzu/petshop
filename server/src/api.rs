@@ -21,10 +21,14 @@ pub struct Api {
 }
 
 impl Api {
-    pub fn from_config(config: &Config, shutdown_tx: broadcast::Sender<bool>) -> Result<Self> {
+    pub fn from_config(
+        config: &Config,
+        shutdown_tx: broadcast::Sender<bool>,
+    ) -> Result<Self, XError> {
+        let metrics = Arc::new(Metrics::from_config(config));
         Ok(Self {
-            metrics: Arc::new(Metrics::from_config(config)),
-            postgres: Arc::new(Postgres::from_config(config)?),
+            metrics: metrics.clone(),
+            postgres: Arc::new(Postgres::from_config(config, metrics.clone())?),
             shutdown: Arc::new(shutdown_tx),
         })
     }
@@ -47,7 +51,7 @@ impl Api {
     /// Returns an error if requests can not be served
     ///
     /// [More information on liveness/readiness probes](https://blog.colinbreck.com/kubernetes-liveness-and-readiness-probes-how-to-avoid-shooting-yourself-in-the-foot/)
-    pub async fn readiness(&self) -> Result<()> {
+    pub async fn readiness(&self) -> Result<(), XError> {
         self.postgres.readiness().await?;
         Ok(())
     }
@@ -89,7 +93,7 @@ impl Petshop for Api {
         let body = HttpBody {
             content_type: "text/html".to_string(),
             data: "<h1>Hello, world!</h1>".into(),
-            extensions: vec![]
+            extensions: vec![],
         };
         Ok(Response::new(body))
     }

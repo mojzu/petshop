@@ -1,3 +1,5 @@
+//! # Metrics
+//!
 use crate::internal::*;
 use opentelemetry::metrics::{BoundCounter, BoundValueRecorder};
 use opentelemetry_prometheus::PrometheusExporter;
@@ -15,6 +17,7 @@ pub struct Metrics {
     exporter: PrometheusExporter,
     api_counter: BoundCounter<'static, u64>,
     api_latency: BoundValueRecorder<'static, f64>,
+    postgres_ready: BoundValueRecorder<'static, u64>,
 }
 
 impl Metrics {
@@ -34,11 +37,17 @@ impl Metrics {
             .with_description("The API request latencies in seconds.")
             .init()
             .bind(&[]);
+        let postgres_ready = meter
+            .u64_value_recorder("postgres_ready_bit")
+            .with_description("1 if postgres is ready, else 0.")
+            .init()
+            .bind(&[]);
 
         Self {
             exporter,
             api_counter,
             api_latency,
+            postgres_ready,
         }
     }
 
@@ -49,6 +58,11 @@ impl Metrics {
     pub fn api_latency_record(&self, time: SystemTime) {
         self.api_latency
             .record(time.elapsed().map_or(0.0, |d| d.as_secs_f64()));
+    }
+
+    pub fn postgres_ready_set(&self, ready: bool) {
+        let value = if ready { 1 } else { 0 };
+        self.postgres_ready.record(value);
     }
 
     /// Export metrics in prometheus exposition format

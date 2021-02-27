@@ -56,8 +56,7 @@ impl TryFrom<ConfigLoad> for Config {
         let mut postgres = if let Some(postgres) = value.postgres {
             postgres
         } else {
-            println!("Config: postgres is not configured");
-            return Err(XError::Config.into());
+            return Err(XError::config("postgres is not configured").into());
         };
         if postgres.application_name.is_none() {
             let application_name = USER_AGENT.to_string();

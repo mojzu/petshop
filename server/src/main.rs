@@ -78,7 +78,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         async move {
             Ok::<_, Error>(service_fn(move |req| {
                 let api = api.clone();
-                internal_http_request_response(api, req)
+                http_request_handler(api, req)
             }))
         }
     });

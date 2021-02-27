@@ -1,3 +1,5 @@
+//! # Metrics Service
+//!
 use crate::internal::*;
 use hyper::{Body, Request as HyperRequest, Response as HyperResponse};
 use std::task::{Context, Poll};

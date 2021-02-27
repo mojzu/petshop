@@ -27,16 +27,28 @@ pub static USER_AGENT: &str = concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_P
 /// Crate Errors
 #[derive(thiserror::Error, Debug)]
 pub enum XError {
-    #[error("configuration error")]
-    Config,
+    #[error("configuration error `{0}`")]
+    Config(String),
+
+    #[error("postgres config error")]
+    PostgresConfig(#[from] deadpool_postgres::config::ConfigError),
+
+    #[error("postgres pool error")]
+    PostgresPool(#[from] deadpool_postgres::PoolError),
+
+    #[error("postgres error")]
+    Postgres(#[from] tokio_postgres::Error),
+}
+
+impl XError {
+    pub fn config(message: &str) -> Self {
+        Self::Config(message.to_owned())
+    }
 }
 
 /// Internal HTTP request handler for metrics and other private endpoints
 #[tracing::instrument(skip(api))]
-pub async fn internal_http_request_response(
-    api: Api,
-    req: Request<Body>,
-) -> Result<Response<Body>> {
+pub async fn http_request_handler(api: Api, req: Request<Body>) -> Result<Response<Body>> {
     match (req.method(), req.uri().path()) {
         (&Method::GET, "/ping") => liveness_request_response(),
         (&Method::GET, "/liveness") => liveness_request_response(),
@@ -47,12 +59,15 @@ pub async fn internal_http_request_response(
             .body("not found".into())?),
     }
     .or_else(|e| {
+        warn!("{:#}", e);
+
         Ok(Response::builder()
             .status(StatusCode::INTERNAL_SERVER_ERROR)
-            .body(format!("error: {}", e).into())?)
+            .body("error".into())?)
     })
 }
 
+/// Kubernetes liveness request handler
 fn liveness_request_response() -> Result<Response<Body>> {
     Ok(Response::builder()
         .status(StatusCode::OK)
@@ -60,12 +75,14 @@ fn liveness_request_response() -> Result<Response<Body>> {
         .body("ok".into())?)
 }
 
+/// Kubernetes readiness request handler
 async fn readiness_request_response(api: Api) -> Result<Response<Body>> {
     info!("checking readiness");
     api.readiness().await?;
     liveness_request_response()
 }
 
+/// Prometheus metrics request handler
 fn metrics_request_response(api: Api) -> Result<Response<Body>> {
     info!("exporting metrics");
     let (content_type, buffer) = api.metrics().export();
