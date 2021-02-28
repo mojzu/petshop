@@ -2,7 +2,8 @@
 
 ```shell
 # Build base images
-cargo make compose-build
+cargo make dist-build
+cargo make compose build
 
 cd examples/authz
 # Copy `oauth2-proxy.template.cfg` to `client-oauth2-proxy.cfg` and `server-oauth2-proxy.cfg` and edit as required

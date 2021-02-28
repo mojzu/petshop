@@ -1,13 +1,23 @@
 name: CI
 
-on: [ push, pull_request ]
+on:
+  push:
+    branches:
+      - main
+
+    tags:
+      - v*
+
+  pull_request:
+    branches:
+      - main
 
 env:
   CLICOLOR_FORCE: 1
 
 jobs:
-  ci:
-    name: CI
+  rust-ci:
+    name: Rust CI
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -47,3 +57,44 @@ jobs:
         with:
           command: make
           args: ci-flow
+
+  docker-ci:
+    name: Docker CI
+    needs: rust-ci
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+
+      - name: Install cargo-make
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: --debug cargo-make
+
+      - name: Run CI
+        run: |
+          cargo make compose-ci run sut
+
+  docker-push:
+    name: Docker Push
+    needs: [rust-ci, docker-ci]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+        # TODO: Build docker images with versions
+      - name: Placeholder
+        run: |
+          echo "TODO: Build/tag/push images here (petshop/envoy:latest, petshop/server:latest)"

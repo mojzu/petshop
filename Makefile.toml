@@ -43,6 +43,13 @@ echo Building petshop/client-playground:latest
 docker build --tag petshop/client-playground:latest --file docker/client-playground.dockerfile .
 '''
 
+[tasks.docker-build-integration-test]
+workspace = false
+script = '''
+echo Building petshop/integration-test:latest
+docker build --tag petshop/integration-test:latest --file docker/integration-test.dockerfile .
+'''
+
 [tasks.docker-build-oauth2-proxy]
 workspace = false
 script = '''
@@ -90,6 +97,7 @@ workspace = false
 script = '''
 echo Running petshop/node-tools:latest
 docker run --rm -it -v "$(pwd)/docker/node-tools/client-playground:/home/node/client-playground" \
+    -v "$(pwd)/docker/node-tools/integration-test:/home/node/integration-test" \
     --user "$(id -u):$(id -g)" --network=host petshop/node-tools:latest ${@}
 '''
 
@@ -175,6 +183,7 @@ dependencies = [
     "generate-grpc-web-client",
     "docker-build-node-tools",
     "docker-build-client-playground",
+    "docker-build-integration-test",
     "docker-build-oauth2-proxy"
 ]
 
@@ -243,15 +252,33 @@ echo Running node-tools/client-playground
 cargo make node-tools -- npm run client-playground
 '''
 
-# Docker Compose
-
-[tasks.compose-build]
+[tasks.dev-integration-test]
 workspace = false
 dependencies = [
-    "dist-flow"
+    "generate-client-flow"
 ]
 script = '''
-docker-compose build
+echo Running node-tools/integration-test
+cargo make node-tools -- npm run integration-test
+'''
+
+# Docker Compose
+
+[tasks.compose]
+workspace = false
+script = '''
+docker-compose ${@}
+'''
+
+[tasks.compose-ci]
+workspace = false
+dependencies = [
+    "docker-build-tools",
+    "docker-build-rust-cache",
+    "generate-flow"
+]
+script = '''
+docker-compose -f docker-compose.ci.yml ${@}
 '''
 
 # Distribution Tasks
@@ -264,6 +291,7 @@ docker image rm -f \
     petshop-authz/envoy:latest \
     petshop-authz/server-oauth2-proxy:latest \
     petshop/client-playground:latest \
+    petshop/integration-test:latest \
     petshop/envoy:latest \
     petshop/envoy-compose:latest \
     petshop/go-tools:latest \
@@ -281,7 +309,7 @@ script = '''
 rm -rf ./dist ./docker/node-tools/grpc-web ./docker/node-tools/typescript-axios
 '''
 
-[tasks.dist-flow]
+[tasks.dist-build]
 workspace = false
 dependencies = [
     "dist-clean",

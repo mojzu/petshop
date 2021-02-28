@@ -126,9 +126,6 @@ async fn shutdown_signal(mut shutdown: broadcast::Receiver<bool>) {
     info!("received shutdown signal ({})", sig);
 }
 
-// TODO: Docker compose test suite (for dev and CI?)
-// TODO: Github actions to build docker images with versions (cd.yml?)
-
 // TODO: Add examples for rust tests/examples/benches?
 // TODO: Rust docs output in dist? cargo make --no-workspace docs-flow
 // TODO: Openapi doc generator from specification?

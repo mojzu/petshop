@@ -13,6 +13,7 @@ Template for Rust API server with gRPC and OpenAPI (V2) interfaces
 - [Generated OpenAPI (V2) definitions](https://github.com/grpc-ecosystem/grpc-gateway) from gRPC `.proto` files
 - Generated TypeScript [axios](https://github.com/axios/axios) and [gRPC Web](https://github.com/grpc/grpc-web) clients
 - Client playground for browser with [Parcel](https://v2.parceljs.org/)
+- Integration tests with [Jasmine](https://jasmine.github.io/)
 - Continuous integration using [GitHub Actions](https://github.com/features/actions) and [cargo-make](https://github.com/sagiegurari/cargo-make)
 - Example proto definitions based (loosely) on [OpenAPI (V2) Petstore](https://petstore.swagger.io/#/)
 - [Cargo workspace](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html) for multiple crates
@@ -36,7 +37,7 @@ cargo --version
 cargo install --force cargo-make --version "~0.32"
 cargo make --version
 # Run distribution tasks
-cargo make dist-flow
+cargo make dist-build
 # ---
 
 # Run on host
@@ -54,9 +55,9 @@ cargo make dev-client-playground
 
 # Or run on docker
 # Run envoy and server using docker-compose
-cargo make compose-build
-docker-compose up
-docker-compose down
+cargo make compose build
+cargo make compose up
+cargo make compose down
 # ---
 
 # Open client playground at http://localhost:1234
@@ -74,7 +75,7 @@ How to change the API:
 
 - Update `proto/proto/api.proto`
 - Implement aysnc trait methods in `server` crate (run `cargo build` to check)
-- Restart `dev-*` tasks or run `cargo make compose-build` task and restart docker containers to update everything
+- Restart `dev-*` tasks or run `cargo make dist-build` and `cargo make compose build` to update everything
 
 The following labels are used:
 

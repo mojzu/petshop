@@ -6,7 +6,7 @@
     {
       "label": "dist - build",
       "type": "shell",
-      "command": "cargo make dist-flow",
+      "command": "cargo make dist-build",
       "problemMatcher": []
     },
     {
@@ -52,21 +52,45 @@
       "problemMatcher": []
     },
     {
+      "label": "dev - integration test",
+      "type": "shell",
+      "command": "cargo make dev-integration-test",
+      "problemMatcher": []
+    },
+    {
       "label": "compose - build",
       "type": "shell",
-      "command": "cargo make compose-build",
+      "command": "cargo make compose build",
       "problemMatcher": []
     },
     {
       "label": "compose - up",
       "type": "shell",
-      "command": "docker-compose up",
+      "command": "cargo make compose up",
       "problemMatcher": []
     },
     {
       "label": "compose - down",
       "type": "shell",
-      "command": "docker-compose down",
+      "command": "cargo make compose down",
+      "problemMatcher": []
+    },
+    {
+      "label": "compose ci - build",
+      "type": "shell",
+      "command": "cargo make compose-ci build",
+      "problemMatcher": []
+    },
+    {
+      "label": "compose ci - up",
+      "type": "shell",
+      "command": "cargo make compose-ci up",
+      "problemMatcher": []
+    },
+    {
+      "label": "compose ci - down",
+      "type": "shell",
+      "command": "cargo make compose-ci down",
       "problemMatcher": []
     },
     {
