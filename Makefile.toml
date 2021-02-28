@@ -1,4 +1,4 @@
-# Build Docker Image Tasks
+# Build docker image tasks
 
 [tasks.docker-build-go-tools]
 workspace = false
@@ -83,7 +83,25 @@ echo Building petshop/server:latest
 docker build --tag petshop/server:latest --file docker/server.dockerfile .
 '''
 
-# Run Docker Container Tasks
+# Run docker container tools
+
+[tasks.go-tools-run]
+workspace = false
+script = '''
+echo Running petshop/go-tools:latest
+docker run --rm -v "$(pwd):/src" --user "$(id -u):$(id -g)" petshop/go-tools:latest ${@}
+'''
+
+[tasks.node-tools-run]
+workspace = false
+script = '''
+echo Running petshop/node-tools:latest
+docker run --rm -v "$(pwd)/docker/node-tools/client-playground:/home/node/client-playground" \
+    -v "$(pwd)/docker/node-tools/integration-test:/home/node/integration-test" \
+    --user "$(id -u):$(id -g)" petshop/node-tools:latest ${@}
+'''
+
+# Run docker container tools interactively
 
 [tasks.go-tools]
 workspace = false
@@ -108,14 +126,14 @@ echo Running petshop/rust-tools:latest
 docker run --rm -it -v "$(pwd):/src" --user "$(id -u):$(id -g)" --network=host petshop/rust-tools:latest ${@}
 '''
 
-# Protobuf/OpenAPI Generator Tasks
+# Protobuf/openapi generator tasks
 
 [tasks.generate-protoc-protobuf]
 workspace = false
 script = '''
 echo Generating protobuf descriptor set dist/api.pb
 mkdir -p ./dist
-cargo make go-tools -- protoc -I/usr/local/include -I/go/src -I/src/proto/proto \
+cargo make go-tools-run -- protoc -I/usr/local/include -I/go/src -I/src/proto/proto \
     --include_imports --include_source_info \
     --descriptor_set_out=/src/dist/api.pb /src/proto/proto/api.proto /src/proto/proto/health.proto
 '''
@@ -125,7 +143,7 @@ workspace = false
 script = '''
 echo Generating openapi v2 specification dist/api.swagger.json
 mkdir -p ./dist
-cargo make go-tools -- protoc -I/usr/local/include -I/go/src -I/src/proto/proto \
+cargo make go-tools-run -- protoc -I/usr/local/include -I/go/src -I/src/proto/proto \
     --openapiv2_out /src/dist --openapiv2_opt \
     logtostderr=true /src/proto/proto/api.proto
 '''
@@ -154,7 +172,7 @@ script = '''
 echo Generating grpc-web client dist/grpc-web
 rm -rf ./dist/grpc-web
 mkdir -p ./dist/grpc-web
-cargo make go-tools -- protoc -I/usr/local/include -I/go/src -I/src/proto/proto \
+cargo make go-tools-run -- protoc -I/usr/local/include -I/go/src -I/src/proto/proto \
     --js_out=import_style=commonjs:/src/dist/grpc-web \
     --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:/src/dist/grpc-web \
     /src/proto/proto/api.proto \
@@ -194,7 +212,7 @@ dependencies = [
     "generate-client-flow"
 ]
 
-# Development Tasks
+# Development tasks
 
 [tasks.dev-envoy]
 workspace = false
@@ -249,7 +267,7 @@ dependencies = [
 ]
 script = '''
 echo Running node-tools/client-playground
-cargo make node-tools -- npm run client-playground
+cargo make node-tools-run -- npm run client-playground
 '''
 
 [tasks.dev-integration-test]
@@ -259,10 +277,10 @@ dependencies = [
 ]
 script = '''
 echo Running node-tools/integration-test
-cargo make node-tools -- npm run integration-test
+cargo make node-tools-run -- npm run integration-test
 '''
 
-# Docker Compose
+# Docker compose tasks
 
 [tasks.compose]
 workspace = false
@@ -281,7 +299,7 @@ script = '''
 docker-compose -f docker-compose.ci.yml ${@}
 '''
 
-# Distribution Tasks
+# Distribution tasks
 
 [tasks.dist-clean-images]
 workspace = false
@@ -317,7 +335,7 @@ dependencies = [
     "generate-flow"
 ]
 
-# Default Tasks
+# Default tasks
 
 [tasks.format]
 [tasks.format-toml]

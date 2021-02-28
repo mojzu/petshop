@@ -94,7 +94,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-        # TODO: Build docker images with versions
+        # TODO: Build docker images with versions, release clients as packages?
       - name: Placeholder
         run: |
           echo "TODO: Build/tag/push images here (petshop/envoy:latest, petshop/server:latest)"
