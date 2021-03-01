@@ -52,6 +52,20 @@ service Petshop {
     };
   }
 
+  // TFB json_url
+  rpc TfbJson (google.protobuf.Empty) returns (Echo) {
+    option (google.api.http) = {
+      get: "/json"
+    };
+  }
+
+  // TFB plaintext_url
+  rpc TfbPlaintext (google.protobuf.Empty) returns (google.api.HttpBody) {
+    option (google.api.http) = {
+      get: "/plaintext"
+    };
+  }
+
   rpc PetPost (Pet) returns (Pet) {
     option (google.api.http) = {
       post: "/api.v1.Petshop/PetPost"

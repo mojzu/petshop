@@ -6,9 +6,6 @@ services:
       context: .
       dockerfile: ./docker/envoy-compose.dockerfile
     image: petshop/envoy-compose:latest
-    ports:
-      - 10000:10000
-      - 9901:9901
 
   # Server service
   server:
@@ -16,9 +13,6 @@ services:
       context: .
       dockerfile: ./docker/server.dockerfile
     image: petshop/server:latest
-    ports:
-      - 5000:5000
-      - 5501:5501
 
   # Integration test service
   sut:

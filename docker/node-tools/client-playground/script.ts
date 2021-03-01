@@ -1,6 +1,6 @@
 import {Empty} from "google-protobuf/google/protobuf/empty_pb";
 import {Struct} from "google-protobuf/google/protobuf/struct_pb";
-import {Configuration, PetshopApi} from "../typescript-axios";
+import {Configuration, PetshopApi} from "../axios";
 import {Category, Echo, FindByStatus, FindByTag, Pet, Status, Tag} from "../grpc-web/api_pb";
 import {PetshopPromiseClient} from "../grpc-web/api_grpc_web_pb";
 import {HttpBody} from "../grpc-web/google/api/httpbody_pb";

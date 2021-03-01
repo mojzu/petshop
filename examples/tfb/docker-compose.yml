@@ -1,0 +1,10 @@
+version: "3"
+services:
+  # Server service
+  server:
+    image: petshop/server:latest
+
+networks:
+  default:
+    external:
+      name: tfb

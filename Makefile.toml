@@ -1,6 +1,7 @@
 # Build docker image tasks
 
 [tasks.docker-build-go-tools]
+category = "Petshop"
 workspace = false
 script = '''
 echo Building petshop/go-tools:latest
@@ -8,6 +9,7 @@ docker build --tag petshop/go-tools:latest --file docker/go-tools.dockerfile .
 '''
 
 [tasks.docker-build-node-tools]
+category = "Petshop"
 workspace = false
 script = '''
 echo Building petshop/node-tools:latest
@@ -15,6 +17,7 @@ docker build --tag petshop/node-tools:latest --file docker/node-tools.dockerfile
 '''
 
 [tasks.docker-build-rust-tools]
+category = "Petshop"
 workspace = false
 script = '''
 echo Building petshop/rust-tools:latest
@@ -22,6 +25,7 @@ docker build --tag petshop/rust-tools:latest --file docker/rust-tools.dockerfile
 '''
 
 [tasks.docker-build-rust-cache]
+category = "Petshop"
 workspace = false
 script = '''
 echo Building petshop/rust-cache:latest
@@ -29,6 +33,7 @@ docker build --tag petshop/rust-cache:latest --file docker/rust-cache.dockerfile
 '''
 
 [tasks.docker-build-envoy]
+category = "Petshop"
 workspace = false
 script = '''
 echo Building petshop/envoy:latest
@@ -37,6 +42,7 @@ docker build --tag petshop/envoy-compose:latest --file docker/envoy-compose.dock
 '''
 
 [tasks.docker-build-client-playground]
+category = "Petshop"
 workspace = false
 script = '''
 echo Building petshop/client-playground:latest
@@ -44,6 +50,7 @@ docker build --tag petshop/client-playground:latest --file docker/client-playgro
 '''
 
 [tasks.docker-build-integration-test]
+category = "Petshop"
 workspace = false
 script = '''
 echo Building petshop/integration-test:latest
@@ -51,6 +58,7 @@ docker build --tag petshop/integration-test:latest --file docker/integration-tes
 '''
 
 [tasks.docker-build-oauth2-proxy]
+category = "Petshop"
 workspace = false
 script = '''
 echo Building petshop/oauth2-proxy:latest
@@ -58,13 +66,24 @@ docker build --tag petshop/oauth2-proxy:latest --file docker/oauth2-proxy.docker
 '''
 
 [tasks.docker-build-prometheus]
+category = "Petshop"
 workspace = false
 script = '''
 echo Building petshop/prometheus-compose:latest
 docker build --tag petshop/prometheus-compose:latest --file docker/prometheus-compose.dockerfile .
 '''
 
+[tasks.docker-build-server]
+category = "Petshop"
+workspace = false
+script = '''
+echo Building petshop/server:latest
+docker build --tag petshop/server:latest --file docker/server.dockerfile .
+'''
+
 [tasks.docker-build-tools]
+description = "Build docker tools images that do not rely on generated outputs"
+category = "Petshop"
 workspace = false
 dependencies = [
     "docker-build-go-tools",
@@ -72,20 +91,21 @@ dependencies = [
 ]
 
 [tasks.docker-build]
+description = "Build docker images that do not rely on generated outputs"
+category = "Petshop"
 workspace = false
 dependencies = [
     "docker-build-tools",
     "docker-build-rust-cache",
-    "docker-build-prometheus"
+    "docker-build-prometheus",
+    "docker-build-server"
 ]
-script = '''
-echo Building petshop/server:latest
-docker build --tag petshop/server:latest --file docker/server.dockerfile .
-'''
 
 # Run docker container tools
 
 [tasks.go-tools-run]
+description = "Run go-tools image with arguments"
+category = "Petshop"
 workspace = false
 script = '''
 echo Running petshop/go-tools:latest
@@ -93,6 +113,8 @@ docker run --rm -v "$(pwd):/src" --user "$(id -u):$(id -g)" petshop/go-tools:lat
 '''
 
 [tasks.node-tools-run]
+description = "Run node-tools image with arguments"
+category = "Petshop"
 workspace = false
 script = '''
 echo Running petshop/node-tools:latest
@@ -104,6 +126,8 @@ docker run --rm -v "$(pwd)/docker/node-tools/client-playground:/home/node/client
 # Run docker container tools interactively
 
 [tasks.go-tools]
+description = "Run go-tools image interactively"
+category = "Petshop"
 workspace = false
 script = '''
 echo Running petshop/go-tools:latest
@@ -111,6 +135,8 @@ docker run --rm -it -v "$(pwd):/src" --user "$(id -u):$(id -g)" --network=host p
 '''
 
 [tasks.node-tools]
+description = "Run node-tools image interactively"
+category = "Petshop"
 workspace = false
 script = '''
 echo Running petshop/node-tools:latest
@@ -120,6 +146,8 @@ docker run --rm -it -v "$(pwd)/docker/node-tools/client-playground:/home/node/cl
 '''
 
 [tasks.rust-tools]
+description = "Run rust-tools image interactively"
+category = "Petshop"
 workspace = false
 script = '''
 echo Running petshop/rust-tools:latest
@@ -129,6 +157,8 @@ docker run --rm -it -v "$(pwd):/src" --user "$(id -u):$(id -g)" --network=host p
 # Protobuf/openapi generator tasks
 
 [tasks.generate-protoc-protobuf]
+description = "Generate protobuf descriptor file"
+category = "Petshop"
 workspace = false
 script = '''
 echo Generating protobuf descriptor set dist/api.pb
@@ -136,9 +166,13 @@ mkdir -p ./dist
 cargo make go-tools-run -- protoc -I/usr/local/include -I/go/src -I/src/proto/proto \
     --include_imports --include_source_info \
     --descriptor_set_out=/src/dist/api.pb /src/proto/proto/api.proto /src/proto/proto/health.proto
+rm -rf ./examples/tfb/api.pb
+cp ./dist/api.pb ./examples/tfb/api.pb
 '''
 
 [tasks.generate-protoc-openapi]
+description = "Generate openapi definition file"
+category = "Petshop"
 workspace = false
 script = '''
 echo Generating openapi v2 specification dist/api.swagger.json
@@ -148,25 +182,29 @@ cargo make go-tools-run -- protoc -I/usr/local/include -I/go/src -I/src/proto/pr
     logtostderr=true /src/proto/proto/api.proto
 '''
 
-[tasks.generate-typescript-axios-client]
+[tasks.generate-axios-client]
+description = "Generate axios client"
+category = "Petshop"
 workspace = false
 script = '''
-echo Generating typescript-axios client dist/typescript-axios
-rm -rf ./dist/typescript-axios
-mkdir -p ./dist/typescript-axios
+echo Generating axios client dist/axios
+rm -rf ./dist/axios
+mkdir -p ./dist/axios
 # DEPEND: docker pull openapitools/openapi-generator-cli:v5.0.1
 # <https://hub.docker.com/r/openapitools/openapi-generator-cli>
 docker run --rm -v "$(pwd):/workspace" --user "$(id -u):$(id -g)" openapitools/openapi-generator-cli:v5.0.1 \
     generate -i /workspace/dist/api.swagger.json \
     -g typescript-axios \
-    -o /workspace/dist/typescript-axios
-(cd ./dist/typescript-axios \
+    -o /workspace/dist/axios
+(cd ./dist/axios \
     && rm -rf .openapi-generator .gitignore .npmignore .openapi-generator-ignore git_push.sh)
-rm -rf ./docker/node-tools/typescript-axios
-cp -r ./dist/typescript-axios ./docker/node-tools/typescript-axios
+rm -rf ./docker/node-tools/axios
+cp -r ./dist/axios ./docker/node-tools/axios
 '''
 
 [tasks.generate-grpc-web-client]
+description = "Generate grpc-web client"
+category = "Petshop"
 workspace = false
 script = '''
 echo Generating grpc-web client dist/grpc-web
@@ -187,6 +225,8 @@ cp -r ./dist/grpc-web ./docker/node-tools/grpc-web
 '''
 
 [tasks.generate-envoy-flow]
+description = "Build generated envoy outputs"
+category = "Petshop"
 workspace = false
 dependencies = [
     "generate-protoc-protobuf",
@@ -194,10 +234,12 @@ dependencies = [
 ]
 
 [tasks.generate-client-flow]
+description = "Build generated client outputs"
+category = "Petshop"
 workspace = false
 dependencies = [
     "generate-protoc-openapi",
-    "generate-typescript-axios-client",
+    "generate-axios-client",
     "generate-grpc-web-client",
     "docker-build-node-tools",
     "docker-build-client-playground",
@@ -206,6 +248,8 @@ dependencies = [
 ]
 
 [tasks.generate-flow]
+description = "Build generated outputs"
+category = "Petshop"
 workspace = false
 dependencies = [
     "generate-envoy-flow",
@@ -215,6 +259,8 @@ dependencies = [
 # Development tasks
 
 [tasks.dev-envoy]
+description = "Build and run envoy docker image"
+category = "Petshop"
 workspace = false
 dependencies = [
     "generate-envoy-flow"
@@ -225,6 +271,8 @@ docker run --rm -it --network=host petshop/envoy:latest
 '''
 
 [tasks.dev-postgres]
+description = "Run postgres docker image"
+category = "Petshop"
 workspace = false
 script = '''
 echo Running postgres:13.2-alpine
@@ -232,6 +280,8 @@ docker run --rm -it --network=host -e POSTGRES_PASSWORD=postgres postgres:13.2-a
 '''
 
 [tasks.dev-server]
+description = "Build and run server"
+category = "Petshop"
 workspace = false
 script = '''
 echo Running petshop_server
@@ -251,6 +301,8 @@ cargo run --bin petshop_server -- ${@}
 '''
 
 [tasks.dev-server-release]
+description = "Build and run server docker image"
+category = "Petshop"
 workspace = false
 dependencies = [
     "docker-build"
@@ -261,34 +313,42 @@ docker run --rm -it --network=host petshop/server:latest
 '''
 
 [tasks.dev-client-playground]
+description = "Build and run client-playground using node-tools image"
+category = "Petshop"
 workspace = false
 dependencies = [
     "generate-client-flow"
 ]
 script = '''
 echo Running node-tools/client-playground
-cargo make node-tools-run -- npm run client-playground
+cargo make node-tools -- npm run client-playground
 '''
 
 [tasks.dev-integration-test]
+description = "Build and run integration-test using node-tools image"
+category = "Petshop"
 workspace = false
 dependencies = [
     "generate-client-flow"
 ]
 script = '''
 echo Running node-tools/integration-test
-cargo make node-tools-run -- npm run integration-test
+cargo make node-tools -- npm run integration-test
 '''
 
 # Docker compose tasks
 
 [tasks.compose]
+description = "Run docker-compose with default compose file"
+category = "Petshop"
 workspace = false
 script = '''
 docker-compose ${@}
 '''
 
 [tasks.compose-ci]
+description = "Build generated outputs and run docker-compose with CI compose file"
+category = "Petshop"
 workspace = false
 dependencies = [
     "docker-build-tools",
@@ -302,6 +362,8 @@ docker-compose -f docker-compose.ci.yml ${@}
 # Distribution tasks
 
 [tasks.dist-clean-images]
+description = "Clean docker images"
+category = "Petshop"
 workspace = false
 script = '''
 docker image rm -f \
@@ -322,17 +384,32 @@ docker image rm -f \
 '''
 
 [tasks.dist-clean]
+description = "Clean generated outputs"
+category = "Petshop"
 workspace = false
 script = '''
-rm -rf ./dist ./docker/node-tools/grpc-web ./docker/node-tools/typescript-axios
+rm -rf ./dist ./docker/node-tools/grpc-web ./docker/node-tools/axios
 '''
 
 [tasks.dist-build]
+description = "Build all docker images and generated outputs"
+category = "Petshop"
 workspace = false
 dependencies = [
     "dist-clean",
     "docker-build",
     "generate-flow"
+]
+
+[tasks.dist-ci-build]
+description = "Build server and envoy docker images"
+category = "Petshop"
+workspace = false
+dependencies = [
+    "docker-build-tools",
+    "docker-build-rust-cache",
+    "docker-build-server",
+    "generate-envoy-flow"
 ]
 
 # Default tasks
@@ -355,6 +432,7 @@ dependencies = [
 [tasks.print-cargo-env]
 [tasks.print-crate-env]
 [tasks.print-env]
+category = "Petshop"
 workspace = false
 dependencies = [
     "print-cargo-make-env",

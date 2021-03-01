@@ -1,7 +1,7 @@
 import "jasmine";
 import { env } from "process";
 import { Struct } from "google-protobuf/google/protobuf/struct_pb";
-import { Configuration, PetshopApi } from "../typescript-axios";
+import { Configuration, PetshopApi } from "../axios";
 import { PetshopPromiseClient } from "../grpc-web/api_grpc_web_pb";
 
 const ENDPOINT = env["CONFIG_ENDPOINT"] || "http://localhost:10000";

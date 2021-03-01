@@ -132,6 +132,23 @@ impl Petshop for Api {
     }
 
     #[tracing::instrument(skip(self))]
+    async fn tfb_json(&self, request: Request<()>) -> Result<Response<Echo>, Status> {
+        Ok(Response::new(Echo {
+            message: "Hello, world!".to_string(),
+        }))
+    }
+
+    #[tracing::instrument(skip(self))]
+    async fn tfb_plaintext(&self, request: Request<()>) -> Result<Response<HttpBody>, Status> {
+        let body = HttpBody {
+            content_type: "text/plain".to_string(),
+            data: "Hello, world!".into(),
+            extensions: vec![],
+        };
+        Ok(Response::new(body))
+    }
+
+    #[tracing::instrument(skip(self))]
     async fn pet_post(&self, request: Request<Pet>) -> Result<Response<Pet>, Status> {
         info!("pet_post request");
         Ok(Response::new(request.into_inner()))

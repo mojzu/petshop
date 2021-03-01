@@ -139,3 +139,6 @@ async fn shutdown_signal(mut shutdown: broadcast::Receiver<bool>) {
 // TODO: Envoy MTLS authentication example(s), other options for auth?
 // TODO: Using X-Request-Id for idempotency tokens for requests? Connect streams to requests this way?
 // TODO: Validation of requests example, validate crate?
+// TODO: Release generated clients as packages?
+// TODO: CLI interface for cron like jobs (systemd/k8s examples?)
+// TODO: Other TechEmpower benchmarks support in example?

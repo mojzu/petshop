@@ -1,9 +1,9 @@
 # authz
 
+- <https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/ext_authz_filter>
+
 ```shell
-# Build base images
 cargo make dist-build
-cargo make compose build
 
 cd examples/authz
 # Copy `oauth2-proxy.template.cfg` to `client-oauth2-proxy.cfg` and `server-oauth2-proxy.cfg` and edit as required
@@ -15,7 +15,6 @@ cd examples/authz
 docker-compose build
 docker-compose up
 docker-compose down
-# ---
 
 # Open client playground at http://localhost:4180/
 

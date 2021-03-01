@@ -5,4 +5,4 @@
 /node_modules
 
 /grpc-web
-/typescript-axios
+/axios
