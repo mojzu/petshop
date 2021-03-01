@@ -23,6 +23,7 @@ Template for Rust API server with gRPC and OpenAPI (V2) interfaces
 - [Prometheus metrics](https://prometheus.io/) endpoint
 - [Kubernetes liveness and readiness](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/) endpoints
 - Authentication example with [OAuth2 Proxy](https://oauth2-proxy.github.io/oauth2-proxy/) and [Envoy External Authorization](https://www.envoyproxy.io/docs/envoy/latest/api-v2/config/filter/http/ext_authz/v2/ext_authz.proto)
+- [TechEmpower Benchmark Framework](https://www.techempower.com/benchmarks/) example ([2021-03-01 results](https://tfb-status.techempower.com/share/download/8b6e133f-ece0-4c80-bf07-77d49fdd3725.json))
 
 ## Quickstart
 

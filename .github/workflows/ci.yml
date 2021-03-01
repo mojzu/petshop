@@ -84,19 +84,10 @@ jobs:
         run: |
           cargo make compose-ci run sut
 
-  docker-push:
-    name: Docker Push
-    needs: [rust-ci, docker-ci]
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Placeholder
+      - name: Build Images
+        if: github.event_name == 'push'
         run: |
-          # cargo make dist-ci-build
-          echo "TODO: Tag/push images here (petshop/envoy:latest, petshop/server:latest)"
+          cargo make dist-ci-build
           docker image inspect petshop/envoy:latest
           docker image inspect petshop/server:latest
+          echo "TODO: Tag/push images here (petshop/envoy:latest, petshop/server:latest)"

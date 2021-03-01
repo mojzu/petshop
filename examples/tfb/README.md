@@ -14,9 +14,10 @@ git clone https://github.com/TechEmpower/FrameworkBenchmarks.git
 cd examples/tfb
 docker-compose up
 
-# Run TFB tests
+# Verify and run TFB tests
 cd FrameworkBenchmarks
 ./tfb --mode verify --test envoy-tonic
+./tfb --test envoy-tonic hyper warp-rust
 
 # Upload results.json at <https://tfb-status.techempower.com/share>
 ```

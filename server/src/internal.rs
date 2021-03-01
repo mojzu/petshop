@@ -46,6 +46,12 @@ impl XError {
     }
 }
 
+impl From<XError> for tonic::Status {
+    fn from(err: XError) -> Self {
+        tonic::Status::internal(err.to_string())
+    }
+}
+
 /// Internal HTTP request handler for metrics and other private endpoints
 #[tracing::instrument(skip(api))]
 pub async fn http_request_handler(api: Api, req: Request<Body>) -> Result<Response<Body>> {

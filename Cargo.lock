@@ -882,6 +882,7 @@ dependencies = [
  "prometheus",
  "prost",
  "prost-types",
+ "rand",
  "serde 1.0.123",
  "serde_derive",
  "serde_json",

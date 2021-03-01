@@ -142,3 +142,5 @@ async fn shutdown_signal(mut shutdown: broadcast::Receiver<bool>) {
 // TODO: Release generated clients as packages?
 // TODO: CLI interface for cron like jobs (systemd/k8s examples?)
 // TODO: Other TechEmpower benchmarks support in example?
+// TODO: Envoy best practices in configurations
+// <https://www.envoyproxy.io/docs/envoy/latest/configuration/best_practices/edge>

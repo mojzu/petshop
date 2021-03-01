@@ -110,6 +110,24 @@
       "type": "shell",
       "command": "(cd examples/authz && docker-compose down)",
       "problemMatcher": []
+    },
+    {
+      "label": "examples - tfb - build",
+      "type": "shell",
+      "command": "(cd examples/tfb && docker-compose build)",
+      "problemMatcher": []
+    },
+    {
+      "label": "examples - tfb - up",
+      "type": "shell",
+      "command": "(cd examples/tfb && docker-compose up)",
+      "problemMatcher": []
+    },
+    {
+      "label": "examples - tfb - down",
+      "type": "shell",
+      "command": "(cd examples/tfb && docker-compose down)",
+      "problemMatcher": []
     }
   ]
 }

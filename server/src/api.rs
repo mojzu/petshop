@@ -3,7 +3,7 @@
 use crate::internal::*;
 use petshop_proto::api::v1::petshop_server::Petshop;
 use petshop_proto::api::v1::{
-    Category, Echo, FindByStatus, FindByTag, Pet, Pets, Status as PetStatus, Tag, User,
+    Category, Echo, FindByStatus, World, FindByTag, Pet, Pets, Status as PetStatus, Tag, User,
 };
 use petshop_proto::google::api::HttpBody;
 use prost_types::Struct;
@@ -146,6 +146,12 @@ impl Petshop for Api {
             extensions: vec![],
         };
         Ok(Response::new(body))
+    }
+
+    #[tracing::instrument(skip(self))]
+    async fn tfb_db(&self, request: Request<()>) -> Result<Response<World>, Status> {
+        let world = self.postgres.db_world().await?;
+        Ok(Response::new(world))
     }
 
     #[tracing::instrument(skip(self))]

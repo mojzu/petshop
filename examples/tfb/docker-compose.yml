@@ -3,6 +3,15 @@ services:
   # Server service
   server:
     image: petshop/server:latest
+    environment:
+      CONFIG_POSTGRES__USER: "benchmarkdbuser"
+      CONFIG_POSTGRES__PASSWORD: "benchmarkdbpass"
+      CONFIG_POSTGRES__DBNAME: "hello_world"
+      CONFIG_POSTGRES__HOST: "tfb-database"
+      CONFIG_POSTGRES__PORT: "5432"
+    ports:
+      - 5000:5000
+      - 5501:5501
 
 networks:
   default:
