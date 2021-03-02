@@ -73,6 +73,18 @@ service Petshop {
     };
   }
 
+  // TFB queries_url
+  rpc TfbQueries1 (Queries) returns (google.protobuf.ListValue) {
+    option (google.api.http) = {
+      get: "/queries/{queries}"
+    };
+  }
+  rpc TfbQueries2 (Queries) returns (google.protobuf.ListValue) {
+    option (google.api.http) = {
+      get: "/queries"
+    };
+  }
+
   rpc PetPost (Pet) returns (Pet) {
     option (google.api.http) = {
       post: "/api.v1.Petshop/PetPost"
@@ -114,6 +126,10 @@ message Echo {
 message World {
   int32 id = 1;
   int32 random_number = 2;
+}
+
+message Queries {
+  int32 queries = 1;
 }
 
 message Category {

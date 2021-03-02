@@ -98,3 +98,33 @@ fn metrics_request_response(api: Api) -> Result<Response<Body>> {
         .header("Content-Type", content_type)
         .body(buffer.into())?)
 }
+
+/// Converts a serde derived Value into a prost Value
+///
+/// FIXME: It feels like there should be a cleaner way to do this, or to avoid
+/// this conversion by converting a prost derived struct into its value
+///
+/// TODO: Fix TFB warning - "An extra key(s) is being included with the db object: values"
+pub fn serde_into_prost_value(value: serde_json::Value) -> prost_types::Value {
+    let kind: prost_types::value::Kind = match value {
+        serde_json::Value::Null => prost_types::value::Kind::NullValue(0),
+        serde_json::Value::Bool(x) => prost_types::value::Kind::BoolValue(x),
+        serde_json::Value::Number(x) => prost_types::value::Kind::NumberValue(x.as_f64().unwrap()),
+        serde_json::Value::String(x) => prost_types::value::Kind::StringValue(x),
+        serde_json::Value::Array(x) => {
+            let mut v = Vec::new();
+            for value in x {
+                v.push(serde_into_prost_value(value));
+            }
+            prost_types::value::Kind::ListValue(prost_types::ListValue { values: v })
+        }
+        serde_json::Value::Object(x) => {
+            let mut fields = std::collections::BTreeMap::new();
+            for (key, value) in x {
+                fields.insert(key, serde_into_prost_value(value));
+            }
+            prost_types::value::Kind::StructValue(prost_types::Struct { fields })
+        }
+    };
+    prost_types::Value { kind: Some(kind) }
+}

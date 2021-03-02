@@ -3,10 +3,11 @@
 use crate::internal::*;
 use petshop_proto::api::v1::petshop_server::Petshop;
 use petshop_proto::api::v1::{
-    Category, Echo, FindByStatus, World, FindByTag, Pet, Pets, Status as PetStatus, Tag, User,
+    Category, Echo, FindByStatus, FindByTag, Pet, Pets, Queries, Status as PetStatus, Tag, User,
+    World,
 };
 use petshop_proto::google::api::HttpBody;
-use prost_types::Struct;
+use prost_types::{ListValue, Struct, Value};
 use std::fmt;
 use tokio::sync::{broadcast, mpsc};
 use tokio_stream::wrappers::ReceiverStream;
@@ -28,7 +29,7 @@ impl Api {
         let metrics = Arc::new(Metrics::from_config(config));
         Ok(Self {
             metrics: metrics.clone(),
-            postgres: Arc::new(Postgres::from_config(config, metrics.clone())?),
+            postgres: Arc::new(Postgres::from_config(config, metrics)?),
             shutdown: Arc::new(shutdown_tx),
         })
     }
@@ -84,6 +85,29 @@ impl Api {
             tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
         }
         info!("echo stream done");
+    }
+
+    #[tracing::instrument(skip(self))]
+    async fn tfb_queries(&self, request: Queries) -> Result<Response<ListValue>, Status> {
+        let queries = if request.queries < 1 {
+            1
+        } else if request.queries > 500 {
+            500
+        } else {
+            request.queries
+        };
+        let worlds = self.postgres.db_world_queries(queries).await?;
+
+        let values: Vec<Value> = worlds
+            .into_iter()
+            .map(|x| {
+                let serde_value = json!({ "id": x.id, "randomNumber": x.random_number });
+                serde_into_prost_value(serde_value)
+            })
+            .collect();
+        let v = ListValue { values };
+
+        Ok(Response::new(v))
     }
 }
 
@@ -152,6 +176,16 @@ impl Petshop for Api {
     async fn tfb_db(&self, request: Request<()>) -> Result<Response<World>, Status> {
         let world = self.postgres.db_world().await?;
         Ok(Response::new(world))
+    }
+
+    #[tracing::instrument(skip(self))]
+    async fn tfb_queries1(&self, request: Request<Queries>) -> Result<Response<ListValue>, Status> {
+        Ok(self.tfb_queries(request.into_inner()).await?)
+    }
+
+    #[tracing::instrument(skip(self))]
+    async fn tfb_queries2(&self, request: Request<Queries>) -> Result<Response<ListValue>, Status> {
+        Ok(self.tfb_queries(request.into_inner()).await?)
     }
 
     #[tracing::instrument(skip(self))]

@@ -1,7 +1,6 @@
 # tfb
 
 - <https://github.com/TechEmpower/FrameworkBenchmarks>
-- <https://github.com/TechEmpower/FrameworkBenchmarks/wiki/Project-Information-Framework-Tests-Overview>
 
 ```shell
 cargo make dist-build
@@ -17,7 +16,7 @@ docker-compose up
 # Verify and run TFB tests
 cd FrameworkBenchmarks
 ./tfb --mode verify --test envoy-tonic
-./tfb --test envoy-tonic hyper warp-rust
+./tfb --test envoy-tonic hyper warp-rust [django ...]
 
 # Upload results.json at <https://tfb-status.techempower.com/share>
 ```

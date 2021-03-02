@@ -2,7 +2,6 @@
 //!
 use crate::internal::*;
 use petshop_proto::api::v1::World;
-use rand::Rng;
 use std::fmt;
 
 /// Postgres
@@ -39,8 +38,26 @@ impl Postgres {
 
     /// Returns random row in World table for TFB
     pub async fn db_world(&self) -> Result<World, XError> {
-        let conn = self.pool.get().await?;
         let id: i32 = Self::db_random_id();
+        self.db_world_by_id(id).await
+    }
+
+    /// Returns array of random rows from World table for TFB
+    pub async fn db_world_queries(&self, queries: i32) -> Result<Vec<World>, XError> {
+        use futures::stream::futures_unordered::FuturesUnordered;
+        use futures::StreamExt;
+
+        let worlds = (0..queries)
+            .map(|_| self.db_world())
+            .collect::<FuturesUnordered<_>>()
+            .collect::<Vec<_>>()
+            .await;
+        let worlds: Result<Vec<_>, _> = worlds.into_iter().collect();
+        Ok(worlds?)
+    }
+
+    async fn db_world_by_id(&self, id: i32) -> Result<World, XError> {
+        let conn = self.pool.get().await?;
         let st = conn
             .prepare(
                 "
@@ -58,6 +75,7 @@ impl Postgres {
     }
 
     fn db_random_id() -> i32 {
+        use rand::Rng;
         let mut rng = rand::thread_rng();
         let id: i32 = rng.gen_range(1..10001);
         id
