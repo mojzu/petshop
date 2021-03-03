@@ -126,19 +126,17 @@ async fn shutdown_signal(mut shutdown: broadcast::Receiver<bool>) {
     info!("received shutdown signal ({})", sig);
 }
 
-// TODO: Add examples for rust tests/examples/benches?
-// TODO: Rust docs output in dist? cargo make --no-workspace docs-flow
-// TODO: Openapi doc generator from specification?
-// TODO: Read the docs docker image for docs?
-// <https://docs.readthedocs.io/en/stable/intro/getting-started-with-sphinx.html#quick-start-video>
-
+// TODO: Release generated clients as packages?
+// TODO: CLI interface for cron like jobs (systemd/k8s examples?)
+// TODO: Other TechEmpower benchmarks support in example? (try again envoy debian?)
 // TODO: Use alpine image for server docker image? Research podman?
 // TODO: Running in k8s/nomad examples?
 
 // TODO: OAuth2-proxy multiple provider support, html templates? (metrics support after next release)
 // TODO: Envoy MTLS authentication example(s), other options for auth?
-// TODO: Using X-Request-Id for idempotency tokens for requests? Connect streams to requests this way?
-// TODO: Validation of requests example, validate crate?
-// TODO: Release generated clients as packages?
-// TODO: CLI interface for cron like jobs (systemd/k8s examples?)
-// TODO: Other TechEmpower benchmarks support in example? (try again envoy debian?)
+
+// TODO: Add examples for rust tests/examples/benches?
+// TODO: Rust docs output in dist? cargo make --no-workspace docs-flow
+// TODO: Openapi doc generator from specification?
+// TODO: Read the docs docker image for docs?
+// <https://docs.readthedocs.io/en/stable/intro/getting-started-with-sphinx.html#quick-start-video>

@@ -104,7 +104,8 @@ fn metrics_request_response(api: Api) -> Result<Response<Body>> {
 /// FIXME: It feels like there should be a cleaner way to do this, or to avoid
 /// this conversion by converting a prost derived struct into its value
 ///
-/// TODO: Fix TFB warning - "An extra key(s) is being included with the db object: values"
+/// FIXME: Fix TFB warning - "An extra key(s) is being included with the db object: values"
+/// It doesn't appear to be returned in the response, so is envoy adding this during transcoding?
 pub fn serde_into_prost_value(value: serde_json::Value) -> prost_types::Value {
     let kind: prost_types::value::Kind = match value {
         serde_json::Value::Null => prost_types::value::Kind::NullValue(0),

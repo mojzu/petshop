@@ -28,26 +28,23 @@ impl Metrics {
             .init();
         let meter = opentelemetry::global::meter(NAME);
 
-        // TODO: Is value recorder correct for bits here?
-        // TODO: How to prefix metrics output with common prefix?
-
         let api_ready = meter
-            .u64_value_recorder("api_ready_bit")
+            .u64_value_recorder(format!("{}.api_ready", NAME))
             .with_description("1 if api is ready, else 0.")
             .init()
             .bind(&[]);
         let api_counter = meter
-            .u64_counter("api_request_counter_total")
+            .u64_counter(format!("{}.api_request_counter_total", NAME))
             .with_description("Total number of API requests made.")
             .init()
             .bind(&[]);
         let api_latency = meter
-            .f64_value_recorder("api_request_latency_seconds")
+            .f64_value_recorder(format!("{}.api_request_latency_seconds", NAME))
             .with_description("The API request latencies in seconds.")
             .init()
             .bind(&[]);
         let postgres_ready = meter
-            .u64_value_recorder("postgres_ready_bit")
+            .u64_value_recorder(format!("{}.postgres_ready", NAME))
             .with_description("1 if postgres is ready, else 0.")
             .init()
             .bind(&[]);

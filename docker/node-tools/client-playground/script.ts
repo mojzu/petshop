@@ -1,20 +1,35 @@
-import {Empty} from "google-protobuf/google/protobuf/empty_pb";
-import {Struct} from "google-protobuf/google/protobuf/struct_pb";
-import {Configuration, PetshopApi} from "../axios";
-import {Category, Echo, FindByStatus, FindByTag, Pet, Status, Tag} from "../grpc-web/api_pb";
-import {PetshopPromiseClient} from "../grpc-web/api_grpc_web_pb";
-import {HttpBody} from "../grpc-web/google/api/httpbody_pb";
+import { Empty } from "google-protobuf/google/protobuf/empty_pb";
+import { Struct } from "google-protobuf/google/protobuf/struct_pb";
+import { Configuration, PetshopApi } from "../axios";
+import {
+    Category,
+    Echo,
+    User,
+    FindByStatus,
+    FindByTag,
+    Pet,
+    Status,
+    Tag,
+} from "../grpc-web/api_pb";
+import { PetshopPromiseClient } from "../grpc-web/api_grpc_web_pb";
+import { HttpBody } from "../grpc-web/google/api/httpbody_pb";
 
 window["HttpClientClass"] = PetshopApi;
-window["httpClient"] = new PetshopApi(new Configuration({
-    baseOptions: {withCredentials: true},
-    basePath: "http://localhost:10000"
-}));
+window["httpClient"] = new PetshopApi(
+    new Configuration({
+        baseOptions: { withCredentials: true },
+        basePath: "http://localhost:10000",
+    })
+);
 
 window["GrpcClientClass"] = PetshopPromiseClient;
-window["grpcClient"] = new PetshopPromiseClient("http://localhost:10000", null, {
-    withCredentials: true,
-});
+window["grpcClient"] = new PetshopPromiseClient(
+    "http://localhost:10000",
+    null,
+    {
+        withCredentials: true,
+    }
+);
 
 window["Empty"] = Empty;
 window["Struct"] = Struct;
@@ -26,3 +41,4 @@ window["Status"] = Status;
 window["Tag"] = Tag;
 window["HttpBody"] = HttpBody;
 window["Echo"] = Echo;
+window["User"] = User;

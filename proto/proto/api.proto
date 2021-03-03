@@ -42,6 +42,14 @@ service Petshop {
     };
   }
 
+  // Validation example
+  rpc ValidationEx (User) returns (User) {
+    option (google.api.http) = {
+      post: "/api.v1.Petshop/ValidationEx"
+      body: "*"
+    };
+  }
+
   // Server streaming example
   //
   // Bidirectional streaming is not supported in grpc-web

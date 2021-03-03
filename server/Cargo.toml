@@ -29,6 +29,9 @@ hyper = "0.14"
 futures = { version = "0.3", default-features = false, features = ["alloc"] }
 tower = { version = "0.4" }
 
+validator = { version = "0.12", features = ["derive"] }
+base64 = "0.13"
+
 chrono = { version = "0.4", features = ["serde"] }
 clap = "2.33"
 config = "0.10"

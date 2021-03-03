@@ -76,21 +76,15 @@
       "problemMatcher": []
     },
     {
-      "label": "compose ci - build",
+      "label": "compose ci - run",
       "type": "shell",
-      "command": "cargo make compose-ci build",
-      "problemMatcher": []
-    },
-    {
-      "label": "compose ci - up",
-      "type": "shell",
-      "command": "cargo make compose-ci up",
+      "command": "cargo make compose-ci run sut",
       "problemMatcher": []
     },
     {
       "label": "compose ci - down",
       "type": "shell",
-      "command": "cargo make compose-ci down",
+      "command": "cargo make compose-ci-down",
       "problemMatcher": []
     },
     {
@@ -109,12 +103,6 @@
       "label": "examples - authz - down",
       "type": "shell",
       "command": "(cd examples/authz && docker-compose down)",
-      "problemMatcher": []
-    },
-    {
-      "label": "examples - tfb - build",
-      "type": "shell",
-      "command": "(cd examples/tfb && docker-compose build)",
       "problemMatcher": []
     },
     {

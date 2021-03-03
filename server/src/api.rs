@@ -75,6 +75,18 @@ impl Api {
         }
     }
 
+    /// Validates request using derived validate method
+    fn validate<T: validator::Validate>(&self, request: &T) -> Result<(), Status> {
+        match request.validate() {
+            Ok(_) => Ok(()),
+            Err(e) => {
+                let serialised = serde_json::to_string(&e).expect("serialisation failed");
+                let encoded = base64::encode(serialised);
+                Err(Status::invalid_argument(encoded))
+            }
+        }
+    }
+
     /// Streaming async example task for echoing message on a timer
     #[tracing::instrument(skip(tx))]
     async fn streaming_ex_task(tx: mpsc::Sender<Result<Echo, Status>>, echo: Echo) {
@@ -137,6 +149,14 @@ impl Petshop for Api {
     ) -> Result<Response<User>, Status> {
         info!("authentication_required request");
         let user = self.user_required(&request)?;
+        Ok(Response::new(user))
+    }
+
+    #[tracing::instrument(skip(self))]
+    async fn validation_ex(&self, request: Request<User>) -> Result<Response<User>, Status> {
+        info!("validation_ex request");
+        let user = request.into_inner();
+        self.validate(&user)?;
         Ok(Response::new(user))
     }
 

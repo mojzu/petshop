@@ -13,8 +13,8 @@ COPY ./proto/Cargo.toml /build/proto/Cargo.toml
 COPY ./server/Cargo.toml /build/server/Cargo.toml
 RUN mkdir .cargo \
     && cargo vendor > .cargo/config \
-    && cargo build --release
+    && RUSTFLAGS="-C target-cpu=native" cargo build --release
 
 COPY ./proto /build/proto
 COPY ./server /build/server
-RUN cargo build --release
+RUN RUSTFLAGS="-C target-cpu=native" cargo build --release

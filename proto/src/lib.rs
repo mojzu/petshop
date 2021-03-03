@@ -10,10 +10,14 @@
 // that generated types have documentation
 //#![deny(missing_docs)]
 
+#[macro_use]
+extern crate validator;
+
 /// API module
 pub mod api {
     /// Proto definitions
     pub mod v1 {
+        use crate::prost_validator;
         tonic::include_proto!("api.v1");
     }
 }
@@ -23,5 +27,28 @@ pub mod google {
     /// Proto definitions
     pub mod api {
         tonic::include_proto!("google.api");
+    }
+}
+
+/// Prost wrappers for validator library
+///
+/// See `build.rs` file for adding these to prost message fields
+pub mod prost_validator {
+    use validator::ValidationError;
+
+    pub fn email(s: &str) -> Result<(), ValidationError> {
+        if validator::validate_email(s) {
+            Ok(())
+        } else {
+            Err(ValidationError::new("email_invalid"))
+        }
+    }
+
+    pub fn user_name(s: &str) -> Result<(), ValidationError> {
+        if validator::validate_length(s, Some(2), Some(500), None) {
+            Ok(())
+        } else {
+            Err(ValidationError::new("user_name_invalid"))
+        }
     }
 }

@@ -22,6 +22,15 @@ describe("example test", () => {
         expect(res.data).toEqual({ value: 42 });
     });
 
+    it("user validation to fail", async () => {
+        try {
+            await HTTP_CLIENT.petshopValidationEx({ email: "notavalidemail", name: "validname" });
+            fail();
+        } catch (e) {
+            expect(e.response.status).toEqual(400);
+        }
+    });
+
     it("grpc client should work", async () => {
         const req = Struct.fromJavaScript({ value: 54 });
         const res = await GRPC_CLIENT.jsonEx(req);

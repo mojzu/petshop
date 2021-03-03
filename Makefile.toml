@@ -359,6 +359,14 @@ script = '''
 docker-compose -f docker-compose.ci.yml ${@}
 '''
 
+[tasks.compose-ci-down]
+description = "Stop and remove docker-compose with CI compose file"
+category = "Petshop"
+workspace = false
+script = '''
+docker-compose -f docker-compose.ci.yml down
+'''
+
 # Distribution tasks
 
 [tasks.dist-clean-images]

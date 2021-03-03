@@ -81,7 +81,21 @@ await grpcClient.jsonEx(req);</code></pre>
 </div>
 
 <div class="example">
-    <h2>Example 6 - Streaming</h2>
+    <h2>Example 6 - Validation</h2>
+    <h3>httpClient</h3>
+    <pre><code class="language-javascript">req = { email: "notavalidemail", name: "validname" };
+await httpClient.petshopValidationEx(req);</code></pre>
+    <pre><code class="language-javascript">req = { email: "validemail@example.com", name: "validname" };
+await httpClient.petshopValidationEx(req);</code></pre>
+    <h3>grpcClient</h3>
+    <pre><code class="language-javascript">req = (new User()).setEmail("notavalidemail").setName("validname");
+await grpcClient.validationEx(req);</code></pre>
+    <pre><code class="language-javascript">req = (new User()).setEmail("validemail@example.com").setName("validname");
+await grpcClient.validationEx(req);</code></pre>
+</div>
+
+<div class="example">
+    <h2>Example 7 - Streaming</h2>
     <h3>httpClient</h3>
     <pre><code class="language-javascript">await httpClient.petshopStreamingEx({message:"message1"});</code></pre>
     <h3>grpcClient</h3>
@@ -93,7 +107,7 @@ stream.on('end', (end) => console.log("stream end"));</code></pre>
 </div>
 
 <div class="example">
-    <h2>Example 7 - Authentication</h2>
+    <h2>Example 8 - Authentication</h2>
     <i>This only works with the <b>authz</b> example</i>
     <h3>httpClient</h3>
     <pre><code class="language-javascript">await httpClient.petshopAuthenticationRequiredEx({});</code></pre>
