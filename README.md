@@ -24,13 +24,18 @@ Template for Rust API server with gRPC and OpenAPI (V2) interfaces
 - [Prometheus metrics](https://prometheus.io/) endpoint
 - [Kubernetes liveness and readiness](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/) endpoints
 - Authentication example with [OAuth2 Proxy](https://oauth2-proxy.github.io/oauth2-proxy/) and [Envoy External Authorization](https://www.envoyproxy.io/docs/envoy/latest/api-v2/config/filter/http/ext_authz/v2/ext_authz.proto)
-- [TechEmpower Benchmark Framework](https://www.techempower.com/benchmarks/) example ([2021-03-02 results](https://www.techempower.com/benchmarks/#section=test&shareid=980a0c18-35c7-4a79-9199-f79a5a19eeee))
+- [TechEmpower Benchmark Framework](https://www.techempower.com/benchmarks/) example ([2021-03-04 results](https://www.techempower.com/benchmarks/#section=test&shareid=e8cbd6d2-802d-4e44-9537-d6328dff022f))
 
 ## Quickstart
 
+Install dependencies
+
+- [Docker](https://docs.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
+- [Rust](https://www.rust-lang.org/)
+
 ```shell
-# Dependencies
-# Install Docker, Docker Compose, Rust stable
+# Check dependencies are installed
 docker --version
 docker-compose --version
 cargo --version
@@ -38,11 +43,41 @@ cargo --version
 # <https://crates.io/crates/cargo-make>
 cargo install --force cargo-make --version "~0.32"
 cargo make --version
-# Run distribution tasks
-cargo make dist-build
-# ---
+```
 
-# Run on host
+Build all docker images and generated outputs
+
+```shell
+cargo make dist-build
+```
+
+Run using docker-compose
+
+```shell
+cargo make compose build
+cargo make compose up
+cargo make compose down
+```
+
+Open the client playground at <http://localhost:1234>
+
+## Developer
+
+How to use this repository as a template
+
+- Clone this repository
+- Find and replace `petshop` and `Petshop` to rename outputs
+- Change `LICENCE` file
+
+How to change the API
+
+- Update protobuf definitions in `proto/proto/api.proto` file
+- Implement methods in `server/src/api.rs` file (run `cargo build` to check)
+- Restart `dev-*` tasks or run `cargo make dist-build` to rebuild
+
+How to run development tasks
+
+```shell
 # Run envoy and postgres docker images in host networking mode
 cargo make dev-envoy
 cargo make dev-postgres
@@ -53,33 +88,12 @@ cargo make dev-server-release
 
 # Run client playground in development mode
 cargo make dev-client-playground
-# ---
 
-# Or run on docker
-# Run envoy and server using docker-compose
-cargo make compose build
-cargo make compose up
-cargo make compose down
-# ---
-
-# Open client playground at http://localhost:1234
+# Run integration test in development mode
+cargo make dev-integration-test
 ```
 
-## Notes
-
-How to use this template:
-
-- Clone this repository
-- Find and replace `petshop` and `Petshop` to rename outputs
-- Change `LICENCE` file
-
-How to change the API:
-
-- Update `proto/proto/api.proto`
-- Implement aysnc trait methods in `server` crate (run `cargo build` to check)
-- Restart `dev-*` tasks or run `cargo make dist-build` and `cargo make compose build` to update everything
-
-The following labels are used:
+These labels are used in the source code
 
 - `TODO: ...` Something to fix/feature to add/ideas/etc.
 - `FIXME: ...` Something that has been fixed in an unintuitive way/may require manual intervention

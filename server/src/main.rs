@@ -128,7 +128,6 @@ async fn shutdown_signal(mut shutdown: broadcast::Receiver<bool>) {
 
 // TODO: Release generated clients as packages?
 // TODO: CLI interface for cron like jobs (systemd/k8s examples?)
-// TODO: Other TechEmpower benchmarks support in example? (try again envoy debian?)
 // TODO: Use alpine image for server docker image? Research podman?
 // TODO: Running in k8s/nomad examples?
 

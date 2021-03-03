@@ -5,114 +5,133 @@
   "tasks": [
     {
       "label": "dist - build",
+      "detail": "Build all docker images and generated outputs",
       "type": "shell",
       "command": "cargo make dist-build",
       "problemMatcher": []
     },
     {
       "label": "dist - clean",
+      "detail": "Clean generated outputs",
       "type": "shell",
       "command": "cargo make dist-clean",
       "problemMatcher": []
     },
     {
       "label": "dist - clean images",
+      "detail": "Clean docker images",
       "type": "shell",
       "command": "cargo make dist-clean-images",
       "problemMatcher": []
     },
     {
       "label": "dev - envoy",
+      "detail": "Build and run envoy docker image",
       "type": "shell",
       "command": "cargo make dev-envoy",
       "problemMatcher": []
     },
     {
       "label": "dev - postgres",
+      "detail": "Run postgres docker image",
       "type": "shell",
       "command": "cargo make dev-postgres",
       "problemMatcher": []
     },
     {
       "label": "dev - server",
+      "detail": "Build and run server",
       "type": "shell",
       "command": "cargo make dev-server",
       "problemMatcher": []
     },
     {
       "label": "dev - server release",
+      "detail": "Build and run server docker image",
       "type": "shell",
       "command": "cargo make dev-server-release",
       "problemMatcher": []
     },
     {
       "label": "dev - client playground",
+      "detail": "Build and run client-playground using node-tools image",
       "type": "shell",
       "command": "cargo make dev-client-playground",
       "problemMatcher": []
     },
     {
       "label": "dev - integration test",
+      "detail": "Build and run integration-test using node-tools image",
       "type": "shell",
       "command": "cargo make dev-integration-test",
       "problemMatcher": []
     },
     {
       "label": "compose - build",
+      "detail": "Run docker-compose build",
       "type": "shell",
       "command": "cargo make compose build",
       "problemMatcher": []
     },
     {
       "label": "compose - up",
+      "detail": "Run docker-compose up",
       "type": "shell",
       "command": "cargo make compose up",
       "problemMatcher": []
     },
     {
       "label": "compose - down",
+      "detail": "Run docker-compose down",
       "type": "shell",
       "command": "cargo make compose down",
       "problemMatcher": []
     },
     {
       "label": "compose ci - run",
+      "detail": "Build generated outputs and run docker-compose with CI compose file",
       "type": "shell",
       "command": "cargo make compose-ci run sut",
       "problemMatcher": []
     },
     {
       "label": "compose ci - down",
+      "detail": "Stop and remove docker-compose with CI compose file",
       "type": "shell",
       "command": "cargo make compose-ci-down",
       "problemMatcher": []
     },
     {
       "label": "examples - authz - build",
+      "detail": "Run authz example docker-compose build",
       "type": "shell",
       "command": "(cd examples/authz && docker-compose build)",
       "problemMatcher": []
     },
     {
       "label": "examples - authz - up",
+      "detail": "Run authz example docker-compose up",
       "type": "shell",
       "command": "(cd examples/authz && docker-compose up)",
       "problemMatcher": []
     },
     {
       "label": "examples - authz - down",
+      "detail": "Run authz example docker-compose down",
       "type": "shell",
       "command": "(cd examples/authz && docker-compose down)",
       "problemMatcher": []
     },
     {
       "label": "examples - tfb - up",
+      "detail": "Run tfb example docker-compose up",
       "type": "shell",
       "command": "(cd examples/tfb && docker-compose up)",
       "problemMatcher": []
     },
     {
       "label": "examples - tfb - down",
+      "detail": "Run tfb example docker-compose down",
       "type": "shell",
       "command": "(cd examples/tfb && docker-compose down)",
       "problemMatcher": []

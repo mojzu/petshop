@@ -93,6 +93,18 @@ service Petshop {
     };
   }
 
+  // TFB update_url
+  rpc TfbUpdates1 (Queries) returns (google.protobuf.ListValue) {
+    option (google.api.http) = {
+      get: "/updates/{queries}"
+    };
+  }
+  rpc TfbUpdates2 (Queries) returns (google.protobuf.ListValue) {
+    option (google.api.http) = {
+      get: "/updates"
+    };
+  }
+
   rpc PetPost (Pet) returns (Pet) {
     option (google.api.http) = {
       post: "/api.v1.Petshop/PetPost"

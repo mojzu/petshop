@@ -56,6 +56,42 @@ impl Postgres {
         Ok(worlds?)
     }
 
+    pub async fn db_world_updates(&self, queries: i32) -> Result<Vec<World>, XError> {
+        let mut worlds = self.db_world_queries(queries).await?;
+        let mut world_ids = vec![0; queries as usize];
+        let mut random_numbers = vec![0; queries as usize];
+
+        for i in 0..worlds.len() {
+            world_ids[i] = worlds[i].id;
+            random_numbers[i] = Self::db_random_id();
+            worlds[i].random_number = random_numbers[i];
+        }
+
+        let mut conn = self.pool.get().await?;
+        let transaction = conn.transaction().await?;
+        transaction
+            .batch_execute("SELECT pg_advisory_xact_lock(42)")
+            .await?;
+        let st = transaction
+            .prepare(
+                "
+                    UPDATE World as w SET
+                        randomNumber = args.randomNumber
+                    FROM (
+                        SELECT unnest($1::int[]) id, unnest($2::int[]) randomNumber
+                    ) AS args
+                    WHERE w.id = args.id
+                ",
+            )
+            .await?;
+        transaction
+            .execute(&st, &[&world_ids, &random_numbers])
+            .await?;
+        transaction.commit().await?;
+
+        Ok(worlds)
+    }
+
     async fn db_world_by_id(&self, id: i32) -> Result<World, XError> {
         let conn = self.pool.get().await?;
         let st = conn
