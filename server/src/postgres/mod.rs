@@ -15,6 +15,7 @@ impl Postgres {
         let pool = config.postgres.create_pool(tokio_postgres::NoTls)?;
 
         // TODO: Check schema version here, how to work against external tools/changes?
+        // TODO: Refactor this so that queries can be used with pool or single connection (for jobs)
 
         Ok(Self { metrics, pool })
     }

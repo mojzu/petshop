@@ -9,6 +9,8 @@ WORKDIR /config
 COPY ./docker/envoy/envoy.yml /config/envoy/envoy.yaml
 COPY ./dist/api.pb /config/api.pb
 
+LABEL org.opencontainers.image.source https://github.com/mojzu/petshop
+
 CMD ["/usr/local/bin/envoy", "-c", "/config/envoy/envoy.yaml"]
 
 # Enable for debug output

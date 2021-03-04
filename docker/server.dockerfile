@@ -23,4 +23,6 @@ EXPOSE 5501
 RUN addgroup -S petshop && adduser -S petshop -G petshop
 USER petshop:petshop
 
+LABEL org.opencontainers.image.source https://github.com/mojzu/petshop
+
 CMD ["petshop_server", "-c", "/config/config.toml"]

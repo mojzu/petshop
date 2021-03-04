@@ -25,6 +25,7 @@ use tokio::sync::broadcast;
 mod api;
 mod config;
 mod internal;
+mod jobs;
 mod metrics;
 mod postgres;
 
@@ -32,23 +33,40 @@ mod postgres;
 ///
 /// Simple command line interface for configuration file path argument (`-c` or `--config`).
 /// Loads configuration from file (optional) and environment.
+/// Runs server by default, optionally pass `--job` with name to run.
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let matches = App::new(NAME)
         .version(VERSION)
-        .arg(
+        .args(&[
             Arg::with_name("config")
                 .long("config")
                 .short("c")
                 .takes_value(true)
                 .required(false),
-        )
+            Arg::with_name("job")
+                .long("job")
+                .short("j")
+                .takes_value(true)
+                .required(false),
+        ])
         .get_matches();
 
     let config_file = matches.value_of("config");
     let config = Config::load(config_file)?;
     config.init_panic_and_tracing();
 
+    if let Some(job) = matches.value_of("job") {
+        Jobs::run(config, job).await?
+    } else {
+        server_run(config).await?
+    }
+
+    Ok(())
+}
+
+/// Start server and await until termination
+async fn server_run(config: Config) -> Result<()> {
     // Build shutdown broadcast channel
     let (shutdown_tx, shutdown_rx1) = broadcast::channel::<bool>(8);
     let shutdown_rx2 = shutdown_tx.subscribe();
@@ -90,6 +108,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let (api_server, internal_server) = tokio::join!(api_server, internal_server);
     api_server?;
     internal_server?;
+
     Ok(())
 }
 
@@ -126,8 +145,7 @@ async fn shutdown_signal(mut shutdown: broadcast::Receiver<bool>) {
     info!("received shutdown signal ({})", sig);
 }
 
-// TODO: Release generated images/clients as packages?
-// TODO: CLI interface for cron like jobs (crontab/systemd/k8s examples?)
+// TODO: Release generated clients as npm packages?
 // TODO: Running in k8s/nomad examples?
 
 // TODO: OAuth2-proxy multiple provider support, html templates? (metrics support after next release)

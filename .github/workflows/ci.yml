@@ -23,8 +23,8 @@ jobs:
       fail-fast: false
       matrix:
         # Add `, beta, nightly` to array for more tests
-        rust: [ stable ]
-        os: [ ubuntu-latest, windows-latest, macOS-latest ]
+        rust: [stable]
+        os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
       - name: Checkout
@@ -89,6 +89,26 @@ jobs:
         if: github.event_name == 'push'
         run: |
           cargo make dist-ci-build
-          docker image inspect petshop/envoy:latest
-          docker image inspect petshop/server:latest
-          echo "TODO: Tag/push images here (petshop/envoy:latest, petshop/server:latest)"
+
+      - name: Push Images
+        if: github.event_name == 'push'
+        run: |
+          # Github packages login
+          echo "${{ secrets.CR_PAT }}" | docker login ghcr.io -u mojzu --password-stdin
+
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+          # Use Docker `latest` tag convention
+          [ "$VERSION" == "main" ] && VERSION=latest
+
+          echo IMAGE=ghcr.io/mojzu/petshop-envoy:$VERSION
+          docker tag petshop/envoy:latest ghcr.io/mojzu/petshop-envoy:$VERSION
+          docker push ghcr.io/mojzu/petshop-envoy:$VERSION
+
+          echo IMAGE=ghcr.io/mojzu/petshop-server:$VERSION
+          docker tag petshop/server:latest ghcr.io/mojzu/petshop-server:$VERSION
+          docker push ghcr.io/mojzu/petshop-server:$VERSION

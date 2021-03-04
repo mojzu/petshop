@@ -5,6 +5,7 @@
 //! Internal HTTP server request handlers.
 pub use crate::api::Api;
 pub use crate::config::Config;
+pub use crate::jobs::Jobs;
 pub use crate::metrics::{Metrics, MetricsService};
 pub use crate::postgres::Postgres;
 pub use anyhow::{Error, Result};
@@ -30,6 +31,9 @@ pub enum XError {
     #[error("configuration error `{0}`")]
     Config(String),
 
+    #[error("jobs error `{0}`")]
+    Jobs(String),
+
     #[error("postgres config error")]
     PostgresConfig(#[from] deadpool_postgres::config::ConfigError),
 
@@ -43,6 +47,10 @@ pub enum XError {
 impl XError {
     pub fn config(message: &str) -> Self {
         Self::Config(message.to_owned())
+    }
+
+    pub fn jobs(message: &str) -> Self {
+        Self::Jobs(message.to_owned())
     }
 }
 

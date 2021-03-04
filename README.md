@@ -86,6 +86,9 @@ cargo make dev-postgres
 cargo make dev-server
 cargo make dev-server-release
 
+# Run job of name with cargo
+cargo make dev-job $NAME
+
 # Run client playground in development mode
 cargo make dev-client-playground
 
