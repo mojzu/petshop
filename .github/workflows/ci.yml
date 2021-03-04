@@ -83,6 +83,7 @@ jobs:
       - name: Run CI
         run: |
           cargo make compose-ci run sut
+          cargo make compose-ci-down
 
       - name: Build Images
         if: github.event_name == 'push'

@@ -1,4 +1,10 @@
-FROM petshop/rust-tools:latest
+# DEPEND: docker pull rust:1.50-alpine3.12
+# <https://hub.docker.com/_/rust>
+FROM rust:1.50-alpine3.12
+
+# Install dependencies
+RUN apk add --no-cache musl-dev protoc \
+    && rustup component add rustfmt 2>&1
 
 RUN mkdir -p /build
 WORKDIR /build

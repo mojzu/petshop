@@ -126,9 +126,8 @@ async fn shutdown_signal(mut shutdown: broadcast::Receiver<bool>) {
     info!("received shutdown signal ({})", sig);
 }
 
-// TODO: Release generated clients as packages?
-// TODO: CLI interface for cron like jobs (systemd/k8s examples?)
-// TODO: Use alpine image for server docker image? Research podman?
+// TODO: Release generated images/clients as packages?
+// TODO: CLI interface for cron like jobs (crontab/systemd/k8s examples?)
 // TODO: Running in k8s/nomad examples?
 
 // TODO: OAuth2-proxy multiple provider support, html templates? (metrics support after next release)
