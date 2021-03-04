@@ -59,7 +59,7 @@ impl Api {
         Ok(())
     }
 
-    /// Parses request metadata to extract authenticated user (works with authz example)
+    /// Parses request metadata to extract authenticated user (works with auth example)
     fn user_required(&self, request: &Request<()>) -> Result<User, Status> {
         let email = request.metadata().get("x-auth-request-email");
         let user = request.metadata().get("x-auth-request-user");
@@ -72,6 +72,31 @@ impl Api {
                 _ => Err(Status::unauthenticated("user authentication failed")),
             },
             _ => Err(Status::unauthenticated("user authentication failed")),
+        }
+    }
+
+    /// Parses request metadata to return authenticated user, which may be provided by oauth2-proxy
+    /// headers or by the authorization header
+    ///
+    /// FIXME: This is a placeholder function that accepts any authorization header as valid to demonstrate
+    /// supporting authentication via oauth2-proxy (for users) or via a header (for computers)
+    ///
+    /// In the auth example, this is made functional by adding an envoy listener that does not use the
+    /// ext_authz filter, so requests are still passed upstream where they can be checked by this function
+    ///
+    /// This example assumes that the application is going to manage/verify its own API keys and that
+    /// all private endpoints will call this function
+    fn auth_required(&self, request: &Request<()>) -> Result<User, Status> {
+        let auth = request.metadata().get("authorization");
+        match auth {
+            Some(auth) => match auth.to_str() {
+                Ok(auth) => Ok(User {
+                    email: "apiconsumer@petshop.com".to_string(),
+                    name: auth.to_string(),
+                }),
+                _ => self.user_required(request),
+            },
+            _ => self.user_required(request),
         }
     }
 
@@ -171,7 +196,7 @@ impl Petshop for Api {
         request: Request<()>,
     ) -> Result<Response<User>, Status> {
         info!("authentication_required request");
-        let user = self.user_required(&request)?;
+        let user = self.auth_required(&request)?;
         Ok(Response::new(user))
     }
 

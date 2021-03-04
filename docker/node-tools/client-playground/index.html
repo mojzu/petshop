@@ -108,12 +108,17 @@ stream.on('end', (end) => console.log("stream end"));</code></pre>
 
 <div class="example">
     <h2>Example 8 - Authentication</h2>
-    <i>This only works with the <b>authz</b> example</i>
+    <i>This only works with the <b>auth</b> example</i>
     <h3>httpClient</h3>
+    <i>Authenticates using cookie provided by oauth2-proxy</i>
     <pre><code class="language-javascript">await httpClient.petshopAuthenticationRequiredEx({});</code></pre>
     <h3>grpcClient</h3>
+    <i>Authenticates using cookie provided by oauth2-proxy</i>
     <pre><code class="language-javascript">req = new Empty();
 await grpcClient.authenticationRequiredEx(req);</code></pre>
+    <h3>apiHttpClient</h3>
+    <i>Authenticates using authorization header</i>
+    <pre><code class="language-javascript">await apiHttpClient.petshopAuthenticationRequiredEx({});</code></pre>
 </div>
 
 <script src="script.ts"></script>

@@ -1,11 +1,11 @@
-# authz
+# auth
 
 - <https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/ext_authz_filter>
 
 ```shell
 cargo make dist-build
 
-cd examples/authz
+cd examples/auth
 # Copy `oauth2-proxy.template.cfg` to `client-oauth2-proxy.cfg` and `server-oauth2-proxy.cfg` and edit as required
 # Configuration fields to change: http_address, upstreams, provider
 # <https://oauth2-proxy.github.io/oauth2-proxy/docs/configuration/oauth_provider>

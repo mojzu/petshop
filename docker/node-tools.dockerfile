@@ -1,6 +1,6 @@
-# DEPEND: docker pull node:15.10.0-buster
+# DEPEND: docker pull node:15.11.0-buster
 # <https://hub.docker.com/_/node/>
-FROM node:15.10.0-buster
+FROM node:15.11.0-buster
 
 # Install package dependencies
 COPY ./docker/node-tools/package.json /home/node/package.json

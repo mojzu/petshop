@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: client-oauth2-proxy.dockerfile
-    image: petshop-authz/client-oauth2-proxy:latest
+    image: petshop-auth/client-oauth2-proxy:latest
     ports:
       - 4180:4180
 
@@ -14,16 +14,17 @@ services:
     build:
       context: .
       dockerfile: server-oauth2-proxy.dockerfile
-    image: petshop-authz/server-oauth2-proxy:latest
+    image: petshop-auth/server-oauth2-proxy:latest
 
   # Envoy service
   envoy:
     build:
       context: .
       dockerfile: envoy.dockerfile
-    image: petshop-authz/envoy:latest
+    image: petshop-auth/envoy:latest
     ports:
       - 10000:10000
+      - 10001:10001
 
   # Server service
   server:

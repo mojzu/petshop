@@ -21,6 +21,18 @@ window["httpClient"] = new PetshopApi(
         basePath: "http://localhost:10000",
     })
 );
+window["apiHttpClient"] = new PetshopApi(
+    new Configuration({
+        // FIXME: Use axios baseOptions here instead of apiKey/username/password
+        // properties on config, typescript-axios does not use them
+        baseOptions: {
+            headers: {
+                Authorization: "an-example-api-key",
+            },
+        },
+        basePath: "http://localhost:10001",
+    })
+);
 
 window["GrpcClientClass"] = PetshopPromiseClient;
 window["grpcClient"] = new PetshopPromiseClient(

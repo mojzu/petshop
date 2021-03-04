@@ -375,9 +375,9 @@ category = "Petshop"
 workspace = false
 script = '''
 docker image rm -f \
-    petshop-authz/client-oauth2-proxy:latest \
-    petshop-authz/envoy:latest \
-    petshop-authz/server-oauth2-proxy:latest \
+    petshop-auth/client-oauth2-proxy:latest \
+    petshop-auth/envoy:latest \
+    petshop-auth/server-oauth2-proxy:latest \
     petshop/client-playground:latest \
     petshop/integration-test:latest \
     petshop/envoy:latest \

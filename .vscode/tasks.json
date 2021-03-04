@@ -102,24 +102,24 @@
       "problemMatcher": []
     },
     {
-      "label": "examples - authz - build",
-      "detail": "Run authz example docker-compose build",
+      "label": "examples - auth - build",
+      "detail": "Run auth example docker-compose build",
       "type": "shell",
-      "command": "(cd examples/authz && docker-compose build)",
+      "command": "(cd examples/auth && docker-compose build)",
       "problemMatcher": []
     },
     {
-      "label": "examples - authz - up",
-      "detail": "Run authz example docker-compose up",
+      "label": "examples - auth - up",
+      "detail": "Run auth example docker-compose up",
       "type": "shell",
-      "command": "(cd examples/authz && docker-compose up)",
+      "command": "(cd examples/auth && docker-compose up)",
       "problemMatcher": []
     },
     {
-      "label": "examples - authz - down",
-      "detail": "Run authz example docker-compose down",
+      "label": "examples - auth - down",
+      "detail": "Run auth example docker-compose down",
       "type": "shell",
-      "command": "(cd examples/authz && docker-compose down)",
+      "command": "(cd examples/auth && docker-compose down)",
       "problemMatcher": []
     },
     {
