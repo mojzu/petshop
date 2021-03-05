@@ -6,12 +6,12 @@ FROM envoyproxy/envoy-alpine:v1.17.1
 RUN mkdir -p /config
 WORKDIR /config
 
-COPY ./docker/envoy/envoy.yml /config/envoy/envoy.yaml
-COPY ./dist/api.pb /config/api.pb
+COPY ./docker/envoy/envoy.yml /config/envoy.yaml
+COPY ./dist/api.pb /data/api.pb
 
 LABEL org.opencontainers.image.source https://github.com/mojzu/petshop
 
-CMD ["/usr/local/bin/envoy", "-c", "/config/envoy/envoy.yaml"]
+CMD ["envoy", "-c", "/config/envoy.yaml"]
 
 # Enable for debug output
-#CMD ["/usr/local/bin/envoy", "-c", "/config/envoy/envoy.yaml", "--log-level", "debug"]
+#CMD ["envoy", "-c", "/config/envoy.yaml", "--log-level", "debug"]
