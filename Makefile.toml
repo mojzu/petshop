@@ -250,16 +250,24 @@ dependencies = [
     "docker-build-envoy"
 ]
 
-[tasks.generate-client-flow]
+[tasks.generate-client-flow-pre]
 description = "Build generated client outputs"
 category = "Petshop"
 workspace = false
 dependencies = [
     "generate-protoc-openapi",
+    "docker-build-node-tools",
     "generate-axios-client",
     "generate-grpc-web-client",
-    "generate-ng-client",
-    "docker-build-node-tools",
+    "generate-ng-client"
+]
+
+[tasks.generate-client-flow]
+description = "Build docker images requiring generated client outputs"
+category = "Petshop"
+workspace = false
+dependencies = [
+    "generate-client-flow-pre",
     "docker-build-client-playground",
     "docker-build-integration-test",
     "docker-build-oauth2-proxy"
@@ -459,10 +467,7 @@ dependencies = [
     "docker-build-rust-cache",
     "docker-build-server",
     "generate-envoy-flow",
-    "generate-protoc-openapi",
-    "generate-axios-client",
-    "generate-grpc-web-client",
-    "generate-ng-client"
+    "generate-client-flow-pre"
 ]
 
 # Clients package tasks

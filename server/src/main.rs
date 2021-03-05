@@ -145,7 +145,7 @@ async fn shutdown_signal(mut shutdown: broadcast::Receiver<bool>) {
     info!("received shutdown signal ({})", sig);
 }
 
-// TODO: Push git tag in format `vX.Y.Z` to build release (+ artifacts?)
+// TODO: Create git release on version tag push, artifacts plus changelog?
 // TODO: Example using pushed images/libraries?
 // TODO: Running in k8s/nomad examples?
 // TODO: OAuth2-proxy multiple provider support, html templates? (metrics support after next release)

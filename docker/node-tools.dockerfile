@@ -16,7 +16,7 @@ RUN npm i
 # Copy openapi specification
 COPY ./dist/api.swagger.json /home/node/api.swagger.json
 
-# Copy source files after installation
+# Copy source files
 COPY ./docker/node-tools /home/node
 
 CMD ["/bin/bash"]

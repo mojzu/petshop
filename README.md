@@ -96,8 +96,9 @@ cargo make dev-client-playground
 # Run integration test in development mode
 cargo make dev-integration-test
 
-# Set version numbers
+# Set version numbers, tag versions in format `vX.Y.Z`
 cargo make dist-version $VERSION
+git tag v$VERSION
 ```
 
 These labels are used in the source code
