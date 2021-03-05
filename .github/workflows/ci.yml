@@ -14,8 +14,6 @@ on:
 
 env:
   CLICOLOR_FORCE: 1
-  # FIXME: Need version number when one can't be found in git tag
-  # Should this be changed by the dist-version task too?
   CURRENT_VERSION: "0.1.0"
 
 jobs:

@@ -421,6 +421,7 @@ export VERSION=${@}
 sed -i -e "s/^version = .*/version = \"${VERSION}\"/" proto/Cargo.toml
 sed -i -e "s/^version = .*/version = \"${VERSION}\"/" server/Cargo.toml
 (cd docker/node-tools/clients && npm version --allow-same-version ${VERSION})
+sed -i -e "s/^  CURRENT_VERSION: .*/  CURRENT_VERSION: \"${VERSION}\"/" .github/workflows/ci.yml
 '''
 
 [tasks.dist-build]
