@@ -442,7 +442,10 @@ dependencies = [
     "docker-build-tools",
     "docker-build-rust-cache",
     "docker-build-server",
-    "generate-envoy-flow"
+    "generate-envoy-flow",
+    "generate-protoc-openapi",
+    "generate-axios-client",
+    "generate-grpc-web-client"
 ]
 
 # Clients package tasks
