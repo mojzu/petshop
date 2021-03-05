@@ -1,4 +1,5 @@
 {
+  /* DEPEND: npm run x-npm-check-updates */
   "compilerOptions": {
     "target": "es2017",
     "module": "commonjs",

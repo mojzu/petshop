@@ -5,6 +5,7 @@
 /node_modules
 
 /clients/node_modules
-/clients/grpc-web
 /clients/axios
+/clients/grpc-web
+/clients/ng
 /**/*.tgz

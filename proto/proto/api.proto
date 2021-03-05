@@ -98,26 +98,22 @@ service Petshop {
   }
 
   // TFB queries_url
-  rpc TfbQueries1 (Queries) returns (google.protobuf.ListValue) {
+  rpc TfbQueries (Queries) returns (google.protobuf.ListValue) {
     option (google.api.http) = {
       get: "/queries/{queries}"
-    };
-  }
-  rpc TfbQueries2 (Queries) returns (google.protobuf.ListValue) {
-    option (google.api.http) = {
-      get: "/queries"
+      additional_bindings {
+        get: "/queries"
+      }
     };
   }
 
   // TFB update_url
-  rpc TfbUpdates1 (Queries) returns (google.protobuf.ListValue) {
+  rpc TfbUpdates (Queries) returns (google.protobuf.ListValue) {
     option (google.api.http) = {
       get: "/updates/{queries}"
-    };
-  }
-  rpc TfbUpdates2 (Queries) returns (google.protobuf.ListValue) {
-    option (google.api.http) = {
-      get: "/updates"
+      additional_bindings {
+        get: "/updates"
+      }
     };
   }
 

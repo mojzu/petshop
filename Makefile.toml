@@ -120,6 +120,7 @@ script = '''
 echo Running petshop/node-tools:latest
 docker run --rm -v "$(pwd)/docker/node-tools/client-playground:/home/node/client-playground" \
     -v "$(pwd)/docker/node-tools/integration-test:/home/node/integration-test" \
+    -v "$(pwd)/dist:/home/node/dist" \
     --user "$(id -u):$(id -g)" petshop/node-tools:latest ${@}
 '''
 
@@ -226,6 +227,20 @@ rm -rf ./docker/node-tools/clients/grpc-web
 cp -r ./dist/grpc-web ./docker/node-tools/clients/grpc-web
 '''
 
+[tasks.generate-ng-client]
+description = "Generate angular client"
+category = "Petshop"
+workspace = false
+script = '''
+echo Generating ng client dist/ng
+rm -rf ./dist/ng
+mkdir -p ./dist/ng
+cargo make node-tools-run -- ng-swagger-gen -i /home/node/api.swagger.json -o /home/node/dist/ng
+mkdir -p ./docker/node-tools/clients
+rm -rf ./docker/node-tools/clients/ng
+cp -r ./dist/ng ./docker/node-tools/clients/ng
+'''
+
 [tasks.generate-envoy-flow]
 description = "Build generated envoy outputs"
 category = "Petshop"
@@ -243,6 +258,7 @@ dependencies = [
     "generate-protoc-openapi",
     "generate-axios-client",
     "generate-grpc-web-client",
+    "generate-ng-client",
     "docker-build-node-tools",
     "docker-build-client-playground",
     "docker-build-integration-test",
@@ -445,7 +461,8 @@ dependencies = [
     "generate-envoy-flow",
     "generate-protoc-openapi",
     "generate-axios-client",
-    "generate-grpc-web-client"
+    "generate-grpc-web-client",
+    "generate-ng-client"
 ]
 
 # Clients package tasks

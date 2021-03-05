@@ -150,6 +150,7 @@ jobs:
         if: github.event_name == 'push'
         uses: actions/setup-node@v2
         with:
+          # DEPEND: Update node version here
           node-version: "15.x"
           registry-url: "https://npm.pkg.github.com"
 

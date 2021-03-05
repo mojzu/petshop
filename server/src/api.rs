@@ -123,58 +123,12 @@ impl Api {
         }
         info!("echo stream done");
     }
-
-    #[tracing::instrument(skip(self))]
-    async fn tfb_queries(&self, request: Queries) -> Result<Response<ListValue>, Status> {
-        let queries = if request.queries < 1 {
-            1
-        } else if request.queries > 500 {
-            500
-        } else {
-            request.queries
-        };
-        let worlds = self.postgres.db_world_queries(queries).await?;
-
-        let values: Vec<Value> = worlds
-            .into_iter()
-            .map(|x| {
-                let serde_value = json!({ "id": x.id, "randomNumber": x.random_number });
-                serde_into_prost_value(serde_value)
-            })
-            .collect();
-        let v = ListValue { values };
-
-        Ok(Response::new(v))
-    }
-
-    #[tracing::instrument(skip(self))]
-    async fn tfb_updates(&self, request: Queries) -> Result<Response<ListValue>, Status> {
-        let queries = if request.queries < 1 {
-            1
-        } else if request.queries > 500 {
-            500
-        } else {
-            request.queries
-        };
-        let worlds = self.postgres.db_world_updates(queries).await?;
-
-        let values: Vec<Value> = worlds
-            .into_iter()
-            .map(|x| {
-                let serde_value = json!({ "id": x.id, "randomNumber": x.random_number });
-                serde_into_prost_value(serde_value)
-            })
-            .collect();
-        let v = ListValue { values };
-
-        Ok(Response::new(v))
-    }
 }
 
 #[tonic::async_trait]
 impl Petshop for Api {
     #[tracing::instrument(skip(self))]
-    async fn http_body_ex(&self, request: Request<()>) -> Result<Response<HttpBody>, Status> {
+    async fn http_body_ex(&self, _request: Request<()>) -> Result<Response<HttpBody>, Status> {
         info!("http_body request");
         let body = HttpBody {
             content_type: "text/html".to_string(),
@@ -224,14 +178,14 @@ impl Petshop for Api {
     }
 
     #[tracing::instrument(skip(self))]
-    async fn tfb_json(&self, request: Request<()>) -> Result<Response<Echo>, Status> {
+    async fn tfb_json(&self, _request: Request<()>) -> Result<Response<Echo>, Status> {
         Ok(Response::new(Echo {
             message: "Hello, world!".to_string(),
         }))
     }
 
     #[tracing::instrument(skip(self))]
-    async fn tfb_plaintext(&self, request: Request<()>) -> Result<Response<HttpBody>, Status> {
+    async fn tfb_plaintext(&self, _request: Request<()>) -> Result<Response<HttpBody>, Status> {
         let body = HttpBody {
             content_type: "text/plain".to_string(),
             data: "Hello, world!".into(),
@@ -241,29 +195,57 @@ impl Petshop for Api {
     }
 
     #[tracing::instrument(skip(self))]
-    async fn tfb_db(&self, request: Request<()>) -> Result<Response<World>, Status> {
+    async fn tfb_db(&self, _request: Request<()>) -> Result<Response<World>, Status> {
         let world = self.postgres.db_world().await?;
         Ok(Response::new(world))
     }
 
     #[tracing::instrument(skip(self))]
-    async fn tfb_queries1(&self, request: Request<Queries>) -> Result<Response<ListValue>, Status> {
-        Ok(self.tfb_queries(request.into_inner()).await?)
+    async fn tfb_queries(&self, request: Request<Queries>) -> Result<Response<ListValue>, Status> {
+        let queries = request.into_inner().queries;
+        let queries = if queries < 1 {
+            1
+        } else if queries > 500 {
+            500
+        } else {
+            queries
+        };
+        let worlds = self.postgres.db_world_queries(queries).await?;
+
+        let values: Vec<Value> = worlds
+            .into_iter()
+            .map(|x| {
+                let serde_value = json!({ "id": x.id, "randomNumber": x.random_number });
+                serde_into_prost_value(serde_value)
+            })
+            .collect();
+        let v = ListValue { values };
+
+        Ok(Response::new(v))
     }
 
     #[tracing::instrument(skip(self))]
-    async fn tfb_queries2(&self, request: Request<Queries>) -> Result<Response<ListValue>, Status> {
-        Ok(self.tfb_queries(request.into_inner()).await?)
-    }
+    async fn tfb_updates(&self, request: Request<Queries>) -> Result<Response<ListValue>, Status> {
+        let queries = request.into_inner().queries;
+        let queries = if queries < 1 {
+            1
+        } else if queries > 500 {
+            500
+        } else {
+            queries
+        };
+        let worlds = self.postgres.db_world_updates(queries).await?;
 
-    #[tracing::instrument(skip(self))]
-    async fn tfb_updates1(&self, request: Request<Queries>) -> Result<Response<ListValue>, Status> {
-        Ok(self.tfb_updates(request.into_inner()).await?)
-    }
+        let values: Vec<Value> = worlds
+            .into_iter()
+            .map(|x| {
+                let serde_value = json!({ "id": x.id, "randomNumber": x.random_number });
+                serde_into_prost_value(serde_value)
+            })
+            .collect();
+        let v = ListValue { values };
 
-    #[tracing::instrument(skip(self))]
-    async fn tfb_updates2(&self, request: Request<Queries>) -> Result<Response<ListValue>, Status> {
-        Ok(self.tfb_updates(request.into_inner()).await?)
+        Ok(Response::new(v))
     }
 
     #[tracing::instrument(skip(self))]
@@ -281,7 +263,7 @@ impl Petshop for Api {
     #[tracing::instrument(skip(self))]
     async fn pet_find_by_status(
         &self,
-        request: Request<FindByStatus>,
+        _request: Request<FindByStatus>,
     ) -> Result<Response<Pets>, Status> {
         info!("pet_find_by_status request");
         let pet = Pet {
@@ -302,7 +284,7 @@ impl Petshop for Api {
     }
 
     #[tracing::instrument(skip(self))]
-    async fn pet_find_by_tag(&self, request: Request<FindByTag>) -> Result<Response<Pets>, Status> {
+    async fn pet_find_by_tag(&self, _request: Request<FindByTag>) -> Result<Response<Pets>, Status> {
         info!("pet_find_by_tag request");
         let pet = Pet {
             id: 1,

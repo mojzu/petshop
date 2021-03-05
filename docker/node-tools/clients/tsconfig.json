@@ -1,15 +1,19 @@
 {
+  /* DEPEND: npm run x-npm-check-updates */
   "compilerOptions": {
     "target": "es2017",
     "module": "commonjs",
     "lib": ["es2017", "dom"],
     "declaration": true,
     "sourceMap": true,
-    "outDir": "./axios",
+    "outDir": "./",
     "strict": true,
     "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
+  "include": ["**/*.ts"],
   "exclude": ["./node_modules"]
 }
