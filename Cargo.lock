@@ -882,7 +882,7 @@ dependencies = [
 
 [[package]]
 name = "petshop_proto"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "bytes",
  "prost",
@@ -894,7 +894,7 @@ dependencies = [
 
 [[package]]
 name = "petshop_server"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "base64",

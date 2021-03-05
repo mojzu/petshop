@@ -7,7 +7,7 @@ pub use crate::api::Api;
 pub use crate::config::Config;
 pub use crate::jobs::Jobs;
 pub use crate::metrics::{Metrics, MetricsService};
-pub use crate::postgres::Postgres;
+pub use crate::postgres::{PostgresClient, PostgresPool};
 pub use anyhow::{Error, Result};
 pub use chrono::Utc;
 pub use std::convert::{TryFrom, TryInto};

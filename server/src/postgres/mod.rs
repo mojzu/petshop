@@ -4,18 +4,27 @@ use crate::internal::*;
 use petshop_proto::api::v1::World;
 use std::fmt;
 
-/// Postgres
-pub struct Postgres {
+/// Postgres Pool
+pub struct PostgresPool {
     metrics: Arc<Metrics>,
     pool: deadpool_postgres::Pool,
 }
 
-impl Postgres {
+/// Postgres Client
+///
+/// FIXME: Is there a way to refactor this so that pool/clients can be used
+/// with any query? Can deref pool client but this bypasses statement cache
+pub struct PostgresClient {
+    client: tokio_postgres::Client,
+}
+
+const CLIENT_CHECK: &str = "SELECT 1 + 1";
+
+impl PostgresPool {
     pub fn from_config(config: &Config, metrics: Arc<Metrics>) -> Result<Self, XError> {
         let pool = config.postgres.create_pool(tokio_postgres::NoTls)?;
 
         // TODO: Check schema version here, how to work against external tools/changes?
-        // TODO: Refactor this so that queries can be used with pool or single connection (for jobs)
 
         Ok(Self { metrics, pool })
     }
@@ -23,17 +32,17 @@ impl Postgres {
     /// Returns an error if queries can not be served
     #[tracing::instrument(skip(self))]
     pub async fn readiness(&self) -> Result<(), XError> {
-        let conn_query = self.conn_query_test().await;
-        self.metrics.postgres_ready_set(conn_query.is_ok());
-        conn_query?;
+        let client_check = self.check().await;
+        self.metrics.postgres_ready_set(client_check.is_ok());
+        client_check?;
         Ok(())
     }
 
     /// Wraps returning a client from pool to set ready metric
-    async fn conn_query_test(&self) -> Result<(), XError> {
-        let conn = self.pool.get().await?;
-        let st = conn.prepare("SELECT 1 + 1").await?;
-        conn.query_one(&st, &[]).await?;
+    async fn check(&self) -> Result<(), XError> {
+        let client = self.pool.get().await?;
+        let st = client.prepare(CLIENT_CHECK).await?;
+        client.query_one(&st, &[]).await?;
         Ok(())
     }
 
@@ -68,8 +77,8 @@ impl Postgres {
             worlds[i].random_number = random_numbers[i];
         }
 
-        let mut conn = self.pool.get().await?;
-        let transaction = conn.transaction().await?;
+        let mut client = self.pool.get().await?;
+        let transaction = client.transaction().await?;
         transaction
             .batch_execute("SELECT pg_advisory_xact_lock(42)")
             .await?;
@@ -94,8 +103,8 @@ impl Postgres {
     }
 
     async fn db_world_by_id(&self, id: i32) -> Result<World, XError> {
-        let conn = self.pool.get().await?;
-        let st = conn
+        let client = self.pool.get().await?;
+        let st = client
             .prepare(
                 "
                     SELECT id, randomNumber
@@ -104,7 +113,7 @@ impl Postgres {
                 ",
             )
             .await?;
-        let row = conn.query_one(&st, &[&id]).await?;
+        let row = client.query_one(&st, &[&id]).await?;
         Ok(World {
             id: row.get(0),
             random_number: row.get(1),
@@ -119,8 +128,35 @@ impl Postgres {
     }
 }
 
-impl fmt::Debug for Postgres {
+impl PostgresClient {
+    pub async fn from_config(config: &Config) -> Result<Self, XError> {
+        let pg_config = config.postgres.get_pg_config()?;
+        let (client, connection) = pg_config.connect(tokio_postgres::NoTls).await?;
+
+        tokio::spawn(async move {
+            if let Err(e) = connection.await {
+                warn!("connection error: {}", e);
+            }
+        });
+
+        Ok(Self { client })
+    }
+
+    pub async fn check(&self) -> Result<(), XError> {
+        let st = self.client.prepare(CLIENT_CHECK).await?;
+        self.client.query_one(&st, &[]).await?;
+        Ok(())
+    }
+}
+
+impl fmt::Debug for PostgresPool {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("Postgres").finish()
+        f.debug_struct("PostgresPool").finish()
+    }
+}
+
+impl fmt::Debug for PostgresClient {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("PostgresClient").finish()
     }
 }

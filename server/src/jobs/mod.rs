@@ -15,9 +15,13 @@ impl Jobs {
         }
     }
 
-    #[tracing::instrument(skip(_config))]
-    pub async fn example(_config: &Config) -> Result<()> {
+    #[tracing::instrument(skip(config))]
+    pub async fn example(config: &Config) -> Result<()> {
         info!("starting Jobs::example");
+
+        let pg = PostgresClient::from_config(config).await?;
+        pg.check().await?;
+
         tokio::time::sleep(std::time::Duration::from_secs(10)).await;
         info!("finishing Jobs::example");
         Ok(())

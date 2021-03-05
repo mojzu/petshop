@@ -14,51 +14,50 @@ on:
 
 env:
   CLICOLOR_FORCE: 1
-  CURRENT_VERSION: "0.1.1"
+  CURRENT_VERSION: "0.2.0"
 
 jobs:
-  # TODO: Disabled temporarily for testing
-  # rust-ci:
-  #   name: Rust CI
-  #   runs-on: ${{ matrix.os }}
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       # Add `, beta, nightly` to array for more tests
-  #       rust: [stable]
-  #       os: [ubuntu-latest, windows-latest, macOS-latest]
+  rust-ci:
+    name: Rust CI
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # Add `, beta, nightly` to array for more tests
+        rust: [stable]
+        os: [ubuntu-latest, windows-latest, macOS-latest]
 
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-  #     - name: Install rust
-  #       uses: actions-rs/toolchain@v1
-  #       with:
-  #         toolchain: ${{ matrix.rust }}
-  #         profile: minimal
-  #         override: true
+      - name: Install rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust }}
+          profile: minimal
+          override: true
 
-  #     - name: Install cargo-make
-  #       uses: actions-rs/cargo@v1
-  #       with:
-  #         command: install
-  #         args: --debug cargo-make
+      - name: Install cargo-make
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: --debug cargo-make
 
-  #     - name: Run CI
-  #       if: matrix.rust != 'nightly'
-  #       uses: actions-rs/cargo@v1
-  #       with:
-  #         command: make
-  #         args: ci-flow
+      - name: Run CI
+        if: matrix.rust != 'nightly'
+        uses: actions-rs/cargo@v1
+        with:
+          command: make
+          args: ci-flow
 
-  #     - name: Run CI (Allow Failures)
-  #       if: matrix.rust == 'nightly'
-  #       continue-on-error: true
-  #       uses: actions-rs/cargo@v1
-  #       with:
-  #         command: make
-  #         args: ci-flow
+      - name: Run CI (Allow Failures)
+        if: matrix.rust == 'nightly'
+        continue-on-error: true
+        uses: actions-rs/cargo@v1
+        with:
+          command: make
+          args: ci-flow
 
   docker-ci:
     name: Docker CI
@@ -120,11 +119,10 @@ jobs:
           echo "DOCKER_VERSION=$DOCKER_VERSION" >> $GITHUB_ENV
           echo "PUBLISH_TAG=$PUBLISH_TAG" >> $GITHUB_ENV
 
-      # TODO: Disabled temporarily for testing
-      # - name: Run CI
-      #   run: |
-      #     cargo make compose-ci run sut
-      #     cargo make compose-ci-down
+      - name: Run CI
+        run: |
+          cargo make compose-ci run sut
+          cargo make compose-ci-down
 
       - name: Build Images
         if: github.event_name == 'push'
