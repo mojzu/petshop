@@ -4,5 +4,7 @@
 /dist
 /node_modules
 
-/grpc-web
-/axios
+/clients/node_modules
+/clients/grpc-web
+/clients/axios
+/**/*.tgz

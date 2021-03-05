@@ -1,6 +1,6 @@
 import { Empty } from "google-protobuf/google/protobuf/empty_pb";
 import { Struct } from "google-protobuf/google/protobuf/struct_pb";
-import { Configuration, PetshopApi } from "../axios";
+import { Configuration, PetshopApi } from "../clients/axios";
 import {
     Category,
     Echo,
@@ -10,9 +10,9 @@ import {
     Pet,
     Status,
     Tag,
-} from "../grpc-web/api_pb";
-import { PetshopPromiseClient } from "../grpc-web/api_grpc_web_pb";
-import { HttpBody } from "../grpc-web/google/api/httpbody_pb";
+} from "../clients/grpc-web/api_pb";
+import { PetshopPromiseClient } from "../clients/grpc-web/api_grpc_web_pb";
+import { HttpBody } from "../clients/grpc-web/google/api/httpbody_pb";
 
 window["HttpClientClass"] = PetshopApi;
 window["httpClient"] = new PetshopApi(

@@ -198,8 +198,9 @@ docker run --rm -v "$(pwd):/workspace" --user "$(id -u):$(id -g)" openapitools/o
     -o /workspace/dist/axios
 (cd ./dist/axios \
     && rm -rf .openapi-generator .gitignore .npmignore .openapi-generator-ignore git_push.sh)
-rm -rf ./docker/node-tools/axios
-cp -r ./dist/axios ./docker/node-tools/axios
+mkdir -p ./docker/node-tools/clients
+rm -rf ./docker/node-tools/clients/axios
+cp -r ./dist/axios ./docker/node-tools/clients/axios
 '''
 
 [tasks.generate-grpc-web-client]
@@ -220,8 +221,9 @@ cargo make go-tools-run -- protoc -I/usr/local/include -I/go/src -I/src/proto/pr
     /src/proto/proto/google/api/httpbody.proto \
     /src/proto/proto/protoc-gen-openapiv2/options/annotations.proto \
     /src/proto/proto/protoc-gen-openapiv2/options/openapiv2.proto
-rm -rf ./docker/node-tools/grpc-web
-cp -r ./dist/grpc-web ./docker/node-tools/grpc-web
+mkdir -p ./docker/node-tools/clients
+rm -rf ./docker/node-tools/clients/grpc-web
+cp -r ./dist/grpc-web ./docker/node-tools/clients/grpc-web
 '''
 
 [tasks.generate-envoy-flow]
@@ -406,7 +408,19 @@ description = "Clean generated outputs"
 category = "Petshop"
 workspace = false
 script = '''
-rm -rf ./dist ./docker/node-tools/grpc-web ./docker/node-tools/axios
+rm -rf ./dist ./docker/node-tools/clients/grpc-web ./docker/node-tools/clients/axios
+'''
+
+[tasks.dist-version]
+description = "Set crate and other version numbers"
+category = "Petshop"
+workspace = false
+script = '''
+echo Setting version to ${@}
+export VERSION=${@}
+sed -i -e "s/^version = .*/version = \"${VERSION}\"/" proto/Cargo.toml
+sed -i -e "s/^version = .*/version = \"${VERSION}\"/" server/Cargo.toml
+(cd docker/node-tools/clients && npm version --allow-same-version ${VERSION})
 '''
 
 [tasks.dist-build]
@@ -429,6 +443,26 @@ dependencies = [
     "docker-build-server",
     "generate-envoy-flow"
 ]
+
+# Clients package tasks
+
+[tasks.clients]
+description = "Clients package npm wrapper"
+category = "Petshop"
+workspace = false
+script = '''
+(cd docker/node-tools/clients && npm ${@})
+'''
+
+[tasks.clients-publish]
+description = "Clients publish latest package with tag"
+category = "Petshop"
+workspace = false
+script = '''
+(cd docker/node-tools/clients \
+    && npm install \
+    && npm publish --tag ${@})
+'''
 
 # Default tasks
 

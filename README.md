@@ -15,6 +15,7 @@ Template for Rust API server with gRPC and OpenAPI (V2) interfaces
 - Client playground for browser with [Parcel](https://v2.parceljs.org/)
 - Integration tests with [Jasmine](https://jasmine.github.io/)
 - Continuous integration using [GitHub Actions](https://github.com/features/actions) and [cargo-make](https://github.com/sagiegurari/cargo-make)
+- Docker image and Node.js package publishing to [GitHub Packages](https://github.com/features/packages)
 - Example proto definitions based (loosely) on [OpenAPI (V2) Petstore](https://petstore.swagger.io/#/)
 - [Cargo workspace](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html) for multiple crates
 - Configuration from file and/or environment variables using [config](https://github.com/mehcode/config-rs)
@@ -66,7 +67,7 @@ Open the client playground at <http://localhost:1234>
 How to use this repository as a template
 
 - Clone this repository
-- Find and replace `petshop` and `Petshop` to rename outputs
+- Find and replace `petshop`, `Petshop` and `mojzu` to rename outputs
 - Change `LICENCE` file
 
 How to change the API
@@ -94,6 +95,9 @@ cargo make dev-client-playground
 
 # Run integration test in development mode
 cargo make dev-integration-test
+
+# Set version numbers
+cargo make dist-version $VERSION
 ```
 
 These labels are used in the source code

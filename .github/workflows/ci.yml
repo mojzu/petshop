@@ -14,6 +14,9 @@ on:
 
 env:
   CLICOLOR_FORCE: 1
+  # FIXME: Need version number when one can't be found in git tag
+  # Should this be changed by the dist-version task too?
+  CURRENT_VERSION: "0.1.0"
 
 jobs:
   rust-ci:
@@ -80,6 +83,39 @@ jobs:
           command: install
           args: --debug cargo-make
 
+      - name: Set Version
+        run: |
+          # Strip git ref prefix from ref
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+          # Default build version
+          BUILD_VERSION=$VERSION
+
+          # Build version from current version, ref and run number for latest
+          [ "$VERSION" == "main" ] && BUILD_VERSION=${CURRENT_VERSION}-latest.${GITHUB_RUN_NUMBER}
+
+          # Default docker version
+          DOCKER_VERSION=$VERSION
+
+          # Use Docker `latest` tag convention
+          [ "$VERSION" == "main" ] && DOCKER_VERSION=latest
+
+          # Default NPM publish tag
+          PUBLISH_TAG=latest
+
+          # Use NPM `next` tag convention
+          [ "$VERSION" == "main" ] && PUBLISH_TAG=next
+
+          echo BUILD_VERSION=$BUILD_VERSION
+          echo DOCKER_VERSION=$DOCKER_VERSION
+          echo PUBLISH_TAG=$PUBLISH_TAG
+
+          # Apply build version
+          cargo make dist-version $BUILD_VERSION
+
       - name: Run CI
         run: |
           cargo make compose-ci run sut
@@ -90,25 +126,33 @@ jobs:
         run: |
           cargo make dist-ci-build
 
-      - name: Push Images
+      - name: Setup GitHub Packages
         if: github.event_name == 'push'
         run: |
           # Github packages login
           echo "${{ secrets.CR_PAT }}" | docker login ghcr.io -u mojzu --password-stdin
 
-          # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+      - name: Push Images
+        if: github.event_name == 'push'
+        run: |
+          echo IMAGE=ghcr.io/mojzu/petshop-envoy:$DOCKER_VERSION
+          docker tag petshop/envoy:latest ghcr.io/mojzu/petshop-envoy:$DOCKER_VERSION
+          docker push ghcr.io/mojzu/petshop-envoy:$DOCKER_VERSION
 
-          # Strip "v" prefix from tag name
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          echo IMAGE=ghcr.io/mojzu/petshop-server:$DOCKER_VERSION
+          docker tag petshop/server:latest ghcr.io/mojzu/petshop-server:$DOCKER_VERSION
+          docker push ghcr.io/mojzu/petshop-server:$DOCKER_VERSION
 
-          # Use Docker `latest` tag convention
-          [ "$VERSION" == "main" ] && VERSION=latest
+      - name: Setup Node
+        if: github.event_name == 'push'
+        uses: actions/setup-node@v2
+        with:
+          node-version: "15.x"
+          registry-url: "https://npm.pkg.github.com"
 
-          echo IMAGE=ghcr.io/mojzu/petshop-envoy:$VERSION
-          docker tag petshop/envoy:latest ghcr.io/mojzu/petshop-envoy:$VERSION
-          docker push ghcr.io/mojzu/petshop-envoy:$VERSION
-
-          echo IMAGE=ghcr.io/mojzu/petshop-server:$VERSION
-          docker tag petshop/server:latest ghcr.io/mojzu/petshop-server:$VERSION
-          docker push ghcr.io/mojzu/petshop-server:$VERSION
+      - name: Publish Package
+        if: github.event_name == 'push'
+        env:
+          NODE_AUTH_TOKEN: "${{ secrets.CR_PAT }}"
+        run: |
+          cargo make clients-publish $PUBLISH_TAG
