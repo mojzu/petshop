@@ -61,7 +61,7 @@ jobs:
 
   docker-ci:
     name: Docker CI
-    # needs: rust-ci
+    needs: rust-ci
     runs-on: ubuntu-latest
 
     steps:
