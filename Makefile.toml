@@ -32,12 +32,18 @@ echo Building petshop/rust-cache:latest
 docker build --tag petshop/rust-cache:latest --file docker/rust-cache.dockerfile .
 '''
 
+# FIXME: BUILD_VERSION is used here for consistency with the server image,
+# it might make more sense to remove it and use the envoy version
 [tasks.docker-build-envoy]
 category = "Petshop"
 workspace = false
 script = '''
 echo Building petshop/envoy:latest
-docker build --tag petshop/envoy:latest --file docker/envoy.dockerfile .
+docker build --tag petshop/envoy:latest \
+    --label org.opencontainers.image.version="${BUILD_VERSION}" \
+    --label org.opencontainers.image.created="$(date --rfc-3339=seconds --utc)" \
+    --label org.opencontainers.image.revision="$(git rev-parse HEAD)" \
+    --file docker/envoy.dockerfile .
 docker build --tag petshop/envoy-compose:latest --file docker/envoy-compose.dockerfile .
 '''
 
@@ -73,12 +79,18 @@ echo Building petshop/prometheus-compose:latest
 docker build --tag petshop/prometheus-compose:latest --file docker/prometheus-compose.dockerfile .
 '''
 
+# FIXME: BUILD_VERSION is empty when building for development, but is defined
+# when running in the GitHub CI action
 [tasks.docker-build-server]
 category = "Petshop"
 workspace = false
 script = '''
 echo Building petshop/server:latest
-docker build --tag petshop/server:latest --file docker/server.dockerfile .
+docker build --tag petshop/server:latest \
+    --label org.opencontainers.image.version="${BUILD_VERSION}" \
+    --label org.opencontainers.image.created="$(date --rfc-3339=seconds --utc)" \
+    --label org.opencontainers.image.revision="$(git rev-parse HEAD)" \
+    --file docker/server.dockerfile .
 '''
 
 [tasks.docker-build-tools]

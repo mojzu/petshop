@@ -6,10 +6,19 @@ FROM envoyproxy/envoy-alpine:v1.17.1
 RUN mkdir -p /config
 WORKDIR /config
 
+# Copy default configuration and protobuf definition file
 COPY ./docker/envoy/envoy.yml /config/envoy.yaml
 COPY ./dist/data /data
 
-LABEL org.opencontainers.image.source https://github.com/mojzu/petshop
+# Add opencontainers annotations
+#
+# created, revision, source and version are added by Makefile.toml tasks
+# <https://github.com/opencontainers/image-spec/blob/master/annotations.md>
+LABEL org.opencontainers.image.title "Petshop Envoy"
+LABEL org.opencontainers.image.authors "Sam Ward <mail@mojzu.net>"
+LABEL org.opencontainers.image.url "https://github.com/mojzu/petshop"
+LABEL org.opencontainers.image.documentation "https://github.com/mojzu/petshop"
+LABEL org.opencontainers.image.source "https://github.com/mojzu/petshop"
 
 CMD ["envoy", "-c", "/config/envoy.yaml"]
 
