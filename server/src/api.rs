@@ -284,7 +284,10 @@ impl Petshop for Api {
     }
 
     #[tracing::instrument(skip(self))]
-    async fn pet_find_by_tag(&self, _request: Request<FindByTag>) -> Result<Response<Pets>, Status> {
+    async fn pet_find_by_tag(
+        &self,
+        _request: Request<FindByTag>,
+    ) -> Result<Response<Pets>, Status> {
         info!("pet_find_by_tag request");
         let pet = Pet {
             id: 1,
