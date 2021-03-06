@@ -24,6 +24,7 @@ Template for Rust API server with gRPC and OpenAPI (V2) interfaces
 -   Postgres connection pool with [Deadpool](https://github.com/bikeshedder/deadpool) and [tokio-postgres](https://crates.io/crates/tokio-postgres)
 -   [Prometheus metrics](https://prometheus.io/) endpoint
 -   [Kubernetes liveness and readiness](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/) endpoints
+-   Changelog placeholder file based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 -   Authentication example with [OAuth2 Proxy](https://oauth2-proxy.github.io/oauth2-proxy/) and [Envoy External Authorization](https://www.envoyproxy.io/docs/envoy/latest/api-v2/config/filter/http/ext_authz/v2/ext_authz.proto)
 -   [TechEmpower Benchmark Framework](https://www.techempower.com/benchmarks/) example ([2021-03-04 results](https://www.techempower.com/benchmarks/#section=test&shareid=e8cbd6d2-802d-4e44-9537-d6328dff022f))
 
