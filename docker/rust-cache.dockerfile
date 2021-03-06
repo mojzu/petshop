@@ -9,6 +9,10 @@ RUN apk add --no-cache musl-dev protoc \
 RUN mkdir -p /build
 WORKDIR /build
 
+# FIXME: Removed `RUSTFLAGS="-C target-cpu=native"` from cargo build
+# Otherwise docker images may fail to run on some architectures (illegal instruction)
+# May be useful in some cases where the target cpu is known
+
 # Vendor and build minimum dependencies to avoid recompilation
 # If more crates are added they should be added here too
 RUN cargo new --lib proto \
@@ -19,8 +23,8 @@ COPY ./proto/Cargo.toml /build/proto/Cargo.toml
 COPY ./server/Cargo.toml /build/server/Cargo.toml
 RUN mkdir .cargo \
     && cargo vendor > .cargo/config \
-    && RUSTFLAGS="-C target-cpu=native" cargo build --release
+    && cargo build --release
 
 COPY ./proto /build/proto
 COPY ./server /build/server
-RUN RUSTFLAGS="-C target-cpu=native" cargo build --release
+RUN cargo build --release
