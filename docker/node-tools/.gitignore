@@ -8,4 +8,5 @@
 /clients/axios
 /clients/grpc-web
 /clients/ng
+/clients/api.swagger.json
 /**/*.tgz

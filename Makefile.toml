@@ -162,13 +162,14 @@ description = "Generate protobuf descriptor file"
 category = "Petshop"
 workspace = false
 script = '''
-echo Generating protobuf descriptor set dist/api.pb
-mkdir -p ./dist
+echo Generating protobuf descriptor set dist/data/api.pb
+mkdir -p ./dist/data
 cargo make go-tools-run -- protoc -I/usr/local/include -I/go/src -I/src/proto/proto \
     --include_imports --include_source_info \
-    --descriptor_set_out=/src/dist/api.pb /src/proto/proto/api.proto /src/proto/proto/health.proto
+    --descriptor_set_out=/src/dist/data/api.pb /src/proto/proto/api.proto /src/proto/proto/health.proto
+
 rm -rf ./examples/tfb/api.pb
-cp ./dist/api.pb ./examples/tfb/api.pb
+cp ./dist/data/api.pb ./examples/tfb/api.pb
 '''
 
 [tasks.generate-protoc-openapi]
@@ -176,11 +177,14 @@ description = "Generate openapi definition file"
 category = "Petshop"
 workspace = false
 script = '''
-echo Generating openapi v2 specification dist/api.swagger.json
-mkdir -p ./dist
+echo Generating openapi v2 specification dist/data/api.swagger.json
+mkdir -p ./dist/data
 cargo make go-tools-run -- protoc -I/usr/local/include -I/go/src -I/src/proto/proto \
-    --openapiv2_out /src/dist --openapiv2_opt \
+    --openapiv2_out /src/dist/data --openapiv2_opt \
     logtostderr=true /src/proto/proto/api.proto
+
+rm -rf ./docker/node-tools/clients/api.swagger.json
+cp ./dist/data/api.swagger.json ./docker/node-tools/clients/api.swagger.json
 '''
 
 [tasks.generate-axios-client]
@@ -194,7 +198,7 @@ mkdir -p ./dist/axios
 # DEPEND: docker pull openapitools/openapi-generator-cli:v5.0.1
 # <https://hub.docker.com/r/openapitools/openapi-generator-cli>
 docker run --rm -v "$(pwd):/workspace" --user "$(id -u):$(id -g)" openapitools/openapi-generator-cli:v5.0.1 \
-    generate -i /workspace/dist/api.swagger.json \
+    generate -i /workspace/dist/data/api.swagger.json \
     -g typescript-axios \
     -o /workspace/dist/axios
 (cd ./dist/axios \
@@ -235,7 +239,7 @@ script = '''
 echo Generating ng client dist/ng
 rm -rf ./dist/ng
 mkdir -p ./dist/ng
-cargo make node-tools-run -- ng-swagger-gen -i /home/node/api.swagger.json -o /home/node/dist/ng
+cargo make node-tools-run -- ng-swagger-gen -i /home/node/dist/data/api.swagger.json -o /home/node/dist/ng
 mkdir -p ./docker/node-tools/clients
 rm -rf ./docker/node-tools/clients/ng
 cp -r ./dist/ng ./docker/node-tools/clients/ng
@@ -432,7 +436,10 @@ description = "Clean generated outputs"
 category = "Petshop"
 workspace = false
 script = '''
-rm -rf ./dist ./docker/node-tools/clients/grpc-web ./docker/node-tools/clients/axios
+rm -rf ./dist \
+    ./docker/node-tools/clients/grpc-web \
+    ./docker/node-tools/clients/axios \
+    ./docker/node-tools/clients/ng
 '''
 
 [tasks.dist-version]

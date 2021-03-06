@@ -13,9 +13,6 @@ COPY ./docker/node-tools/package-lock.json /home/node/package-lock.json
 WORKDIR /home/node
 RUN npm i
 
-# Copy openapi specification
-COPY ./dist/api.swagger.json /home/node/api.swagger.json
-
 # Copy source files
 COPY ./docker/node-tools /home/node
 

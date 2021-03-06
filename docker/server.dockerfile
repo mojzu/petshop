@@ -23,6 +23,8 @@ EXPOSE 5501
 RUN addgroup -S petshop && adduser -S petshop -G petshop
 USER petshop:petshop
 
+# TODO: Add other annotations here or on docker build using --label?
+# <https://github.com/opencontainers/image-spec/blob/master/annotations.md>
 LABEL org.opencontainers.image.source https://github.com/mojzu/petshop
 
 CMD ["petshop_server", "-c", "/config/config.toml"]

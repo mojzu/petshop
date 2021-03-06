@@ -7,7 +7,7 @@ RUN mkdir -p /config
 WORKDIR /config
 
 COPY ./docker/envoy/envoy.yml /config/envoy.yaml
-COPY ./dist/api.pb /data/api.pb
+COPY ./dist/data /data
 
 LABEL org.opencontainers.image.source https://github.com/mojzu/petshop
 
