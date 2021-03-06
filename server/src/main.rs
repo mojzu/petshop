@@ -145,7 +145,7 @@ async fn shutdown_signal(mut shutdown: broadcast::Receiver<bool>) {
     info!("received shutdown signal ({})", sig);
 }
 
-// TODO: Running in k8s/nomad examples?
+// TODO: Running in k8s examples?
 // TODO: OAuth2-proxy multiple provider support, html templates? (metrics support after next release)
 // TODO: Envoy MTLS authentication example(s), other options for auth?
 

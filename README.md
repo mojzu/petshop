@@ -103,8 +103,16 @@ cargo make dist-version $VERSION
 git tag v$VERSION
 ```
 
+Release checklist
+
+-   [ ] Set version number using `cargo make dist-version`
+-   [ ] Update `CHANGELOG.md` file
+-   [ ] Commit changes and tag in format `vX.Y.Z`
+-   [ ] Push changes and tags to main branch
+-   [ ] Delete old package versions on GitHub
+
 These labels are used in the source code
 
--   `TODO: ...` Something to fix/feature to add/ideas/etc.
--   `FIXME: ...` Something that has been fixed in an unintuitive way/may require manual intervention
--   `DEPEND: ...` A project dependency that needs updating occasionally
+-   `TODO`: Something to fix/feature to add/ideas/etc.
+-   `FIXME`: Something that has been fixed in an unintuitive way/may require manual intervention
+-   `DEPEND`: A project dependency that needs updating occasionally

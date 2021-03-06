@@ -1,6 +1,6 @@
 # tfb
 
-- <https://github.com/TechEmpower/FrameworkBenchmarks>
+-   <https://github.com/TechEmpower/FrameworkBenchmarks>
 
 ```shell
 cargo make dist-build

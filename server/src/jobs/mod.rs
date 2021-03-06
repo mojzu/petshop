@@ -2,7 +2,7 @@
 //!
 //! An example using cron to run jobs can be found in examples/cron
 //!
-//! TODO: Example integration with k8s/nomad/systemd/etc?
+//! TODO: Example integration with k8s
 use crate::internal::*;
 
 /// Jobs
