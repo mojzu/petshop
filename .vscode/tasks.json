@@ -123,6 +123,27 @@
       "problemMatcher": []
     },
     {
+      "label": "examples - cron - build",
+      "detail": "Run cron example docker-compose build",
+      "type": "shell",
+      "command": "(cd examples/cron && docker-compose build)",
+      "problemMatcher": []
+    },
+    {
+      "label": "examples - cron - up",
+      "detail": "Run cron example docker-compose up",
+      "type": "shell",
+      "command": "(cd examples/cron && docker-compose up)",
+      "problemMatcher": []
+    },
+    {
+      "label": "examples - cron - down",
+      "detail": "Run cron example docker-compose down",
+      "type": "shell",
+      "command": "(cd examples/cron && docker-compose down)",
+      "problemMatcher": []
+    },
+    {
       "label": "examples - tfb - up",
       "detail": "Run tfb example docker-compose up",
       "type": "shell",

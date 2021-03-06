@@ -1,0 +1,14 @@
+version: "3"
+services:
+  # Cron service
+  cron:
+    build:
+      context: .
+      dockerfile: cron.dockerfile
+    image: petshop-cron/cron:latest
+
+  # Postgres service
+  postgres:
+    image: postgres:13.2-alpine
+    environment:
+      POSTGRES_PASSWORD: "postgres"

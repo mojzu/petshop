@@ -12,6 +12,7 @@ git clone https://github.com/TechEmpower/FrameworkBenchmarks.git
 # Start server service in background
 cd examples/tfb
 docker-compose up
+docker-compose down
 
 # Verify and run TFB tests
 cd FrameworkBenchmarks

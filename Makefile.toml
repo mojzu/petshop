@@ -332,7 +332,7 @@ cargo run --bin petshop_server -- ${@}
 '''
 
 [tasks.dev-job]
-description = "Build and run server"
+description = "Build and run job"
 category = "Petshop"
 workspace = false
 script = '''
@@ -418,6 +418,7 @@ docker image rm -f \
     petshop-auth/client-oauth2-proxy:latest \
     petshop-auth/envoy:latest \
     petshop-auth/server-oauth2-proxy:latest \
+    petshop-cron/cron:latest \
     petshop/client-playground:latest \
     petshop/integration-test:latest \
     petshop/envoy:latest \

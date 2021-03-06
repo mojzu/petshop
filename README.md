@@ -19,13 +19,14 @@ Template for Rust API server with gRPC and OpenAPI (V2) interfaces
 -   Example proto definitions based (loosely) on [OpenAPI (V2) Petstore](https://petstore.swagger.io/#/)
 -   [Cargo workspace](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html) for multiple crates
 -   Configuration from file and/or environment variables using [config](https://github.com/mehcode/config-rs)
--   Logs and panic output to `stderr` are optionally formatted as single line JSON objects with [tracing](https://tracing.rs/tracing/)
+-   Logs and panic output to `stderr` optionally formatted as single line JSON objects with [tracing](https://tracing.rs/tracing/)
 -   Request validation with [validator](https://github.com/Keats/validator)
 -   Postgres connection pool with [Deadpool](https://github.com/bikeshedder/deadpool) and [tokio-postgres](https://crates.io/crates/tokio-postgres)
 -   [Prometheus metrics](https://prometheus.io/) endpoint
 -   [Kubernetes liveness and readiness](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/) endpoints
 -   Changelog placeholder file based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 -   Authentication example with [OAuth2 Proxy](https://oauth2-proxy.github.io/oauth2-proxy/) and [Envoy External Authorization](https://www.envoyproxy.io/docs/envoy/latest/api-v2/config/filter/http/ext_authz/v2/ext_authz.proto)
+-   Cron example to run periodic jobs for the server
 -   [TechEmpower Benchmark Framework](https://www.techempower.com/benchmarks/) example ([2021-03-04 results](https://www.techempower.com/benchmarks/#section=test&shareid=e8cbd6d2-802d-4e44-9537-d6328dff022f))
 
 ## Quickstart
