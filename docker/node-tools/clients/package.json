@@ -1,6 +1,6 @@
 {
   "name": "@mojzu/petshop-clients",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Petshop generated clients",
   "main": "./axios/index.js",
   "typings": "./axios/index.d.ts",
