@@ -7,6 +7,7 @@
 /clients/node_modules
 /clients/axios
 /clients/grpc-web
-/clients/ng
+/clients/ng-swagger
+/clients/ngx-grpc
 /clients/api.swagger.json
 /**/*.tgz

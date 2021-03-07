@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+-   Add generated ngx-grpc client to package
+-   Add release checklist to README
+-   Add opencontainers more opencontainers annotations to output server and envoy images
+
 ## [0.2.2] - 2021-03-06
 
 -   Include generated `api.swagger.json` file in clients package

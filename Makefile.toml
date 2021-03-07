@@ -133,6 +133,7 @@ echo Running petshop/node-tools:latest
 docker run --rm -v "$(pwd)/docker/node-tools/client-playground:/home/node/client-playground" \
     -v "$(pwd)/docker/node-tools/integration-test:/home/node/integration-test" \
     -v "$(pwd)/dist:/home/node/dist" \
+    -v "$(pwd)/proto/proto:/home/node/proto" \
     --user "$(id -u):$(id -g)" petshop/node-tools:latest ${@}
 '''
 
@@ -155,6 +156,8 @@ script = '''
 echo Running petshop/node-tools:latest
 docker run --rm -it -v "$(pwd)/docker/node-tools/client-playground:/home/node/client-playground" \
     -v "$(pwd)/docker/node-tools/integration-test:/home/node/integration-test" \
+    -v "$(pwd)/dist:/home/node/dist" \
+    -v "$(pwd)/proto/proto:/home/node/proto" \
     --user "$(id -u):$(id -g)" --network=host petshop/node-tools:latest ${@}
 '''
 
@@ -243,18 +246,41 @@ rm -rf ./docker/node-tools/clients/grpc-web
 cp -r ./dist/grpc-web ./docker/node-tools/clients/grpc-web
 '''
 
-[tasks.generate-ng-client]
+[tasks.generate-ng-swagger-client]
 description = "Generate angular client"
 category = "Petshop"
 workspace = false
 script = '''
-echo Generating ng client dist/ng
-rm -rf ./dist/ng
-mkdir -p ./dist/ng
-cargo make node-tools-run -- ng-swagger-gen -i /home/node/dist/data/api.swagger.json -o /home/node/dist/ng
+echo Generating ng client dist/ng-swagger
+rm -rf ./dist/ng-swagger
+mkdir -p ./dist/ng-swagger
+cargo make node-tools-run -- ng-swagger-gen -i /home/node/dist/data/api.swagger.json -o /home/node/dist/ng-swagger
+
 mkdir -p ./docker/node-tools/clients
-rm -rf ./docker/node-tools/clients/ng
-cp -r ./dist/ng ./docker/node-tools/clients/ng
+rm -rf ./docker/node-tools/clients/ng-swagger
+cp -r ./dist/ng-swagger ./docker/node-tools/clients/ng-swagger
+'''
+
+# FIXME: Prepends @ts-nocheck to file that causes tsc errors but is
+# not used in the outputs so safe to ignore (openapiv2 annotations)
+[tasks.generate-ngx-grpc-client]
+description = "Generate angular client"
+category = "Petshop"
+workspace = false
+script = '''
+echo Generating ng client dist/ngx-grpc
+rm -rf ./dist/ngx-grpc
+mkdir -p ./dist/ngx-grpc
+cargo make node-tools-run -- protoc -I/usr/local/include -I/home/node/proto \
+    --plugin=protoc-gen-ng=/usr/local/bin/protoc-gen-ng \
+    --ng_out=/home/node/dist/ngx-grpc /home/node/proto/api.proto
+
+echo "// @ts-nocheck" | cat - ./dist/ngx-grpc/protoc-gen-openapiv2/options/openapiv2.pb.ts > /tmp/out \
+    && mv /tmp/out ./dist/ngx-grpc/protoc-gen-openapiv2/options/openapiv2.pb.ts
+
+mkdir -p ./docker/node-tools/clients
+rm -rf ./docker/node-tools/clients/ngx-grpc
+cp -r ./dist/ngx-grpc ./docker/node-tools/clients/ngx-grpc
 '''
 
 [tasks.generate-envoy-flow]
@@ -275,7 +301,8 @@ dependencies = [
     "docker-build-node-tools",
     "generate-axios-client",
     "generate-grpc-web-client",
-    "generate-ng-client"
+    "generate-ng-swagger-client",
+    "generate-ngx-grpc-client"
 ]
 
 [tasks.generate-client-flow]
@@ -452,7 +479,8 @@ script = '''
 rm -rf ./dist \
     ./docker/node-tools/clients/grpc-web \
     ./docker/node-tools/clients/axios \
-    ./docker/node-tools/clients/ng
+    ./docker/node-tools/clients/ng-swagger \
+    ./docker/node-tools/clients/ngx-grpc
 '''
 
 [tasks.dist-version]

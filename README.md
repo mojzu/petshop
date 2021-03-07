@@ -11,7 +11,7 @@ Template for Rust API server with gRPC and OpenAPI (V2) interfaces
 -   Envoy proxy with [gRPC-JSON transcoder](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/grpc_json_transcoder_filter)
 -   Builds [Docker](https://docs.docker.com/reference/) images for gRPC server and Envoy proxy based on [Alpine Linux](https://alpinelinux.org/)
 -   [Generated OpenAPI (V2) definitions](https://github.com/grpc-ecosystem/grpc-gateway) from gRPC `.proto` files
--   Generated TypeScript [axios](https://github.com/axios/axios), [gRPC Web](https://github.com/grpc/grpc-web) and [Angular](https://github.com/cyclosproject/ng-swagger-gen) clients
+-   Generated TypeScript [axios](https://github.com/axios/axios), [gRPC Web](https://github.com/grpc/grpc-web), [Angular OpenAPI](https://github.com/cyclosproject/ng-swagger-gen) and [Angular gRPC](https://github.com/ngx-grpc/ngx-grpc) clients
 -   Client playground for browser with [Parcel](https://v2.parceljs.org/)
 -   Integration tests with [Jasmine](https://jasmine.github.io/)
 -   Continuous integration using [GitHub Actions](https://github.com/features/actions) and [cargo-make](https://github.com/sagiegurari/cargo-make)
