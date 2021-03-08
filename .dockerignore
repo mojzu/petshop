@@ -5,4 +5,3 @@
 /docker/node-tools/.cache
 /docker/node-tools/.parcel-cache
 /docker/node-tools/node_modules
-/docker/node-tools/clients/node_modules

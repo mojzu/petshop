@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Add generated ngx-grpc client to package
 -   Add release checklist to README
 -   Add opencontainers more opencontainers annotations to output server and envoy images
+-   Remove clients package, copying the generated files would work better/be less complex
 
 ## [0.2.2] - 2021-03-06
 

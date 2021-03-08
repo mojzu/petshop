@@ -3,11 +3,4 @@
 /.parcel-cache
 /dist
 /node_modules
-
-/clients/node_modules
-/clients/axios
-/clients/grpc-web
-/clients/ng-swagger
-/clients/ngx-grpc
-/clients/api.swagger.json
-/**/*.tgz
+/clients

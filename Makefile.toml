@@ -197,9 +197,6 @@ mkdir -p ./dist/data
 cargo make go-tools-run -- protoc -I/usr/local/include -I/go/src -I/src/proto/proto \
     --openapiv2_out /src/dist/data --openapiv2_opt \
     logtostderr=true /src/proto/proto/api.proto
-
-rm -rf ./docker/node-tools/clients/api.swagger.json
-cp ./dist/data/api.swagger.json ./docker/node-tools/clients/api.swagger.json
 '''
 
 [tasks.generate-axios-client]
@@ -255,10 +252,6 @@ echo Generating ng client dist/ng-swagger
 rm -rf ./dist/ng-swagger
 mkdir -p ./dist/ng-swagger
 cargo make node-tools-run -- ng-swagger-gen -i /home/node/dist/data/api.swagger.json -o /home/node/dist/ng-swagger
-
-mkdir -p ./docker/node-tools/clients
-rm -rf ./docker/node-tools/clients/ng-swagger
-cp -r ./dist/ng-swagger ./docker/node-tools/clients/ng-swagger
 '''
 
 # FIXME: Prepends @ts-nocheck to file that causes tsc errors but is
@@ -277,10 +270,6 @@ cargo make node-tools-run -- protoc -I/usr/local/include -I/home/node/proto \
 
 echo "// @ts-nocheck" | cat - ./dist/ngx-grpc/protoc-gen-openapiv2/options/openapiv2.pb.ts > /tmp/out \
     && mv /tmp/out ./dist/ngx-grpc/protoc-gen-openapiv2/options/openapiv2.pb.ts
-
-mkdir -p ./docker/node-tools/clients
-rm -rf ./docker/node-tools/clients/ngx-grpc
-cp -r ./dist/ngx-grpc ./docker/node-tools/clients/ngx-grpc
 '''
 
 [tasks.generate-envoy-flow]
@@ -475,12 +464,11 @@ docker image rm -f \
 description = "Clean generated outputs"
 category = "Petshop"
 workspace = false
+dependencies = [
+    "clean"
+]
 script = '''
-rm -rf ./dist \
-    ./docker/node-tools/clients/grpc-web \
-    ./docker/node-tools/clients/axios \
-    ./docker/node-tools/clients/ng-swagger \
-    ./docker/node-tools/clients/ngx-grpc
+rm -rf ./dist
 '''
 
 [tasks.dist-version]
@@ -492,7 +480,6 @@ echo Setting version to ${@}
 export VERSION=${@}
 sed -i -e "s/^version = .*/version = \"${VERSION}\"/" proto/Cargo.toml
 sed -i -e "s/^version = .*/version = \"${VERSION}\"/" server/Cargo.toml
-(cd docker/node-tools/clients && npm version --allow-same-version ${VERSION})
 sed -i -e "s/^  CURRENT_VERSION: .*/  CURRENT_VERSION: \"${VERSION}\"/" .github/workflows/ci.yml
 '''
 
@@ -517,26 +504,6 @@ dependencies = [
     "generate-envoy-flow",
     "generate-client-flow-pre"
 ]
-
-# Clients package tasks
-
-[tasks.clients]
-description = "Clients package npm wrapper"
-category = "Petshop"
-workspace = false
-script = '''
-(cd docker/node-tools/clients && npm ${@})
-'''
-
-[tasks.clients-publish]
-description = "Clients publish latest package with tag"
-category = "Petshop"
-workspace = false
-script = '''
-(cd docker/node-tools/clients \
-    && npm install \
-    && npm publish --tag ${@})
-'''
 
 # Default tasks
 

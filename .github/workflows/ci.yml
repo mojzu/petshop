@@ -101,15 +101,8 @@ jobs:
           # Use Docker `latest` tag convention
           [ "$VERSION" == "main" ] && DOCKER_VERSION=latest
 
-          # Default NPM publish tag
-          PUBLISH_TAG=latest
-
-          # Use NPM `next` tag convention
-          [ "$VERSION" == "main" ] && PUBLISH_TAG=next
-
           echo BUILD_VERSION=$BUILD_VERSION
           echo DOCKER_VERSION=$DOCKER_VERSION
-          echo PUBLISH_TAG=$PUBLISH_TAG
 
           # Apply build version
           cargo make dist-version $BUILD_VERSION
@@ -117,7 +110,6 @@ jobs:
           # Save versions to environment
           echo "BUILD_VERSION=$BUILD_VERSION" >> $GITHUB_ENV
           echo "DOCKER_VERSION=$DOCKER_VERSION" >> $GITHUB_ENV
-          echo "PUBLISH_TAG=$PUBLISH_TAG" >> $GITHUB_ENV
 
       - name: Run CI
         run: |
@@ -145,18 +137,3 @@ jobs:
           echo IMAGE=ghcr.io/mojzu/petshop-server:${{ env.DOCKER_VERSION }}
           docker tag petshop/server:latest ghcr.io/mojzu/petshop-server:${{ env.DOCKER_VERSION }}
           docker push ghcr.io/mojzu/petshop-server:${{ env.DOCKER_VERSION }}
-
-      - name: Setup Node
-        if: github.event_name == 'push'
-        uses: actions/setup-node@v2
-        with:
-          # DEPEND: Update node version here
-          node-version: "15.x"
-          registry-url: "https://npm.pkg.github.com"
-
-      - name: Publish Package
-        if: github.event_name == 'push'
-        env:
-          NODE_AUTH_TOKEN: "${{ secrets.CR_PAT }}"
-        run: |
-          cargo make clients-publish ${{ env.PUBLISH_TAG }}
