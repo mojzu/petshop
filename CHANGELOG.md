@@ -10,8 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Add ngx-grpc client generation
 -   Add release checklist to README
 -   Add more opencontainers annotations to output server and envoy images
--   Remove clients package, copying the generated files would work better/be less complex
+-   Remove clients package, copying the generated files would work better/be less complex. Planning to replace this with an archive of client source files for each tag
 -   Add `ghcr` example
+-   Fix `tracing::instrument` not working in tonic async trait
 
 ## [0.2.2] - 2021-03-06
 

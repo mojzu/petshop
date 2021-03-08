@@ -137,3 +137,5 @@ jobs:
           echo IMAGE=ghcr.io/mojzu/petshop-server:${{ env.DOCKER_VERSION }}
           docker tag petshop/server:latest ghcr.io/mojzu/petshop-server:${{ env.DOCKER_VERSION }}
           docker push ghcr.io/mojzu/petshop-server:${{ env.DOCKER_VERSION }}
+
+# TODO: Build archive of client source files and upload as release
