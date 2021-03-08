@@ -144,6 +144,20 @@
       "problemMatcher": []
     },
     {
+      "label": "examples - ghcr - up",
+      "detail": "Run ghcr example docker-compose up",
+      "type": "shell",
+      "command": "(cd examples/ghcr && docker-compose up)",
+      "problemMatcher": []
+    },
+    {
+      "label": "examples - ghcr - down",
+      "detail": "Run ghcr example docker-compose down",
+      "type": "shell",
+      "command": "(cd examples/ghcr && docker-compose down)",
+      "problemMatcher": []
+    },
+    {
       "label": "examples - tfb - up",
       "detail": "Run tfb example docker-compose up",
       "type": "shell",

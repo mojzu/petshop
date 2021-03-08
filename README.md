@@ -15,7 +15,7 @@ Template for Rust API server with gRPC and OpenAPI (V2) interfaces
 -   Client playground for browser with [Parcel](https://v2.parceljs.org/)
 -   Integration tests with [Jasmine](https://jasmine.github.io/)
 -   Continuous integration using [GitHub Actions](https://github.com/features/actions) and [cargo-make](https://github.com/sagiegurari/cargo-make)
--   Docker image and Node.js package publishing to [GitHub Packages](https://github.com/features/packages)
+-   Docker image publishing to [GitHub Packages](https://github.com/features/packages)
 -   Example proto definitions based (loosely) on [OpenAPI (V2) Petstore](https://petstore.swagger.io/#/)
 -   [Cargo workspace](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html) for multiple crates
 -   Configuration from file and/or environment variables using [config](https://github.com/mehcode/config-rs)
@@ -27,6 +27,7 @@ Template for Rust API server with gRPC and OpenAPI (V2) interfaces
 -   Changelog placeholder file based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 -   Authentication example with [OAuth2 Proxy](https://oauth2-proxy.github.io/oauth2-proxy/) and [Envoy External Authorization](https://www.envoyproxy.io/docs/envoy/latest/api-v2/config/filter/http/ext_authz/v2/ext_authz.proto)
 -   Cron example to run periodic jobs for the server
+-   [GitHub Container Registry](https://docs.github.com/en/packages/guides/about-github-container-registry) example to use published images
 -   [TechEmpower Benchmark Framework](https://www.techempower.com/benchmarks/) example ([2021-03-04 results](https://www.techempower.com/benchmarks/#section=test&shareid=e8cbd6d2-802d-4e44-9537-d6328dff022f))
 
 ## Quickstart

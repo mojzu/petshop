@@ -1,0 +1,19 @@
+version: "3"
+services:
+  # Envoy service
+  envoy:
+    image: ghcr.io/mojzu/petshop-envoy:latest
+    ports:
+      - 10000:10000
+    volumes:
+      - ${PWD}/envoy.yml:/config/envoy.yaml
+
+  # Server service
+  server:
+    image: ghcr.io/mojzu/petshop-server:latest
+
+  # Postgres service
+  postgres:
+    image: postgres:13.2-alpine
+    environment:
+      POSTGRES_PASSWORD: "postgres"
