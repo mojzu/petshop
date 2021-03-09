@@ -5,8 +5,6 @@ services:
     image: ghcr.io/mojzu/petshop-envoy:latest
     ports:
       - 10000:10000
-    volumes:
-      - ${PWD}/envoy.yml:/config/envoy.yaml
 
   # Server service
   server:

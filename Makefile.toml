@@ -54,7 +54,7 @@ docker build --tag petshop/envoy:latest \
     --label org.opencontainers.image.created="$(date --rfc-3339=seconds --utc)" \
     --label org.opencontainers.image.revision="$(git rev-parse HEAD)" \
     --file docker/envoy.dockerfile .
-docker build --tag petshop/envoy-compose:latest --file docker/envoy-compose.dockerfile .
+docker build --tag petshop/envoy-localhost:latest --file docker/envoy-localhost.dockerfile .
 '''
 
 [tasks.docker-build-client-playground]
@@ -85,8 +85,8 @@ docker build --tag petshop/oauth2-proxy:latest --file docker/oauth2-proxy.docker
 category = "Petshop"
 workspace = false
 script = '''
-echo Building petshop/prometheus-compose:latest
-docker build --tag petshop/prometheus-compose:latest --file docker/prometheus-compose.dockerfile .
+echo Building petshop/prometheus:latest
+docker build --tag petshop/prometheus:latest --file docker/prometheus.dockerfile .
 '''
 
 # FIXME: BUILD_VERSION is empty when building for development, but is defined
@@ -335,8 +335,8 @@ dependencies = [
     "generate-envoy-flow"
 ]
 script = '''
-echo Running petshop/envoy:latest
-docker run --rm -it --network=host petshop/envoy:latest
+echo Running petshop/envoy-localhost:latest
+docker run --rm -it --network=host petshop/envoy-localhost:latest
 '''
 
 [tasks.dev-postgres]
@@ -462,11 +462,11 @@ docker image rm -f \
     petshop/client-playground:latest \
     petshop/integration-test:latest \
     petshop/envoy:latest \
-    petshop/envoy-compose:latest \
+    petshop/envoy-localhost:latest \
     petshop/go-tools:latest \
     petshop/node-tools:latest \
     petshop/oauth2-proxy:latest \
-    petshop/prometheus-compose:latest \
+    petshop/prometheus:latest \
     petshop/rust-cache:latest \
     petshop/rust-tools:latest \
     petshop/server:latest

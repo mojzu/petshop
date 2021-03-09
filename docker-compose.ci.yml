@@ -4,8 +4,8 @@ services:
   envoy:
     build:
       context: .
-      dockerfile: ./docker/envoy-compose.dockerfile
-    image: petshop/envoy-compose:latest
+      dockerfile: ./docker/envoy.dockerfile
+    image: petshop/envoy:latest
 
   # Server service
   server:

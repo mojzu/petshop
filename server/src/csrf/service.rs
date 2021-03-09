@@ -137,13 +137,9 @@ fn x_xsrf_token_header_value(config: &CsrfConfig, req: &HyperRequest<Body>) -> O
 fn grpc_status_header_code(res: &HyperResponse<BoxBody>) -> tonic::Code {
     match res.headers().get("grpc-status") {
         Some(header) => match header.to_str() {
-            Ok(value) => {
-                match value.parse::<i32>() {
-                    Ok(value) => {
-                        tonic::Code::from_i32(value)
-                    },
-                    Err(_) => tonic::Code::Unknown,
-                }
+            Ok(value) => match value.parse::<i32>() {
+                Ok(value) => tonic::Code::from_i32(value),
+                Err(_) => tonic::Code::Unknown,
             },
             Err(_) => tonic::Code::Unknown,
         },

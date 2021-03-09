@@ -30,8 +30,8 @@ static_resources:
                         allow_origin_string_match:
                           - prefix: "*"
                         allow_methods: POST, OPTIONS
-                        allow_headers: authorization,keep-alive,user-agent,cache-control,content-type,content-transfer-encoding,x-accept-content-transfer-encoding,x-accept-response-streaming,x-user-agent,x-grpc-web,grpc-timeout
-                        expose_headers: grpc-status,grpc-message
+                        allow_headers: authorization,keep-alive,user-agent,cache-control,content-type,content-transfer-encoding,x-accept-content-transfer-encoding,x-accept-response-streaming,x-user-agent,x-grpc-web,grpc-timeout,x-xsrf-token
+                        expose_headers: grpc-status,grpc-message,x-xsrf-token
                         allow_credentials: true
                 http_filters:
                   - name: envoy.filters.http.cors

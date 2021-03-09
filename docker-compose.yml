@@ -4,8 +4,8 @@ services:
   envoy:
     build:
       context: .
-      dockerfile: ./docker/envoy-compose.dockerfile
-    image: petshop/envoy-compose:latest
+      dockerfile: ./docker/envoy.dockerfile
+    image: petshop/envoy:latest
     ports:
       - 10000:10000
       - 9901:9901
@@ -14,8 +14,8 @@ services:
   prometheus:
     build:
       context: .
-      dockerfile: ./docker/prometheus-compose.dockerfile
-    image: petshop/prometheus-compose:latest
+      dockerfile: ./docker/prometheus.dockerfile
+    image: petshop/prometheus:latest
     ports:
       - 9090:9090
 
