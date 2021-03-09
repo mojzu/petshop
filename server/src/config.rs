@@ -15,7 +15,20 @@ pub struct Config {
     pub tracing_json: bool,
     pub api_addr: SocketAddr,
     pub internal_addr: SocketAddr,
+    pub csrf: Option<CsrfConfig>,
     pub postgres: deadpool_postgres::Config,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct CsrfConfigLoad {
+    cookie_name: Option<String>,
+    cookie_domain: Option<String>,
+    cookie_path: Option<String>,
+    cookie_secure: Option<bool>,
+    cookie_samesite: Option<String>,
+    cookie_max_age_minutes: Option<i64>,
+    header_name: Option<String>,
+    token_length: Option<usize>,
 }
 
 /// Parsed Configuration
@@ -31,6 +44,7 @@ struct ConfigLoad {
     api_port: Option<u16>,
     internal_host: Option<String>,
     internal_port: Option<u16>,
+    csrf: Option<CsrfConfigLoad>,
     postgres: Option<deadpool_postgres::Config>,
 }
 
@@ -52,6 +66,53 @@ impl TryFrom<ConfigLoad> for Config {
         );
         let internal_port = Config::opt_or_default("internal_port", value.internal_port, 5501);
         let internal_addr: SocketAddr = format!("{}:{}", internal_host, internal_port).parse()?;
+
+        let csrf = if let Some(csrf) = value.csrf {
+            let cookie_name = Config::opt_or_default(
+                "csrf.cookie_name",
+                csrf.cookie_name,
+                "XSRF-TOKEN".to_string(),
+            );
+            let cookie_domain = Config::opt_or_default(
+                "csrf.cookie_domain",
+                csrf.cookie_domain,
+                "localhost".to_string(),
+            );
+            let cookie_path =
+                Config::opt_or_default("csrf.cookie_path", csrf.cookie_path, "/".to_string());
+            let cookie_secure =
+                Config::opt_or_default("csrf.cookie_secure", csrf.cookie_secure, true);
+            let cookie_samesite = Config::opt_or_default(
+                "csrf.cookie_samesite",
+                csrf.cookie_samesite,
+                "strict".to_string(),
+            );
+            let cookie_samesite = Csrf::samesite_from_string(cookie_samesite)?;
+            let cookie_max_age_minutes = Config::opt_or_default(
+                "csrf.cookie_max_age_minutes",
+                csrf.cookie_max_age_minutes,
+                1440,
+            );
+            let header_name = Config::opt_or_default(
+                "csrf.header_name",
+                csrf.header_name,
+                "X-XSRF-TOKEN".to_string(),
+            );
+            let token_length = Config::opt_or_default("csrf.token_length", csrf.token_length, 32);
+            Some(CsrfConfig {
+                cookie_name,
+                cookie_domain,
+                cookie_path,
+                cookie_secure,
+                cookie_samesite,
+                cookie_max_age_minutes,
+                header_name,
+                token_length,
+            })
+        } else {
+            println!("Config: csrf is not configured, defaulting to disabled");
+            None
+        };
 
         let mut postgres = if let Some(postgres) = value.postgres {
             postgres
@@ -79,6 +140,7 @@ impl TryFrom<ConfigLoad> for Config {
             tracing_json,
             api_addr,
             internal_addr,
+            csrf,
             postgres,
         })
     }

@@ -17,6 +17,7 @@ use tonic::{Request, Response, Status};
 #[derive(Clone)]
 pub struct Api {
     metrics: Arc<Metrics>,
+    csrf: Arc<Csrf>,
     postgres: Arc<PostgresPool>,
     shutdown: Arc<broadcast::Sender<bool>>,
 }
@@ -29,6 +30,7 @@ impl Api {
         let metrics = Arc::new(Metrics::from_config(config));
         Ok(Self {
             metrics: metrics.clone(),
+            csrf: Arc::new(Csrf::from_config(config)),
             postgres: Arc::new(PostgresPool::from_config(config, metrics)?),
             shutdown: Arc::new(shutdown_tx),
         })
@@ -36,6 +38,10 @@ impl Api {
 
     pub fn metrics(&self) -> Arc<Metrics> {
         self.metrics.clone()
+    }
+
+    pub fn csrf(&self) -> Arc<Csrf> {
+        self.csrf.clone()
     }
 
     pub fn postgres(&self) -> Arc<PostgresPool> {

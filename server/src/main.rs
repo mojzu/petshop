@@ -24,6 +24,7 @@ use tokio::sync::broadcast;
 
 mod api;
 mod config;
+mod csrf;
 mod internal;
 mod jobs;
 mod metrics;
@@ -78,15 +79,17 @@ async fn server_run(config: Config) -> Result<()> {
     // Build API service
     let petshop = Api::from_config(&config, shutdown_tx)?;
     let petshop_internal = petshop.clone();
-    let petshop_metrics_service =
-        MetricsService::wrap(petshop.metrics(), PetshopServer::new(petshop));
+    let petshop_metrics = petshop.metrics();
+    let petshop_csrf = petshop.csrf();
+    let petshop_service = MetricsService::wrap(petshop_metrics, PetshopServer::new(petshop));
+    let petshop_service = CsrfService::wrap(petshop_csrf, petshop_service);
 
     // Build and serve tonic api server
     info!("api listening on {}", config.api_addr);
     let api_server = tonic::transport::Server::builder()
         .trace_fn(|_| tracing::info_span!(NAME))
         .add_service(health_service)
-        .add_service(petshop_metrics_service)
+        .add_service(petshop_service)
         .serve_with_shutdown(config.api_addr, shutdown_signal(shutdown_rx1));
 
     // Build and serve hyper internal server
@@ -144,13 +147,3 @@ async fn shutdown_signal(mut shutdown: broadcast::Receiver<bool>) {
     };
     info!("received shutdown signal ({})", sig);
 }
-
-// TODO: Running in k8s examples?
-// TODO: OAuth2-proxy multiple provider support, html templates? (metrics support after next release)
-// TODO: Envoy MTLS authentication example(s), other options for auth?
-
-// TODO: Add examples for rust tests/examples/benches?
-// TODO: Rust docs output in dist? cargo make --no-workspace docs-flow
-// TODO: Openapi doc generator from specification?
-// TODO: Read the docs docker image for docs?
-// <https://docs.readthedocs.io/en/stable/intro/getting-started-with-sphinx.html#quick-start-video>

@@ -33,10 +33,6 @@ static_resources:
                         allow_headers: authorization,keep-alive,user-agent,cache-control,content-type,content-transfer-encoding,x-accept-content-transfer-encoding,x-accept-response-streaming,x-user-agent,x-grpc-web,grpc-timeout
                         expose_headers: grpc-status,grpc-message
                         allow_credentials: true
-                      request_headers_to_remove:
-                        # This removes the cookie before the request is passed upstream
-                        # which prevents tracing from logging it
-                        - cookie
                 http_filters:
                   - name: envoy.filters.http.cors
                   - name: envoy.filters.http.ext_authz

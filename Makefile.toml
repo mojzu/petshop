@@ -1,3 +1,13 @@
+# TODO: Running in k8s examples?
+# TODO: OAuth2-proxy multiple provider support, html templates? (metrics support after next release)
+# TODO: Envoy MTLS authentication example(s), other options for auth?
+
+# TODO: Add examples for rust tests/examples/benches?
+# TODO: Rust docs output in dist? cargo make --no-workspace docs-flow
+# TODO: Openapi doc generator from specification?
+# TODO: Read the docs docker image for docs?
+# <https://docs.readthedocs.io/en/stable/intro/getting-started-with-sphinx.html#quick-start-video>
+
 # Build docker image tasks
 
 [tasks.docker-build-go-tools]
@@ -252,6 +262,7 @@ echo Generating ng client dist/ng-swagger
 rm -rf ./dist/ng-swagger
 mkdir -p ./dist/ng-swagger
 cargo make node-tools-run -- ng-swagger-gen -i /home/node/dist/data/api.swagger.json -o /home/node/dist/ng-swagger
+cp ./docker/node-tools/ng-swagger/api-interceptor.ts ./dist/ng-swagger/api-interceptor.ts
 '''
 
 # FIXME: Prepends @ts-nocheck to file that causes tsc errors but is
@@ -344,6 +355,7 @@ CONFIG_API_HOST = "0.0.0.0"
 CONFIG_API_PORT = "5000"
 CONFIG_INTERNAL_HOST = "0.0.0.0"
 CONFIG_INTERNAL_PORT = "5501"
+CONFIG_CSRF__COOKIE_DOMAIN = "localhost"
 CONFIG_POSTGRES__USER = "postgres"
 CONFIG_POSTGRES__PASSWORD = "postgres"
 CONFIG_POSTGRES__DBNAME = "postgres"

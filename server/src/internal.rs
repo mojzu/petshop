@@ -5,6 +5,7 @@
 //! Internal HTTP server request handlers.
 pub use crate::api::Api;
 pub use crate::config::Config;
+pub use crate::csrf::{Csrf, CsrfConfig, CsrfService};
 pub use crate::jobs::Jobs;
 pub use crate::metrics::{Metrics, MetricsService};
 pub use crate::postgres::{PostgresClient, PostgresPool};
