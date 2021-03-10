@@ -66,6 +66,14 @@ service Petshop {
     };
   }
 
+  // CSRF example
+  rpc CsrfEx (google.protobuf.Empty) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/api.v1.Petshop/CsrfEx"
+      body: "*"
+    };
+  }
+
   // Server streaming example
   //
   // Bidirectional streaming is not supported in grpc-web

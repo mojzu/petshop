@@ -107,7 +107,17 @@ stream.on('end', (end) => console.log("stream end"));</code></pre>
 </div>
 
 <div class="example">
-    <h2>Example 8 - Authentication</h2>
+    <h2>Example 8 - CSRF</h2>
+    <i>Only works after CSRF token has been set (by another successful client request)</i>
+    <h3>httpClient</h3>
+    <pre><code class="language-javascript">await httpClient.petshopCsrfEx({});</code></pre>
+    <h3>grpcClient</h3>
+    <pre><code class="language-javascript">req = new Empty();
+await grpcClient.csrfEx(req);</code></pre>
+</div>
+
+<div class="example">
+    <h2>Example 9 - Authentication</h2>
     <i>This only works with the <b>auth</b> example</i>
     <h3>httpClient</h3>
     <i>Authenticates using cookie provided by oauth2-proxy</i>

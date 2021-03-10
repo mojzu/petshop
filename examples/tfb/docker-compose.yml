@@ -2,29 +2,22 @@ version: "3"
 services:
   server1:
     image: petshop/server:latest
-    environment:
-      CONFIG_POSTGRES__USER: "benchmarkdbuser"
-      CONFIG_POSTGRES__PASSWORD: "benchmarkdbpass"
-      CONFIG_POSTGRES__DBNAME: "hello_world"
-      CONFIG_POSTGRES__HOST: "tfb-database"
-      CONFIG_POSTGRES__PORT: "5432"
     ports:
       - 5000:5000
       - 5501:5501
+    volumes:
+      - ${PWD}/config.toml:/config/config.toml
 
   # server2:
   #   image: petshop/server:latest
   #   environment:
   #     CONFIG_API_PORT: 5001
   #     CONFIG_INTERNAL_PORT: 5502
-  #     CONFIG_POSTGRES__USER: "benchmarkdbuser"
-  #     CONFIG_POSTGRES__PASSWORD: "benchmarkdbpass"
-  #     CONFIG_POSTGRES__DBNAME: "hello_world"
-  #     CONFIG_POSTGRES__HOST: "tfb-database"
-  #     CONFIG_POSTGRES__PORT: "5432"
   #   ports:
   #     - 5001:5001
   #     - 5502:5502
+  #   volumes:
+  #     - ${PWD}/config.toml:/config/config.toml
 
 networks:
   default:

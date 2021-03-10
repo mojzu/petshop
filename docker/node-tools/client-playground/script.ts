@@ -34,12 +34,32 @@ window["apiHttpClient"] = new PetshopApi(
     })
 );
 
+// FIXME: Add unary interceptor to add CSRF token request header, this mimics the behaviour
+// of the axios and angular clients. It probably isn't necessary for a grpc-web client but
+// it makes CSRF handling on the server more consistent when exposing grpc and transcoded
+// json interfaces
+//
+// In production it would probably make more sense to choose either a grpc-web or http
+// client for the user interface to use, and to enable csrf protection if required
+const getCookieValue = (name) =>
+    document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)")?.pop() || "";
+const CsrfInterceptor = function () {};
+CsrfInterceptor.prototype.intercept = function (request, invoker) {
+    const xsrfToken = getCookieValue("XSRF-TOKEN");
+    if (xsrfToken != null && xsrfToken !== "") {
+        const metadata = request.getMetadata();
+        metadata["X-XSRF-TOKEN"] = xsrfToken;
+    }
+    return invoker(request);
+};
+
 window["GrpcClientClass"] = PetshopPromiseClient;
 window["grpcClient"] = new PetshopPromiseClient(
     "http://localhost:10000",
     null,
     {
         withCredentials: true,
+        unaryInterceptors: [new CsrfInterceptor()],
     }
 );
 

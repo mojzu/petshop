@@ -21,6 +21,7 @@ Template for Rust API server with gRPC and OpenAPI (V2) interfaces
 -   Configuration from file and/or environment variables using [config](https://github.com/mehcode/config-rs)
 -   Logs and panic output to `stderr` optionally formatted as single line JSON objects with [tracing](https://tracing.rs/tracing/)
 -   Request validation with [validator](https://github.com/Keats/validator)
+-   CSRF protection based on [OWASP CSRF Prevention](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html) and [Angular XSRF protection](https://angular.io/guide/http#security-xsrf-protection)
 -   Postgres connection pool with [Deadpool](https://github.com/bikeshedder/deadpool) and [tokio-postgres](https://crates.io/crates/tokio-postgres)
 -   [Prometheus metrics](https://prometheus.io/) endpoint
 -   [Kubernetes liveness and readiness](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/) endpoints

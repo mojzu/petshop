@@ -163,9 +163,20 @@ impl Petshop for Api {
     #[tracing::instrument(skip(self))]
     async fn validation_ex(&self, request: Request<User>) -> Result<Response<User>, Status> {
         info!("validation_ex request");
+
         let user = request.into_inner();
         self.validate(&user)?;
+
         Ok(Response::new(user))
+    }
+
+    #[tracing::instrument(skip(self))]
+    async fn csrf_ex(&self, request: Request<()>) -> Result<Response<()>, Status> {
+        info!("csrf_ex request");
+
+        self.csrf.request_check(&request)?;
+
+        self.csrf.response_used(Response::new(()))
     }
 
     type StreamingExStream = ReceiverStream<Result<Echo, Status>>;

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.3] - 2021-03-10
+
 -   Add ngx-grpc client generation
 -   Add release checklist to README
 -   Add more opencontainers annotations to output server and envoy images
@@ -14,7 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Add `ghcr` example
 -   Fix `tracing::instrument` not working in tonic async trait
 -   Refactor envoy images to make published images easier to use in example
--   Start CSRF module development
+-   Add CSRF module, service and example
+-   Remove `x-xsrf-token` from envoy CORS exposed headers
+-   Modify `tfb` example to disable CSRF
 
 ## [0.2.2] - 2021-03-06
 

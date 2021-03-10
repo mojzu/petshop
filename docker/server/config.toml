@@ -4,6 +4,16 @@ api_port = 5000
 internal_host = "0.0.0.0"
 internal_port = 5501
 
+[csrf]
+cookie_name = "XSRF-TOKEN"
+cookie_domain = "localhost"
+cookie_path = "/"
+cookie_secure = true
+cookie_samesite = "strict"
+cookie_max_age_minutes = 1440
+header_name = "X-XSRF-TOKEN"
+token_length = 32
+
 [postgres]
 user = "postgres"
 password = "postgres"

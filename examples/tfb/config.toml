@@ -1,0 +1,12 @@
+tracing_json = true
+api_host = "0.0.0.0"
+api_port = 5000
+internal_host = "0.0.0.0"
+internal_port = 5501
+
+[postgres]
+user = "benchmarkdbuser"
+password = "benchmarkdbpass"
+dbname = "hello_world"
+host = "tfb-database"
+port = 5432

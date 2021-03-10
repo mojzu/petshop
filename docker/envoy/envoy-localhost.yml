@@ -31,7 +31,7 @@ static_resources:
                           - prefix: "*"
                         allow_methods: POST, OPTIONS
                         allow_headers: authorization,keep-alive,user-agent,cache-control,content-type,content-transfer-encoding,x-accept-content-transfer-encoding,x-accept-response-streaming,x-user-agent,x-grpc-web,grpc-timeout,x-xsrf-token
-                        expose_headers: grpc-status,grpc-message,x-xsrf-token
+                        expose_headers: grpc-status,grpc-message
                         allow_credentials: true
                 http_filters:
                   - name: envoy.filters.http.cors
