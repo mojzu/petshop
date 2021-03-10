@@ -107,7 +107,7 @@ git tag v$VERSION
 
 Release checklist
 
--   [ ] Set version number using `cargo make dist-version`
+-   [ ] Set version number using `cargo make dist-version $VERSION`
 -   [ ] Update `CHANGELOG.md` file
 -   [ ] Commit changes and tag in format `vX.Y.Z`
 -   [ ] Push changes and tags to main branch

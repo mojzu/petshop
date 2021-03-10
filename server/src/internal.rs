@@ -56,8 +56,14 @@ impl XError {
 }
 
 impl From<XError> for tonic::Status {
-    fn from(err: XError) -> Self {
-        tonic::Status::internal(err.to_string())
+    fn from(e: XError) -> Self {
+        // These errors come from modules like Postgres, where you
+        // probably wouldn't want to include error details in the
+        // response, log them here instead which will include
+        // tracing information from the request handler
+        let e: Error = e.into();
+        warn!("{:#}", e);
+        tonic::Status::internal("error")
     }
 }
 
@@ -74,8 +80,9 @@ pub async fn http_request_handler(api: Api, req: Request<Body>) -> Result<Respon
             .body("not found".into())?),
     }
     .or_else(|e| {
+        // In case of an internal error do not send details
+        // back to client, log them here instead
         warn!("{:#}", e);
-
         Ok(Response::builder()
             .status(StatusCode::INTERNAL_SERVER_ERROR)
             .body("error".into())?)

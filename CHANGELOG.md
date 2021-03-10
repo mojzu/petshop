@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+-   Hide internal error details from responses, log them as warnings
+
 ## [0.2.3] - 2021-03-10
 
 -   Add ngx-grpc client generation
