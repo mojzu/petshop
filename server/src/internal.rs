@@ -26,6 +26,10 @@ pub static VERSION: &str = env!("CARGO_PKG_VERSION");
 /// Crate User Agent
 pub static USER_AGENT: &str = concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"),);
 
+pub type HttpStatus = http::StatusCode;
+
+pub type HttpHeaders = http::header::HeaderMap<http::header::HeaderValue>;
+
 /// Crate Errors
 #[derive(thiserror::Error, Debug)]
 pub enum XError {
@@ -34,6 +38,12 @@ pub enum XError {
 
     #[error("jobs error `{0}`")]
     Jobs(String),
+
+    #[error("internal uri error `{0}`")]
+    InternalUri(String),
+
+    #[error("serde json error")]
+    SerdeJson(#[from] serde_json::Error),
 
     #[error("postgres config error")]
     PostgresConfig(#[from] deadpool_postgres::config::ConfigError),
@@ -47,22 +57,30 @@ pub enum XError {
 
 impl XError {
     pub fn config(message: &str) -> Self {
-        Self::Config(message.to_owned())
+        Self::Config(message.to_string())
     }
 
     pub fn jobs(message: &str) -> Self {
-        Self::Jobs(message.to_owned())
+        Self::Jobs(message.to_string())
+    }
+
+    pub fn internal_uri(uri: &str) -> Self {
+        Self::InternalUri(uri.to_string())
     }
 }
 
 impl From<XError> for tonic::Status {
-    fn from(e: XError) -> Self {
+    fn from(err: XError) -> Self {
         // These errors come from modules like Postgres, where you
         // probably wouldn't want to include error details in the
         // response, log them here instead which will include
         // tracing information from the request handler
-        let e: Error = e.into();
-        warn!("{:#}", e);
+        //
+        // <https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html#error-handling>
+        // <https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html#which-events-to-log>
+        let err: Error = err.into();
+        warn!("{:#}", err);
+
         tonic::Status::internal("error")
     }
 }
@@ -70,19 +88,25 @@ impl From<XError> for tonic::Status {
 /// Internal HTTP request handler for metrics and other private endpoints
 #[tracing::instrument(skip(api))]
 pub async fn http_request_handler(api: Api, req: Request<Body>) -> Result<Response<Body>> {
+    let metrics = api.metrics();
+    metrics.internal_counter_inc();
+
     match (req.method(), req.uri().path()) {
         (&Method::GET, "/ping") => liveness_request_response(),
         (&Method::GET, "/liveness") => liveness_request_response(),
-        (&Method::GET, "/readiness") => readiness_request_response(api).await,
-        (&Method::GET, "/metrics") => metrics_request_response(api),
-        _ => Ok(Response::builder()
-            .status(StatusCode::NOT_FOUND)
-            .body("not found".into())?),
+        (&Method::GET, "/readiness") => readiness_request_response(&api).await,
+        (&Method::GET, "/metrics") => metrics_request_response(&api),
+        (_, uri) => Err(XError::internal_uri(uri).into()),
     }
     .or_else(|e| {
         // In case of an internal error do not send details
         // back to client, log them here instead
+        //
+        // <https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html#error-handling>
+        // <https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html#which-events-to-log>
+        metrics.internal_error_counter_inc();
         warn!("{:#}", e);
+
         Ok(Response::builder()
             .status(StatusCode::INTERNAL_SERVER_ERROR)
             .body("error".into())?)
@@ -98,15 +122,13 @@ fn liveness_request_response() -> Result<Response<Body>> {
 }
 
 /// Kubernetes readiness request handler
-async fn readiness_request_response(api: Api) -> Result<Response<Body>> {
-    info!("checking readiness");
+async fn readiness_request_response(api: &Api) -> Result<Response<Body>> {
     api.readiness().await?;
     liveness_request_response()
 }
 
 /// Prometheus metrics request handler
-fn metrics_request_response(api: Api) -> Result<Response<Body>> {
-    info!("exporting metrics");
+fn metrics_request_response(api: &Api) -> Result<Response<Body>> {
     let (content_type, buffer) = api.metrics().export();
 
     Ok(Response::builder()
@@ -144,4 +166,18 @@ pub fn serde_into_prost_value(value: serde_json::Value) -> prost_types::Value {
         }
     };
     prost_types::Value { kind: Some(kind) }
+}
+
+/// Returns grpc-status code from response headers, if header is not present assumed to be 0
+pub fn http_headers_grpc_status(headers: &HttpHeaders) -> tonic::Code {
+    match headers.get("grpc-status") {
+        Some(header) => match header.to_str() {
+            Ok(value) => match value.parse::<i32>() {
+                Ok(value) => tonic::Code::from_i32(value),
+                Err(_) => tonic::Code::Unknown,
+            },
+            Err(_) => tonic::Code::Unknown,
+        },
+        None => tonic::Code::Ok,
+    }
 }

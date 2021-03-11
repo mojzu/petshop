@@ -30,17 +30,16 @@ pub struct CsrfConfig {
 /// CSRF
 pub struct Csrf {
     config: Option<CsrfConfig>,
+    metrics: Arc<Metrics>,
 }
-
-type HttpStatus = http::StatusCode;
-type HttpHeaders = http::header::HeaderMap<http::header::HeaderValue>;
 
 const X_CSRF_MATCH: &str = "x-csrf-match";
 const X_CSRF_USED: &str = "x-csrf-used";
 
 impl Csrf {
-    pub fn from_config(config: &Config) -> Self {
+    pub fn from_config(config: &Config, metrics: Arc<Metrics>) -> Self {
         Self {
+            metrics,
             config: config.csrf.clone(),
         }
     }
@@ -62,6 +61,10 @@ impl Csrf {
             if request.metadata().get(X_CSRF_MATCH).is_some() {
                 Ok(())
             } else {
+                self.metrics.csrf_error_counter_inc();
+                // FIXME: Would it be worth using an x-csrf-error header set by
+                // the request handler to log as an error here?
+
                 Err(tonic::Status::permission_denied(
                     "csrf token does not match",
                 ))
@@ -94,9 +97,8 @@ impl Csrf {
                 // Get csrf token from cookie, this is set by the server
                 // on successful responses and refresh after one use
                 //
-                // This does require some kind of initialisation by the
-                // client to make a first request that does not depend
-                // on csrf verification
+                // This does require some kind of initialisation by the client to
+                // make a first request that does not require csrf verification
                 let csrf_token = Self::cookie_value(headers, config.cookie_name.as_str());
 
                 // Get csrf token from header, this is set by the client
@@ -111,7 +113,7 @@ impl Csrf {
                     (csrf_token.as_ref(), x_csrf_token.as_ref())
                 {
                     if csrf_token == x_csrf_token {
-                        // TODO: Verify origin via headers here, config option?
+                        // TODO: Verify origin via headers here, config option? tests?
                         // let origin = headers.get(http::header::ORIGIN);
                         // let referer = headers.get(http::header::REFERER);
 
@@ -138,7 +140,7 @@ impl Csrf {
         if let Some(config) = self.config.as_ref() {
             // Check the HTTP/gRPC status is OK before setting cookie
             let status_is_ok = status == HttpStatus::OK;
-            let code_is_ok = Self::grpc_status(headers) == tonic::Code::Ok;
+            let code_is_ok = http_headers_grpc_status(headers) == tonic::Code::Ok;
 
             if status_is_ok && code_is_ok {
                 // Tonic request handler indicates that the token has been used with header
@@ -197,20 +199,6 @@ impl Csrf {
                 Err(_) => None,
             },
             None => None,
-        }
-    }
-
-    /// Returns grpc-status code from response headers, if header is not present assumed to be 0
-    fn grpc_status(headers: &HttpHeaders) -> tonic::Code {
-        match headers.get("grpc-status") {
-            Some(header) => match header.to_str() {
-                Ok(value) => match value.parse::<i32>() {
-                    Ok(value) => tonic::Code::from_i32(value),
-                    Err(_) => tonic::Code::Unknown,
-                },
-                Err(_) => tonic::Code::Unknown,
-            },
-            None => tonic::Code::Ok,
         }
     }
 

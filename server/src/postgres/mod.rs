@@ -1,13 +1,15 @@
 //! # Postgres
 //!
+//! <https://cheatsheetseries.owasp.org/cheatsheets/Database_Security_Cheat_Sheet.html>
+//! <https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html>
 use crate::internal::*;
 use petshop_proto::api::v1::World;
 use std::fmt;
 
 /// Postgres Pool
 pub struct PostgresPool {
-    metrics: Arc<Metrics>,
     pool: deadpool_postgres::Pool,
+    metrics: Arc<Metrics>,
 }
 
 /// Postgres Client
@@ -26,14 +28,14 @@ impl PostgresPool {
 
         // TODO: Check schema version here, how to work against external tools/changes?
 
-        Ok(Self { metrics, pool })
+        Ok(Self { pool, metrics })
     }
 
     /// Returns an error if queries can not be served
     #[tracing::instrument(skip(self))]
     pub async fn readiness(&self) -> Result<(), XError> {
         let client_check = self.check().await;
-        self.metrics.postgres_ready_set(client_check.is_ok());
+        self.metrics.postgres_ready(client_check.is_ok());
         client_check?;
         Ok(())
     }
@@ -134,8 +136,8 @@ impl PostgresClient {
         let (client, connection) = pg_config.connect(tokio_postgres::NoTls).await?;
 
         tokio::spawn(async move {
-            if let Err(e) = connection.await {
-                warn!("connection error: {}", e);
+            if let Err(err) = connection.await {
+                warn!("connection error: {}", err);
             }
         });
 

@@ -15,66 +15,135 @@ mod service;
 /// Can add more metrics here for collection
 pub struct Metrics {
     exporter: PrometheusExporter,
-    api_ready: BoundValueRecorder<'static, u64>,
-    api_counter: BoundCounter<'static, u64>,
-    api_latency: BoundValueRecorder<'static, f64>,
+    ready: BoundValueRecorder<'static, u64>,
+    counter: BoundCounter<'static, u64>,
+    error_counter: BoundCounter<'static, u64>,
+    latency: BoundValueRecorder<'static, f64>,
+    csrf_error_counter: BoundCounter<'static, u64>,
+    validate_error_counter: BoundCounter<'static, u64>,
+    internal_counter: BoundCounter<'static, u64>,
+    internal_error_counter: BoundCounter<'static, u64>,
     postgres_ready: BoundValueRecorder<'static, u64>,
 }
 
 impl Metrics {
-    pub fn from_config(_config: &Config) -> Self {
+    pub fn from_config(config: &Config) -> Self {
         let exporter = opentelemetry_prometheus::exporter()
             .with_registry(prometheus::default_registry().clone())
             .init();
         let meter = opentelemetry::global::meter(NAME);
+        let name = &config.metrics_name;
 
-        let api_ready = meter
-            .u64_value_recorder(format!("{}.api_ready", NAME))
-            .with_description("1 if api is ready, else 0.")
+        let ready = meter
+            .u64_value_recorder(format!("{}.api_ready", name))
+            .with_description("1 if API is ready, else 0.")
             .init()
             .bind(&[]);
-        let api_counter = meter
-            .u64_counter(format!("{}.api_request_counter_total", NAME))
-            .with_description("Total number of API requests made.")
+        let counter = meter
+            .u64_counter(format!("{}.api_counter_total", name))
+            .with_description("Total number of API server requests made.")
             .init()
             .bind(&[]);
-        let api_latency = meter
-            .f64_value_recorder(format!("{}.api_request_latency_seconds", NAME))
-            .with_description("The API request latencies in seconds.")
+        let error_counter = meter
+            .u64_counter(format!("{}.api_error_counter_total", name))
+            .with_description("Total number of API server errors.")
             .init()
             .bind(&[]);
+        let latency = meter
+            .f64_value_recorder(format!("{}.api_latency_seconds", name))
+            .with_description("The API server request latencies in seconds.")
+            .init()
+            .bind(&[]);
+        let csrf_error_counter = meter
+            .u64_counter(format!("{}.api_csrf_error_counter_total", name))
+            .with_description("Total number of API server CSRF check errors.")
+            .init()
+            .bind(&[]);
+        let validate_error_counter = meter
+            .u64_counter(format!("{}.api_validate_error_counter_total", name))
+            .with_description("Total number of API server validation check errors.")
+            .init()
+            .bind(&[]);
+
+        let internal_counter = meter
+            .u64_counter(format!("{}.internal_counter_total", name))
+            .with_description("Total number of internal HTTP server requests made.")
+            .init()
+            .bind(&[]);
+        let internal_error_counter = meter
+            .u64_counter(format!("{}.internal_error_counter_total", name))
+            .with_description("Total number of internal HTTP server errors.")
+            .init()
+            .bind(&[]);
+
         let postgres_ready = meter
-            .u64_value_recorder(format!("{}.postgres_ready", NAME))
+            .u64_value_recorder(format!("{}.postgres_ready", name))
             .with_description("1 if postgres is ready, else 0.")
             .init()
             .bind(&[]);
 
         Self {
             exporter,
-            api_ready,
-            api_counter,
-            api_latency,
+            ready,
+            counter,
+            error_counter,
+            latency,
+            csrf_error_counter,
+            validate_error_counter,
+            internal_counter,
+            internal_error_counter,
             postgres_ready,
         }
     }
 
-    pub fn api_ready_set(&self, ready: bool) {
+    #[inline]
+    pub fn api_ready(&self, ready: bool) {
         let value = if ready { 1 } else { 0 };
-        self.api_ready.record(value);
+        self.ready.record(value);
     }
 
-    pub fn api_counter_inc(&self) {
-        self.api_counter.add(1);
+    #[inline]
+    pub fn csrf_error_counter_inc(&self) {
+        self.csrf_error_counter.add(1);
     }
 
-    pub fn api_latency_record(&self, time: SystemTime) {
-        self.api_latency
-            .record(time.elapsed().map_or(0.0, |d| d.as_secs_f64()));
+    #[inline]
+    pub fn validate_error_counter_inc(&self) {
+        self.validate_error_counter.add(1);
     }
 
-    pub fn postgres_ready_set(&self, ready: bool) {
+    #[inline]
+    pub fn internal_counter_inc(&self) {
+        self.internal_counter.add(1);
+    }
+
+    #[inline]
+    pub fn internal_error_counter_inc(&self) {
+        self.internal_error_counter.add(1);
+    }
+
+    #[inline]
+    pub fn postgres_ready(&self, ready: bool) {
         let value = if ready { 1 } else { 0 };
         self.postgres_ready.record(value);
+    }
+
+    #[inline]
+    pub fn service_request_handler(&self) -> SystemTime {
+        self.counter.add(1);
+        SystemTime::now()
+    }
+
+    #[inline]
+    pub fn service_response_handler(&self, start: SystemTime, headers: Option<&HttpHeaders>) {
+        if let Some(headers) = headers {
+            if http_headers_grpc_status(headers) != tonic::Code::Ok {
+                self.error_counter.add(1);
+            }
+        }
+
+        self.latency
+            .record(start.elapsed().map_or(0.0, |d| d.as_secs_f64()));
     }
 
     /// Export metrics in prometheus exposition format

@@ -7,6 +7,9 @@ fn main() {
         //
         // Validator functions have to be wrapped to make them usable with the prost types, an alternative
         // way of doing this might be to implement the Validate trait manually on structs in lib.rs
+        //
+        // <https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html>
+        // <https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html#input-validation>
         .type_attribute("api.v1.User", "#[derive(Validate)]")
         .field_attribute(
             "api.v1.User.email",

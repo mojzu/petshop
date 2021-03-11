@@ -30,7 +30,7 @@ impl Api {
         let metrics = Arc::new(Metrics::from_config(config));
         Ok(Self {
             metrics: metrics.clone(),
-            csrf: Arc::new(Csrf::from_config(config)),
+            csrf: Arc::new(Csrf::from_config(config, metrics.clone())),
             postgres: Arc::new(PostgresPool::from_config(config, metrics)?),
             shutdown: Arc::new(shutdown_tx),
         })
@@ -60,7 +60,7 @@ impl Api {
     /// [More information on liveness/readiness probes](https://blog.colinbreck.com/kubernetes-liveness-and-readiness-probes-how-to-avoid-shooting-yourself-in-the-foot/)
     pub async fn readiness(&self) -> Result<(), XError> {
         let postgres_ready = self.postgres.readiness().await;
-        self.metrics.api_ready_set(postgres_ready.is_ok());
+        self.metrics.api_ready(postgres_ready.is_ok());
         postgres_ready?;
         Ok(())
     }
@@ -92,6 +92,8 @@ impl Api {
     ///
     /// This example assumes that the application is going to manage/verify its own API keys and that
     /// all private endpoints will call this function
+    ///
+    /// <https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html#api-keys>
     fn auth_required(&self, request: &Request<()>) -> Result<User, Status> {
         let auth = request.metadata().get("authorization");
         match auth {
@@ -106,13 +108,22 @@ impl Api {
         }
     }
 
-    /// Validates request using derived validate method
+    /// Validates request using derived validate method, logs validation errors
+    /// and returns serialised validation errors in message (base64 encoded)
+    ///
+    /// <https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html#error-handling>
+    /// <https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html#which-events-to-log>
     fn validate<T: validator::Validate>(&self, request: &T) -> Result<(), Status> {
         match request.validate() {
             Ok(_) => Ok(()),
-            Err(e) => {
-                let serialised = serde_json::to_string(&e).expect("serialisation failed");
+            Err(err) => {
+                let serialised = serde_json::to_string(&err).map_err(XError::SerdeJson)?;
                 let encoded = base64::encode(serialised);
+
+                self.metrics.validate_error_counter_inc();
+                let err: Error = err.into();
+                warn!("{:#}", err);
+
                 Err(Status::invalid_argument(encoded))
             }
         }

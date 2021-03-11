@@ -15,6 +15,7 @@ pub struct Config {
     pub tracing_json: bool,
     pub api_addr: SocketAddr,
     pub internal_addr: SocketAddr,
+    pub metrics_name: String,
     pub csrf: Option<CsrfConfig>,
     pub postgres: deadpool_postgres::Config,
 }
@@ -44,6 +45,7 @@ struct ConfigLoad {
     api_port: Option<u16>,
     internal_host: Option<String>,
     internal_port: Option<u16>,
+    metrics_name: Option<String>,
     csrf: Option<CsrfConfigLoad>,
     postgres: Option<deadpool_postgres::Config>,
 }
@@ -66,6 +68,8 @@ impl TryFrom<ConfigLoad> for Config {
         );
         let internal_port = Config::opt_or_default("internal_port", value.internal_port, 5501);
         let internal_addr: SocketAddr = format!("{}:{}", internal_host, internal_port).parse()?;
+        let metrics_name =
+            Config::opt_or_default("metrics_name", value.metrics_name, NAME.to_string());
 
         let csrf = if let Some(csrf) = value.csrf {
             let cookie_name = Config::opt_or_default(
@@ -140,6 +144,7 @@ impl TryFrom<ConfigLoad> for Config {
             tracing_json,
             api_addr,
             internal_addr,
+            metrics_name,
             csrf,
             postgres,
         })
@@ -169,6 +174,10 @@ impl Config {
     }
 
     /// Initialise panic and log output to stderr using tracing and configuration values
+    ///
+    /// <https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html#error-handling>
+    /// <https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html#which-events-to-log>
+    /// <https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html#data-to-exclude>
     pub fn init_panic_and_tracing(&self) {
         if self.tracing_json {
             Self::init_panic_json();

@@ -3,6 +3,7 @@ api_host = "0.0.0.0"
 api_port = 5000
 internal_host = "0.0.0.0"
 internal_port = 5501
+metrics_name = "petshop_server"
 
 [postgres]
 user = "benchmarkdbuser"

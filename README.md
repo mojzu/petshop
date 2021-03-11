@@ -113,7 +113,7 @@ Release checklist
 -   [ ] Push changes and tags to main branch
 -   [ ] Delete old package versions on GitHub
 
-These labels are used in the source code
+These labels are used in the source code (find all with regex `((\bTODO\b)|(\bFIXME\b)|(\bDEPEND\b))`)
 
 -   `TODO`: Something to fix/feature to add/ideas/etc.
 -   `FIXME`: Something that has been fixed in an unintuitive way/may require manual intervention

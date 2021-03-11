@@ -44,12 +44,17 @@ where
         let metrics = self.metrics.clone();
 
         Box::pin(async move {
-            metrics.api_counter_inc();
-            let request_start = SystemTime::now();
+            let request_start = metrics.service_request_handler();
 
             let res = svc.call(req).await;
 
-            metrics.api_latency_record(request_start);
+            let headers = if let Ok(res) = res.as_ref() {
+                Some(res.headers())
+            } else {
+                None
+            };
+            metrics.service_response_handler(request_start, headers);
+
             res
         })
     }
