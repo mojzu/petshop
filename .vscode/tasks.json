@@ -91,14 +91,7 @@
       "label": "compose ci - run",
       "detail": "Build generated outputs and run docker-compose with CI compose file",
       "type": "shell",
-      "command": "cargo make compose-ci run sut",
-      "problemMatcher": []
-    },
-    {
-      "label": "compose ci - down",
-      "detail": "Stop and remove docker-compose with CI compose file",
-      "type": "shell",
-      "command": "cargo make compose-ci-down",
+      "command": "cargo make compose-ci run sut && cargo make compose down",
       "problemMatcher": []
     },
     {

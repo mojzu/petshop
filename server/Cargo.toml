@@ -57,3 +57,5 @@ rand = "0.8"
 http = "0.2"
 cookie = "0.15"
 time = "0.2"
+
+handlebars = "3.5"

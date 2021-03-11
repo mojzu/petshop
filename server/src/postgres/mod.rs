@@ -3,7 +3,7 @@
 //! <https://cheatsheetseries.owasp.org/cheatsheets/Database_Security_Cheat_Sheet.html>
 //! <https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html>
 use crate::internal::*;
-use petshop_proto::api::v1::World;
+use petshop_proto::api::v1::{Fortune, World};
 use std::fmt;
 
 /// Postgres Pool
@@ -46,6 +46,28 @@ impl PostgresPool {
         let st = client.prepare(CLIENT_CHECK).await?;
         client.query_one(&st, &[]).await?;
         Ok(())
+    }
+
+    /// Returns fortunes for TFB
+    pub async fn db_fortunes(&self) -> Result<Vec<Fortune>, XError> {
+        let client = self.pool.get().await?;
+        let st = client
+            .prepare(
+                "
+                    SELECT id, message
+                    FROM Fortune
+                ",
+            )
+            .await?;
+        let rows = client.query(&st, &[]).await?;
+        let rows: Vec<Fortune> = rows
+            .into_iter()
+            .map(|row| Fortune {
+                id: row.get(0),
+                message: row.get(1),
+            })
+            .collect();
+        Ok(rows)
     }
 
     /// Returns random row in World table for TFB

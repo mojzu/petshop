@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Hide internal error details from responses, log them as warnings
 -   Add metrics_name config option and error counters
 -   Upgrade dependencies
+-   Add fortunes test to `tfb` example, re-run benchmarks
 
 ## [0.2.3] - 2021-03-10
 

@@ -3,8 +3,8 @@
 use crate::internal::*;
 use petshop_proto::api::v1::petshop_server::Petshop;
 use petshop_proto::api::v1::{
-    Category, Echo, FindByStatus, FindByTag, Pet, Pets, Queries, Status as PetStatus, Tag, User,
-    World,
+    Category, Echo, FindByStatus, FindByTag, Fortune, Pet, Pets, Queries, Status as PetStatus, Tag,
+    User, World,
 };
 use petshop_proto::google::api::HttpBody;
 use prost_types::{ListValue, Struct, Value};
@@ -20,7 +20,23 @@ pub struct Api {
     csrf: Arc<Csrf>,
     postgres: Arc<PostgresPool>,
     shutdown: Arc<broadcast::Sender<bool>>,
+    /// This is only here for TFB fortunes endpoint
+    tfb_handlebars: Arc<handlebars::Handlebars<'static>>,
 }
+
+const TFB_FORTUNES: &str = "tfb_fortunes";
+const TFB_FORTUNES_HTML: &str = "<!DOCTYPE html>
+<html>
+<head><title>Fortunes</title></head>
+<body>
+<table>
+<tr><th>id</th><th>message</th></tr>
+{{#each rows}}
+<tr><td>{{id}}</td><td>{{message}}</td></tr>
+{{/each}}
+</table>
+</body>
+</html>";
 
 impl Api {
     pub fn from_config(
@@ -28,11 +44,18 @@ impl Api {
         shutdown_tx: broadcast::Sender<bool>,
     ) -> Result<Self, XError> {
         let metrics = Arc::new(Metrics::from_config(config));
+
+        let mut tfb_handlebars = handlebars::Handlebars::new();
+        tfb_handlebars
+            .register_template_string(TFB_FORTUNES, TFB_FORTUNES_HTML)
+            .expect("register template failed");
+
         Ok(Self {
             metrics: metrics.clone(),
             csrf: Arc::new(Csrf::from_config(config, metrics.clone())),
             postgres: Arc::new(PostgresPool::from_config(config, metrics)?),
             shutdown: Arc::new(shutdown_tx),
+            tfb_handlebars: Arc::new(tfb_handlebars),
         })
     }
 
@@ -250,6 +273,38 @@ impl Petshop for Api {
         let v = ListValue { values };
 
         Ok(Response::new(v))
+    }
+
+    #[tracing::instrument(skip(self))]
+    async fn tfb_fortunes(&self, _request: Request<()>) -> Result<Response<HttpBody>, Status> {
+        let mut fortunes = self.postgres.db_fortunes().await?;
+        fortunes.push(Fortune {
+            id: 0,
+            message: "Additional fortune added at request time.".to_string(),
+        });
+        fortunes.sort_by(|a, b| a.message.cmp(&b.message));
+
+        let rows: Vec<serde_json::Value> = fortunes
+            .into_iter()
+            .map(|x| {
+                json!({
+                    "id": x.id,
+                    "message": x.message,
+                })
+            })
+            .collect();
+        let template_data = json!({ "rows": rows });
+        let template_render = self
+            .tfb_handlebars
+            .render(TFB_FORTUNES, &template_data)
+            .unwrap();
+
+        let body = HttpBody {
+            content_type: "text/html; charset=UTF-8".to_string(),
+            data: template_render.into(),
+            extensions: vec![],
+        };
+        Ok(Response::new(body))
     }
 
     #[tracing::instrument(skip(self))]

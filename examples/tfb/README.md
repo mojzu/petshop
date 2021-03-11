@@ -17,7 +17,7 @@ docker-compose down
 # Verify and run TFB tests
 cd FrameworkBenchmarks
 ./tfb --mode verify --test envoy-tonic
-./tfb --test envoy-tonic hyper warp-rust [django ...]
+./tfb --test envoy-tonic hyper warp-rust actix [django ...]
 
 # Upload results.json at <https://tfb-status.techempower.com/share>
 ```

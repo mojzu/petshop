@@ -115,6 +115,13 @@ service Petshop {
     };
   }
 
+  // TFB fortune_url
+  rpc TfbFortunes (google.protobuf.Empty) returns (google.api.HttpBody) {
+    option (google.api.http) = {
+      get: "/fortunes"
+    };
+  }
+
   // TFB update_url
   rpc TfbUpdates (Queries) returns (google.protobuf.ListValue) {
     option (google.api.http) = {
@@ -166,6 +173,11 @@ message Echo {
 message World {
   int32 id = 1;
   int32 random_number = 2;
+}
+
+message Fortune {
+  int32 id = 1;
+  string message = 2;
 }
 
 message Queries {
