@@ -357,6 +357,7 @@ CONFIG_INTERNAL_HOST = "0.0.0.0"
 CONFIG_INTERNAL_PORT = "5501"
 CONFIG_METRICS_NAME = "petshop_server"
 CONFIG_CSRF__COOKIE_DOMAIN = "localhost"
+CONFIG_CSRF__ALLOW_ORIGIN = "http://localhost"
 CONFIG_POSTGRES__USER = "postgres"
 CONFIG_POSTGRES__PASSWORD = "postgres"
 CONFIG_POSTGRES__DBNAME = "postgres"
@@ -501,7 +502,6 @@ description = "Build all docker images and generated outputs"
 category = "Petshop"
 workspace = false
 dependencies = [
-    "dist-clean",
     "docker-build",
     "generate-flow"
 ]

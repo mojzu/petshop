@@ -5,6 +5,7 @@
 //!
 //! - Double submit cookie strategy (works with axios/Angular)
 //! - SameSite cookie attribute (defaults to strict)
+//! - Optional origin verification
 //!
 use crate::internal::*;
 use cookie::{Cookie, SameSite};
@@ -24,6 +25,7 @@ pub struct CsrfConfig {
     pub cookie_samesite: SameSite,
     pub cookie_max_age_minutes: i64,
     pub header_name: String,
+    pub allow_origins: Vec<Url>,
     pub token_length: usize,
 }
 
@@ -65,9 +67,7 @@ impl Csrf {
                 // FIXME: Would it be worth using an x-csrf-error header set by
                 // the request handler to log as an error here?
 
-                Err(tonic::Status::permission_denied(
-                    "csrf token does not match",
-                ))
+                Err(tonic::Status::permission_denied("csrf check failed"))
             }
         } else {
             Ok(())
@@ -108,16 +108,22 @@ impl Csrf {
                 // set a header on the request which can be checked in
                 // the tonic request handler
                 //
-                // TODO: Use HMAC based token pattern here?
+                // FIXME: Use HMAC based token pattern here?
                 if let (Some(csrf_token), Some(x_csrf_token)) =
                     (csrf_token.as_ref(), x_csrf_token.as_ref())
                 {
                     if csrf_token == x_csrf_token {
-                        // TODO: Verify origin via headers here, config option? tests?
-                        // let origin = headers.get(http::header::ORIGIN);
-                        // let referer = headers.get(http::header::REFERER);
+                        let allow_origin = if config.allow_origins.is_empty() {
+                            true
+                        } else {
+                            // Check the source origin if allow_origin is not empty
+                            // <https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#identifying-source-origin-via-originreferer-header>
+                            Self::match_allow_origin(headers, &config.allow_origins)
+                        };
 
-                        headers.append(X_CSRF_MATCH, "1".parse().unwrap());
+                        if allow_origin {
+                            headers.append(X_CSRF_MATCH, "1".parse().unwrap());
+                        }
                     }
                 }
 
@@ -172,6 +178,45 @@ impl Csrf {
         }
     }
 
+    fn match_allow_origin(headers: &HttpHeaders, allow_origin: &[Url]) -> bool {
+        let origin = Self::header_get_value(headers, http::header::ORIGIN.as_str());
+        let referer = Self::header_get_value(headers, http::header::REFERER.as_str());
+
+        // Match against the origin header (preferred), or fall back on the referer
+        // header, fail if neither are found
+        let compare_url = match (origin, referer) {
+            (Some(origin), _) => Url::from_str(&origin).ok(),
+            (_, Some(referer)) => Url::from_str(&referer).ok(),
+            _ => None,
+        };
+
+        // Compare URL against allowed origins
+        if let Some(compare_url) = compare_url {
+            for url in allow_origin {
+                // Always match against scheme and domain
+                let scheme_match = url.scheme() == compare_url.scheme();
+                let domain_match = match (url.domain(), compare_url.domain()) {
+                    (Some(domain), Some(compare_domain)) => domain == compare_domain,
+                    _ => false,
+                };
+                // Match against port if it is present in the allowed origin
+                let port_match = match url.port() {
+                    Some(port) => match compare_url.port() {
+                        Some(compare_port) => port == compare_port,
+                        _ => false,
+                    },
+                    None => true,
+                };
+
+                if scheme_match && domain_match && port_match {
+                    return true;
+                }
+            }
+        }
+
+        false
+    }
+
     fn cookie_value(headers: &HttpHeaders, cookie_name: &str) -> Option<String> {
         match headers.get(http::header::COOKIE) {
             Some(header) => match header.to_str() {
@@ -186,6 +231,16 @@ impl Csrf {
                     }
                     None
                 }
+                Err(_) => None,
+            },
+            None => None,
+        }
+    }
+
+    fn header_get_value(headers: &HttpHeaders, header_name: &str) -> Option<String> {
+        match headers.get(header_name) {
+            Some(header) => match header.to_str() {
+                Ok(value) => Some(value.into()),
                 Err(_) => None,
             },
             None => None,

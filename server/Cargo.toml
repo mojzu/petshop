@@ -57,5 +57,6 @@ rand = "0.8"
 http = "0.2"
 cookie = "0.15"
 time = "0.2"
+url = { version = "2.2", features = ["serde"] }
 
 handlebars = "3.5"

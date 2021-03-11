@@ -7,10 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.4] - 2021-03-11
+
 -   Hide internal error details from responses, log them as warnings
 -   Add metrics_name config option and error counters
 -   Upgrade dependencies
 -   Add fortunes test to `tfb` example, re-run benchmarks
+-   Add placeholder step in CI action for release artifacts
+-   Add allow_origin/allow_origins config option and source origin checking in csrf module
 
 ## [0.2.3] - 2021-03-10
 

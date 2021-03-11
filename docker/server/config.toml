@@ -13,6 +13,9 @@ cookie_secure = true
 cookie_samesite = "strict"
 cookie_max_age_minutes = 1440
 header_name = "X-XSRF-TOKEN"
+allow_origins = [
+    "http://localhost"
+]
 token_length = 32
 
 [postgres]

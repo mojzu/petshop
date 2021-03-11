@@ -12,8 +12,10 @@ pub use crate::postgres::{PostgresClient, PostgresPool};
 pub use anyhow::{Error, Result};
 pub use chrono::Utc;
 pub use std::convert::{TryFrom, TryInto};
+pub use std::str::FromStr;
 pub use std::sync::Arc;
 pub use std::time::SystemTime;
+pub use url::Url;
 
 use hyper::{Body, Method, Request, Response, StatusCode};
 

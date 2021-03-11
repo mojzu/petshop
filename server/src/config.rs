@@ -29,6 +29,8 @@ struct CsrfConfigLoad {
     cookie_samesite: Option<String>,
     cookie_max_age_minutes: Option<i64>,
     header_name: Option<String>,
+    allow_origin: Option<Url>,
+    allow_origins: Option<Vec<Url>>,
     token_length: Option<usize>,
 }
 
@@ -102,6 +104,12 @@ impl TryFrom<ConfigLoad> for Config {
                 csrf.header_name,
                 "X-XSRF-TOKEN".to_string(),
             );
+            let mut allow_origins =
+                Config::opt_or_default("csrf.allow_origins", csrf.allow_origins, Vec::new());
+            let allow_origin = Config::opt("csrf.allow_origin", csrf.allow_origin);
+            if let Some(allow_origin) = allow_origin {
+                allow_origins.push(allow_origin);
+            }
             let token_length = Config::opt_or_default("csrf.token_length", csrf.token_length, 32);
             Some(CsrfConfig {
                 cookie_name,
@@ -111,6 +119,7 @@ impl TryFrom<ConfigLoad> for Config {
                 cookie_samesite,
                 cookie_max_age_minutes,
                 header_name,
+                allow_origins,
                 token_length,
             })
         } else {
@@ -212,6 +221,13 @@ impl Config {
                 .expect("panic_json failed");
             eprintln!("{}", output);
         }));
+    }
+
+    fn opt<T: fmt::Debug>(name: &str, value: Option<T>) -> Option<T> {
+        if value.is_none() {
+            println!("Config: {} is not configured, defaulting to none", name);
+        }
+        value
     }
 
     fn opt_or_default<T: fmt::Debug>(name: &str, value: Option<T>, default_value: T) -> T {
