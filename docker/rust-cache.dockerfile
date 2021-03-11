@@ -1,6 +1,6 @@
-# DEPEND: docker pull rust:1.50-alpine3.12
+# DEPEND: docker pull rust:1.50.0-alpine3.12
 # <https://hub.docker.com/_/rust>
-FROM rust:1.50-alpine3.12
+FROM rust:1.50.0-alpine3.12
 
 # Install dependencies
 RUN apk add --no-cache musl-dev protoc \

@@ -4,7 +4,7 @@ FROM node:15.11.0-buster
 
 # DEPEND: Install protocol buffers
 # <https://github.com/protocolbuffers/protobuf>
-RUN wget -O protoc.zip -q "https://github.com/protocolbuffers/protobuf/releases/download/v3.15.4/protoc-3.15.4-linux-x86_64.zip" \
+RUN wget -O protoc.zip -q "https://github.com/protocolbuffers/protobuf/releases/download/v3.15.5/protoc-3.15.5-linux-x86_64.zip" \
     && unzip -o protoc.zip -d /usr/local bin/protoc \
     && unzip -o protoc.zip -d /usr/local 'include/*' \
     && chmod +x /usr/local/bin/protoc \
@@ -13,7 +13,7 @@ RUN wget -O protoc.zip -q "https://github.com/protocolbuffers/protobuf/releases/
 # Install packages globally
 # DEPEND: Update package versions
 # <https://www.npmjs.com/package/ng-swagger-gen>
-# <https://github.com/ngx-grpc/ngx-grpc>
+# <https://www.npmjs.com/package/@ngx-grpc/protoc-gen-ng>
 RUN npm i -g ng-swagger-gen@2.3.1 @ngx-grpc/protoc-gen-ng@2.0.4 tslib
 
 # Install package dependencies
