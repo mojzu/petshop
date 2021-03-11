@@ -101,8 +101,13 @@ jobs:
           # Use Docker `latest` tag convention
           [ "$VERSION" == "main" ] && DOCKER_VERSION=latest
 
+          # Release artifacts
+          RELEASE_ARTIFACTS=yes
+          [ "$VERSION" == "main" ] && RELEASE_ARTIFACTS=no
+
           echo BUILD_VERSION=$BUILD_VERSION
           echo DOCKER_VERSION=$DOCKER_VERSION
+          echo RELEASE_ARTIFACTS=$RELEASE_ARTIFACTS
 
           # Apply build version
           cargo make dist-version $BUILD_VERSION
@@ -110,6 +115,7 @@ jobs:
           # Save versions to environment
           echo "BUILD_VERSION=$BUILD_VERSION" >> $GITHUB_ENV
           echo "DOCKER_VERSION=$DOCKER_VERSION" >> $GITHUB_ENV
+          echo "RELEASE_ARTIFACTS=$RELEASE_ARTIFACTS" >> $GITHUB_ENV
 
       - name: Run CI
         run: |
@@ -138,4 +144,8 @@ jobs:
           docker tag petshop/server:latest ghcr.io/mojzu/petshop-server:${{ env.DOCKER_VERSION }}
           docker push ghcr.io/mojzu/petshop-server:${{ env.DOCKER_VERSION }}
 
-# TODO: Build archive of client source files and upload as release
+      - name: Release Artifacts
+        if: env.RELEASE_ARTIFACTS == 'yes'
+        run: |
+          echo "TODO: Create release and add clients-src.tgz file here"
+          ls ./dist/clients-src.tgz

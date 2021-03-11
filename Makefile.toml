@@ -506,6 +506,15 @@ dependencies = [
     "generate-flow"
 ]
 
+[tasks.dist-clients-src]
+description = "Compress generated definitions and clients into file"
+category = "Petshop"
+workspace = false
+script = '''
+rm -rf ./dist/clients-src.tgz
+(cd ./dist && tar -cvzf clients-src.tgz data axios grpc-web ng-swagger ngx-grpc)
+'''
+
 [tasks.dist-ci-build]
 description = "Build server and envoy docker images"
 category = "Petshop"
@@ -515,7 +524,8 @@ dependencies = [
     "docker-build-rust-cache",
     "docker-build-server",
     "generate-envoy-flow",
-    "generate-client-flow-pre"
+    "generate-client-flow-pre",
+    "dist-clients-src"
 ]
 
 # Default tasks
