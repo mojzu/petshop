@@ -52,3 +52,34 @@ pub mod prost_validator {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::api::v1::*;
+    use validator::Validate;
+
+    // FIXME: Unit test example, can also use doctests here but not in the
+    // server crate (because it's a binary), worth splitting server
+    // functionality into a library?
+
+    #[test]
+    fn user_validate_test() {
+        let user = User {
+            email: "validemail@example.com".to_string(),
+            name: "validname".to_string(),
+        };
+        assert_eq!(user.validate().is_ok(), true);
+
+        let user = User {
+            email: "notanemail".to_string(),
+            name: "validname".to_string(),
+        };
+        assert_eq!(user.validate().is_ok(), false);
+
+        let user = User {
+            email: "validemail@example.com".to_string(),
+            name: "v".to_string(),
+        };
+        assert_eq!(user.validate().is_ok(), false);
+    }
+}

@@ -99,10 +99,10 @@ impl Csrf {
                 //
                 // This does require some kind of initialisation by the client to
                 // make a first request that does not require csrf verification
-                let csrf_token = Self::cookie_value(headers, config.cookie_name.as_str());
+                let csrf_token = cookie_value(headers, config.cookie_name.as_str());
 
                 // Get csrf token from header, this is set by the client
-                let x_csrf_token = Self::header_remove_value(headers, config.header_name.as_str());
+                let x_csrf_token = header_remove_value(headers, config.header_name.as_str());
 
                 // Check if cookie and header csrf tokens match, if they do
                 // set a header on the request which can be checked in
@@ -118,7 +118,23 @@ impl Csrf {
                         } else {
                             // Check the source origin if allow_origin is not empty
                             // <https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#identifying-source-origin-via-originreferer-header>
-                            Self::match_allow_origin(headers, &config.allow_origins)
+                            let origin = header_get_value(headers, http::header::ORIGIN.as_str());
+                            let referer = header_get_value(headers, http::header::REFERER.as_str());
+
+                            // Match against the origin header (preferred), or fall back on the referer
+                            // header, fail if neither are found
+                            let origin_url = match (origin, referer) {
+                                (Some(origin), _) => Url::from_str(&origin).ok(),
+                                (_, Some(referer)) => Url::from_str(&referer).ok(),
+                                _ => None,
+                            };
+
+                            if let Some(origin_url) = origin_url {
+                                match_allow_origin(origin_url, &config.allow_origins)
+                            } else {
+                                // Blocking recommended if origin and referrer are not available
+                                false
+                            }
                         };
 
                         if allow_origin {
@@ -150,14 +166,14 @@ impl Csrf {
 
             if status_is_ok && code_is_ok {
                 // Tonic request handler indicates that the token has been used with header
-                let csrf_used = Self::header_remove_value(headers, X_CSRF_USED).is_some();
+                let csrf_used = header_remove_value(headers, X_CSRF_USED).is_some();
 
                 // Always refresh the token if it has been used, else reuse
                 // the token or generate one if it wasn't present
                 let csrf_token = if csrf_used {
-                    Self::random_string(config.token_length)
+                    random_string(config.token_length)
                 } else {
-                    csrf_token.unwrap_or_else(|| Self::random_string(config.token_length))
+                    csrf_token.unwrap_or_else(|| random_string(config.token_length))
                 };
 
                 // Create cookie and set on response
@@ -177,98 +193,123 @@ impl Csrf {
             }
         }
     }
-
-    fn match_allow_origin(headers: &HttpHeaders, allow_origin: &[Url]) -> bool {
-        let origin = Self::header_get_value(headers, http::header::ORIGIN.as_str());
-        let referer = Self::header_get_value(headers, http::header::REFERER.as_str());
-
-        // Match against the origin header (preferred), or fall back on the referer
-        // header, fail if neither are found
-        let compare_url = match (origin, referer) {
-            (Some(origin), _) => Url::from_str(&origin).ok(),
-            (_, Some(referer)) => Url::from_str(&referer).ok(),
-            _ => None,
-        };
-
-        // Compare URL against allowed origins
-        if let Some(compare_url) = compare_url {
-            for url in allow_origin {
-                // Always match against scheme and domain
-                let scheme_match = url.scheme() == compare_url.scheme();
-                let domain_match = match (url.domain(), compare_url.domain()) {
-                    (Some(domain), Some(compare_domain)) => domain == compare_domain,
-                    _ => false,
-                };
-                // Match against port if it is present in the allowed origin
-                let port_match = match url.port() {
-                    Some(port) => match compare_url.port() {
-                        Some(compare_port) => port == compare_port,
-                        _ => false,
-                    },
-                    None => true,
-                };
-
-                if scheme_match && domain_match && port_match {
-                    return true;
-                }
-            }
-        }
-
-        false
-    }
-
-    fn cookie_value(headers: &HttpHeaders, cookie_name: &str) -> Option<String> {
-        match headers.get(http::header::COOKIE) {
-            Some(header) => match header.to_str() {
-                Ok(header) => {
-                    let cookies: Vec<&str> = header.split_whitespace().collect();
-                    for cookie in cookies {
-                        if let Ok(cookie) = Cookie::parse(cookie) {
-                            if cookie.name().to_lowercase() == cookie_name.to_lowercase() {
-                                return Some(cookie.value().into());
-                            }
-                        }
-                    }
-                    None
-                }
-                Err(_) => None,
-            },
-            None => None,
-        }
-    }
-
-    fn header_get_value(headers: &HttpHeaders, header_name: &str) -> Option<String> {
-        match headers.get(header_name) {
-            Some(header) => match header.to_str() {
-                Ok(value) => Some(value.into()),
-                Err(_) => None,
-            },
-            None => None,
-        }
-    }
-
-    fn header_remove_value(headers: &mut HttpHeaders, header_name: &str) -> Option<String> {
-        match headers.remove(header_name) {
-            Some(header) => match header.to_str() {
-                Ok(value) => Some(value.into()),
-                Err(_) => None,
-            },
-            None => None,
-        }
-    }
-
-    fn random_string(length: usize) -> String {
-        use rand::Rng;
-        let rng = rand::thread_rng();
-        rng.sample_iter(&rand::distributions::Alphanumeric)
-            .take(length)
-            .map(char::from)
-            .collect()
-    }
 }
 
 impl fmt::Debug for Csrf {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("Csrf").finish()
+    }
+}
+
+/// Returns true if the origin matches one of the allowed origins
+fn match_allow_origin(origin: Url, allow_origin: &[Url]) -> bool {
+    for url in allow_origin {
+        // Always match against scheme and domain
+        let scheme_match = url.scheme() == origin.scheme();
+        let domain_match = match (url.domain(), origin.domain()) {
+            (Some(domain), Some(compare_domain)) => domain == compare_domain,
+            _ => false,
+        };
+        // Match against port if it is present in the allowed origin
+        let port_match = match url.port() {
+            Some(port) => match origin.port() {
+                Some(compare_port) => port == compare_port,
+                _ => false,
+            },
+            None => true,
+        };
+
+        if scheme_match && domain_match && port_match {
+            return true;
+        }
+    }
+
+    false
+}
+
+/// Get cookie of name from headers and return value as string option
+fn cookie_value(headers: &HttpHeaders, cookie_name: &str) -> Option<String> {
+    match headers.get(http::header::COOKIE) {
+        Some(header) => match header.to_str() {
+            Ok(header) => {
+                let cookies: Vec<&str> = header.split_whitespace().collect();
+                for cookie in cookies {
+                    if let Ok(cookie) = Cookie::parse(cookie) {
+                        if cookie.name().to_lowercase() == cookie_name.to_lowercase() {
+                            return Some(cookie.value().into());
+                        }
+                    }
+                }
+                None
+            }
+            Err(_) => None,
+        },
+        None => None,
+    }
+}
+
+/// Get header of name from headers and return value as string option
+fn header_get_value(headers: &HttpHeaders, header_name: &str) -> Option<String> {
+    match headers.get(header_name) {
+        Some(header) => match header.to_str() {
+            Ok(value) => Some(value.into()),
+            Err(_) => None,
+        },
+        None => None,
+    }
+}
+
+/// Remove header of name from headers and return value as string option
+fn header_remove_value(headers: &mut HttpHeaders, header_name: &str) -> Option<String> {
+    match headers.remove(header_name) {
+        Some(header) => match header.to_str() {
+            Ok(value) => Some(value.into()),
+            Err(_) => None,
+        },
+        None => None,
+    }
+}
+
+/// Generate and return a random alphanumeric string of length
+fn random_string(length: usize) -> String {
+    use rand::Rng;
+    let rng = rand::thread_rng();
+    rng.sample_iter(&rand::distributions::Alphanumeric)
+        .take(length)
+        .map(char::from)
+        .collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn match_allow_origin_test() {
+        let http_localhost = Url::from_str("http://localhost").unwrap();
+        let allow_origin = vec![http_localhost];
+
+        let http_localhost_1234 = Url::from_str("http://localhost:1234").unwrap();
+        let http_localhost_4180 = Url::from_str("http://localhost:4180").unwrap();
+        assert_eq!(match_allow_origin(http_localhost_1234, &allow_origin), true);
+        assert_eq!(match_allow_origin(http_localhost_4180, &allow_origin), true);
+
+        let http_foo = Url::from_str("http://foo").unwrap();
+        let https_localhost = Url::from_str("https://localhost").unwrap();
+        assert_eq!(match_allow_origin(http_foo, &allow_origin), false);
+        assert_eq!(match_allow_origin(https_localhost, &allow_origin), false);
+
+        let example_org = Url::from_str("http://example.org").unwrap();
+        let allow_origin = vec![example_org.clone()];
+
+        let attacker_com = Url::from_str("http://example.org.attacker.com").unwrap();
+        assert_eq!(match_allow_origin(example_org, &allow_origin), true);
+        assert_eq!(match_allow_origin(attacker_com, &allow_origin), false);
+    }
+
+    #[test]
+    fn random_string_test() {
+        let output = random_string(32);
+        assert_eq!(output.len(), 32);
     }
 }

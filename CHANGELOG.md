@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+-   Add unit test examples to `proto` and `server` crates
+
 ## [0.2.4] - 2021-03-11
 
 -   Hide internal error details from responses, log them as warnings

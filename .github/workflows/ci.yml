@@ -147,5 +147,5 @@ jobs:
       - name: Release Artifacts
         if: env.RELEASE_ARTIFACTS == 'yes'
         run: |
-          echo "TODO: Create release and add clients-src.tgz file here"
+          echo "TODO: Create release (with changelog notes?) and add clients-src.tgz file here"
           ls ./dist/clients-src.tgz

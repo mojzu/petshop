@@ -13,7 +13,7 @@ Template for Rust API server with gRPC and OpenAPI (V2) interfaces
 -   [Generated OpenAPI (V2) definitions](https://github.com/grpc-ecosystem/grpc-gateway) from gRPC `.proto` files
 -   Generated TypeScript [axios](https://github.com/axios/axios), [gRPC Web](https://github.com/grpc/grpc-web), [Angular OpenAPI](https://github.com/cyclosproject/ng-swagger-gen) and [Angular gRPC](https://github.com/ngx-grpc/ngx-grpc) clients
 -   Client playground for browser with [Parcel](https://v2.parceljs.org/)
--   Integration tests with [Jasmine](https://jasmine.github.io/)
+-   Unit tests with Rust, integration tests with [Jasmine](https://jasmine.github.io/) (using generated clients)
 -   Continuous integration using [GitHub Actions](https://github.com/features/actions) and [cargo-make](https://github.com/sagiegurari/cargo-make)
 -   Docker image publishing to [GitHub Packages](https://github.com/features/packages)
 -   Example proto definitions based (loosely) on [OpenAPI (V2) Petstore](https://petstore.swagger.io/#/)

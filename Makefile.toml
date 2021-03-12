@@ -2,7 +2,7 @@
 # TODO: OAuth2-proxy multiple provider support, html templates? (metrics support after next release)
 # TODO: Envoy MTLS authentication example(s), other options for auth?
 
-# TODO: Add examples for rust tests/examples/benches?
+# TODO: Add examples for rust examples/benches?
 # TODO: Rust docs output in dist? cargo make --no-workspace docs-flow
 # TODO: Openapi doc generator from specification?
 # TODO: Read the docs docker image for docs?
