@@ -14,21 +14,21 @@ extern crate serde_json;
 #[macro_use]
 extern crate tracing;
 
-use crate::api::Api;
 use crate::config::Config;
 use crate::internal::*;
+use crate::services::Api;
 use clap::{App, Arg};
 use hyper::service::{make_service_fn, service_fn};
-use petshop_proto::api::v1::petshop_server::PetshopServer;
+use petshop_proto::api::{petshop_server::PetshopServer, tfb_server::TfbServer};
 use tokio::sync::broadcast;
 
-mod api;
 mod config;
 mod csrf;
 mod internal;
 mod jobs;
 mod metrics;
 mod postgres;
+mod services;
 
 /// Main
 ///
@@ -72,17 +72,26 @@ async fn server_run(config: Config) -> Result<()> {
     let (shutdown_tx, shutdown_rx1) = broadcast::channel::<bool>(8);
     let shutdown_rx2 = shutdown_tx.subscribe();
 
+    // FIXME: Additional gRPC services after being defined in proto library
+    // must be added/implemented in this crate
+
     // Build gRPC health service
     let (mut health_reporter, health_service) = tonic_health::server::health_reporter();
     health_reporter.set_serving::<PetshopServer<Api>>().await;
+    health_reporter.set_serving::<TfbServer<Api>>().await;
 
-    // Build API service
+    // Build API services
     let petshop = Api::from_config(&config, shutdown_tx)?;
+    let petshop_tfb = petshop.clone();
     let petshop_internal = petshop.clone();
     let petshop_metrics = petshop.metrics();
     let petshop_csrf = petshop.csrf();
+
     let petshop_service = MetricsService::wrap(petshop_metrics, PetshopServer::new(petshop));
     let petshop_service = CsrfService::wrap(petshop_csrf, petshop_service);
+
+    let tfb_metrics = petshop_tfb.metrics();
+    let tfb_service = MetricsService::wrap(tfb_metrics, TfbServer::new(petshop_tfb));
 
     // Build and serve tonic api server
     info!("api listening on {}", config.api_addr);
@@ -90,6 +99,7 @@ async fn server_run(config: Config) -> Result<()> {
         .trace_fn(|_| tracing::info_span!(NAME))
         .add_service(health_service)
         .add_service(petshop_service)
+        .add_service(tfb_service)
         .serve_with_shutdown(config.api_addr, shutdown_signal(shutdown_rx1));
 
     // Build and serve hyper internal server

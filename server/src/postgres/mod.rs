@@ -3,7 +3,7 @@
 //! <https://cheatsheetseries.owasp.org/cheatsheets/Database_Security_Cheat_Sheet.html>
 //! <https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html>
 use crate::internal::*;
-use petshop_proto::api::v1::{Fortune, World};
+use petshop_proto::api::{Fortune, World};
 use std::fmt;
 
 /// Postgres Pool

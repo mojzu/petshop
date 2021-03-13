@@ -58,7 +58,8 @@ static_resources:
                     typed_config:
                       "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_json_transcoder.v3.GrpcJsonTranscoder
                       proto_descriptor: "/data/api.pb"
-                      services: [ "grpc.health.v1.Health", "api.v1.Petshop" ]
+                      # FIXME: Additional gRPC services in proto crate must be added here
+                      services: [ "grpc.health.v1.Health", "api.Petshop", "api.Tfb" ]
                       print_options:
                         add_whitespace: true
                         always_print_primitive_fields: true
@@ -100,7 +101,8 @@ static_resources:
                     typed_config:
                       "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_json_transcoder.v3.GrpcJsonTranscoder
                       proto_descriptor: "/data/api.pb"
-                      services: [ "grpc.health.v1.Health", "api.v1.Petshop" ]
+                      # FIXME: Additional gRPC services in proto crate must be added here
+                      services: [ "grpc.health.v1.Health", "api.Petshop", "api.Tfb" ]
                       print_options:
                         add_whitespace: true
                         always_print_primitive_fields: true

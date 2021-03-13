@@ -10,7 +10,7 @@ import {
     Pet,
     Status,
     Tag,
-} from "../clients/grpc-web/api_pb";
+} from "../clients/grpc-web/messages_pb";
 import { PetshopPromiseClient } from "../clients/grpc-web/api_grpc_web_pb";
 import { HttpBody } from "../clients/grpc-web/google/api/httpbody_pb";
 
@@ -65,12 +65,13 @@ window["grpcClient"] = new PetshopPromiseClient(
 
 window["Empty"] = Empty;
 window["Struct"] = Struct;
+window["HttpBody"] = HttpBody;
+
 window["Category"] = Category;
 window["FindByStatus"] = FindByStatus;
 window["FindByTag"] = FindByTag;
 window["Pet"] = Pet;
 window["Status"] = Status;
 window["Tag"] = Tag;
-window["HttpBody"] = HttpBody;
 window["Echo"] = Echo;
 window["User"] = User;

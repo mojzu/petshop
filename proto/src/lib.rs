@@ -16,10 +16,8 @@ extern crate validator;
 /// API module
 pub mod api {
     /// Proto definitions
-    pub mod v1 {
-        use crate::prost_validator;
-        tonic::include_proto!("api.v1");
-    }
+    use crate::prost_validator;
+    tonic::include_proto!("api");
 }
 
 /// Google module
@@ -45,7 +43,7 @@ pub mod prost_validator {
     }
 
     pub fn user_name(s: &str) -> Result<(), ValidationError> {
-        if validator::validate_length(s, Some(2), Some(500), None) {
+        if validator::validate_length(s, None, Some(128), None) {
             Ok(())
         } else {
             Err(ValidationError::new("user_name_invalid"))
@@ -55,7 +53,7 @@ pub mod prost_validator {
 
 #[cfg(test)]
 mod tests {
-    use super::api::v1::*;
+    use super::api::*;
     use validator::Validate;
 
     // FIXME: Unit test example, can also use doctests here but not in the

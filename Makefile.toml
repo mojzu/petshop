@@ -253,6 +253,7 @@ cargo make go-tools-run -- protoc -I/usr/local/include -I/go/src -I/src/proto/pr
     --js_out=import_style=commonjs:/src/dist/grpc-web \
     --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:/src/dist/grpc-web \
     /src/proto/proto/api.proto \
+    /src/proto/proto/messages.proto \
     /src/proto/proto/google/api/annotations.proto \
     /src/proto/proto/google/api/field_behavior.proto \
     /src/proto/proto/google/api/http.proto \
@@ -504,6 +505,7 @@ script = '''
 echo Setting version to ${@}
 export VERSION=${@}
 sed -i -e "s/^version = .*/version = \"${VERSION}\"/" proto/Cargo.toml
+sed -i -e "s/^    version: .*/    version: \"${VERSION}\";/" proto/proto/api.proto
 sed -i -e "s/^version = .*/version = \"${VERSION}\"/" server/Cargo.toml
 sed -i -e "s/^  CURRENT_VERSION: .*/  CURRENT_VERSION: \"${VERSION}\"/" .github/workflows/ci.yml
 '''

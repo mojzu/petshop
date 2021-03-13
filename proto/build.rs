@@ -10,13 +10,13 @@ fn main() {
         //
         // <https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html>
         // <https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html#input-validation>
-        .type_attribute("api.v1.User", "#[derive(Validate)]")
+        .type_attribute("api.User", "#[derive(Validate)]")
         .field_attribute(
-            "api.v1.User.email",
+            "api.User.email",
             "#[validate(custom = \"prost_validator::email\")]",
         )
         .field_attribute(
-            "api.v1.User.name",
+            "api.User.name",
             "#[validate(custom = \"prost_validator::user_name\")]",
         )
         .compile(&["proto/api.proto"], &["proto"])
