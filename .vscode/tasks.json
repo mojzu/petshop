@@ -60,6 +60,13 @@
       "problemMatcher": []
     },
     {
+      "label": "dev - swagger ui",
+      "detail": "Run Swagger UI on port 8080 using generated definitions",
+      "type": "shell",
+      "command": "cargo make dev-swagger-ui",
+      "problemMatcher": []
+    },
+    {
       "label": "dev - integration test",
       "detail": "Build and run integration-test using node-tools image",
       "type": "shell",
@@ -92,13 +99,6 @@
       "detail": "Build generated outputs and run docker-compose with CI compose file",
       "type": "shell",
       "command": "cargo make compose-ci run sut && cargo make compose down",
-      "problemMatcher": []
-    },
-    {
-      "label": "swagger ui",
-      "detail": "Run swagger UI on port 8080 using generated definition",
-      "type": "shell",
-      "command": "cargo make swagger-ui",
       "problemMatcher": []
     },
     {

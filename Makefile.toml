@@ -178,19 +178,6 @@ echo Running petshop/rust-tools:latest
 docker run --rm -it -v "$(pwd):/src" --user "$(id -u):$(id -g)" --network=host petshop/rust-tools:latest ${@}
 '''
 
-# DEPEND: docker pull swaggerapi/swagger-ui:v3.45.0
-# <https://hub.docker.com/r/swaggerapi/swagger-ui>
-[tasks.swagger-ui]
-description = "Run swagger-ui using generated definition"
-category = "Petshop"
-workspace = false
-dependencies = [
-    "generate-protoc-openapi"
-]
-script = '''
-docker run --rm -it --network=host -e SWAGGER_JSON=/dist/data/api.swagger.json -v "$(pwd)/dist:/dist" swaggerapi/swagger-ui:v3.45.0
-'''
-
 # Protobuf/openapi generator tasks
 
 [tasks.generate-protoc-protobuf]
@@ -416,6 +403,19 @@ dependencies = [
 script = '''
 echo Running node-tools/client-playground
 cargo make node-tools -- npm run client-playground
+'''
+
+# DEPEND: docker pull swaggerapi/swagger-ui:v3.45.0
+# <https://hub.docker.com/r/swaggerapi/swagger-ui>
+[tasks.dev-swagger-ui]
+description = "Run swagger-ui using generated definition"
+category = "Petshop"
+workspace = false
+dependencies = [
+    "generate-protoc-openapi"
+]
+script = '''
+docker run --rm -it --network=host -e SWAGGER_JSON=/dist/data/api.swagger.json -v "$(pwd)/dist:/dist" swaggerapi/swagger-ui:v3.45.0
 '''
 
 [tasks.dev-integration-test]
