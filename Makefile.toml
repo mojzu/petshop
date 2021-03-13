@@ -469,12 +469,23 @@ docker-compose -f docker-compose.ci.yml down
 
 # Documentation tasks
 
+[tasks.docs-clean]
+description = "Clean documentation directory"
+category = "Petshop"
+workspace = false
+script = '''
+rm -rf ./docs
+'''
+
 [tasks.docs-sphinx]
 description = "Run sphinx documentation builder"
 category = "Petshop"
 workspace = false
 dependencies = [
-    "docker-build-sphinx"
+    "docker-build-sphinx",
+    "docs-clean",
+    # TODO: How to link between sphinx and rustdoc output?
+    # "docs-flow",
 ]
 script = '''
 echo Running petshop/sphinx:latest
@@ -512,7 +523,8 @@ description = "Clean generated outputs"
 category = "Petshop"
 workspace = false
 dependencies = [
-    "clean"
+    "clean",
+    "docs-clean",
 ]
 script = '''
 rm -rf ./dist
