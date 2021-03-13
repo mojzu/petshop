@@ -3,8 +3,6 @@
 # TODO: Envoy MTLS authentication example(s), other options for auth?
 
 # TODO: Rust docs output in dist? cargo make --no-workspace docs-flow
-# TODO: Read the docs docker image for docs?
-# <https://docs.readthedocs.io/en/stable/intro/getting-started-with-sphinx.html#quick-start-video>
 
 # Build docker image tasks
 
@@ -85,6 +83,14 @@ workspace = false
 script = '''
 echo Building petshop/prometheus:latest
 docker build --tag petshop/prometheus:latest --file docker/prometheus.dockerfile .
+'''
+
+[tasks.docker-build-sphinx]
+category = "Petshop"
+workspace = false
+script = '''
+echo Building petshop/sphinx:latest
+docker build --tag petshop/sphinx:latest --file docker/sphinx.dockerfile .
 '''
 
 # FIXME: BUILD_VERSION is empty when building for development, but is defined
@@ -461,6 +467,20 @@ script = '''
 docker-compose -f docker-compose.ci.yml down
 '''
 
+# Documentation tasks
+
+[tasks.docs-sphinx]
+description = "Run sphinx documentation builder"
+category = "Petshop"
+workspace = false
+dependencies = [
+    "docker-build-sphinx"
+]
+script = '''
+echo Running petshop/sphinx:latest
+docker run --rm -it -v "$(pwd):/src" --user "$(id -u):$(id -g)" --network=host petshop/sphinx:latest sphinx-make-html
+'''
+
 # Distribution tasks
 
 [tasks.dist-clean-images]
@@ -481,6 +501,7 @@ docker image rm -f \
     petshop/node-tools:latest \
     petshop/oauth2-proxy:latest \
     petshop/prometheus:latest \
+    petshop/sphinx:latest \
     petshop/rust-cache:latest \
     petshop/rust-tools:latest \
     petshop/server:latest
@@ -508,6 +529,7 @@ sed -i -e "s/^version = .*/version = \"${VERSION}\"/" proto/Cargo.toml
 sed -i -e "s/^    version: .*/    version: \"${VERSION}\";/" proto/proto/api.proto
 sed -i -e "s/^version = .*/version = \"${VERSION}\"/" server/Cargo.toml
 sed -i -e "s/^  CURRENT_VERSION: .*/  CURRENT_VERSION: \"${VERSION}\"/" .github/workflows/ci.yml
+sed -i -e "s/^release = .*/release = '${VERSION}'/" docker/sphinx/conf.py
 '''
 
 [tasks.dist-build]

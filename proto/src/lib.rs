@@ -43,7 +43,7 @@ pub mod prost_validator {
     }
 
     pub fn user_name(s: &str) -> Result<(), ValidationError> {
-        if validator::validate_length(s, None, Some(128), None) {
+        if validator::validate_length(s, None, Some(64), None) {
             Ok(())
         } else {
             Err(ValidationError::new("user_name_invalid"))
@@ -76,7 +76,7 @@ mod tests {
 
         let user = User {
             email: "validemail@example.com".to_string(),
-            name: "v".to_string(),
+            name: "abcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcab".to_string(),
         };
         assert_eq!(user.validate().is_ok(), false);
     }

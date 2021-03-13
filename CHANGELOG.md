@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Add unit test examples to `proto` and `server` crates
 -   Add `swagger-ui` task to makefile, runs Swagger UI with the generated API definitions
 -   Refactoring proto crate to support multiple gRPC services
+-   Add Sphinx documentation builder
 
 ## [0.2.4] - 2021-03-11
 

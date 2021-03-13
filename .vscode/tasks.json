@@ -74,6 +74,13 @@
       "problemMatcher": []
     },
     {
+      "label": "docs - sphinx",
+      "detail": "Build documentation using Sphinx",
+      "type": "shell",
+      "command": "cargo make docs-sphinx",
+      "problemMatcher": []
+    },
+    {
       "label": "compose - build",
       "detail": "Run docker-compose build",
       "type": "shell",
