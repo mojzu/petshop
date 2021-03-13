@@ -95,6 +95,13 @@
       "problemMatcher": []
     },
     {
+      "label": "swagger ui",
+      "detail": "Run swagger UI on port 8080 using generated definition",
+      "type": "shell",
+      "command": "cargo make swagger-ui",
+      "problemMatcher": []
+    },
+    {
       "label": "examples - auth - build",
       "detail": "Run auth example docker-compose build",
       "type": "shell",

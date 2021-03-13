@@ -14,7 +14,13 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
   info: {
     title: "Petshop API";
     version: "v1";
+    description: "";
   };
+  host: "localhost:10000";
+  schemes: HTTP;
+  schemes: HTTPS;
+  consumes: "application/json";
+  produces: "application/json";
   security_definitions: {
     security: {
       key: "BasicAuth";

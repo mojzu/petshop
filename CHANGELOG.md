@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 -   Add unit test examples to `proto` and `server` crates
+-   Add `swagger-ui` task to makefile, runs Swagger UI with the generated API definitions
 
 ## [0.2.4] - 2021-03-11
 

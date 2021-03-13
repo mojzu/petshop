@@ -2,9 +2,7 @@
 # TODO: OAuth2-proxy multiple provider support, html templates? (metrics support after next release)
 # TODO: Envoy MTLS authentication example(s), other options for auth?
 
-# TODO: Add examples for rust examples/benches?
 # TODO: Rust docs output in dist? cargo make --no-workspace docs-flow
-# TODO: Openapi doc generator from specification?
 # TODO: Read the docs docker image for docs?
 # <https://docs.readthedocs.io/en/stable/intro/getting-started-with-sphinx.html#quick-start-video>
 
@@ -180,6 +178,19 @@ echo Running petshop/rust-tools:latest
 docker run --rm -it -v "$(pwd):/src" --user "$(id -u):$(id -g)" --network=host petshop/rust-tools:latest ${@}
 '''
 
+# DEPEND: docker pull swaggerapi/swagger-ui:v3.45.0
+# <https://hub.docker.com/r/swaggerapi/swagger-ui>
+[tasks.swagger-ui]
+description = "Run swagger-ui using generated definition"
+category = "Petshop"
+workspace = false
+dependencies = [
+    "generate-protoc-openapi"
+]
+script = '''
+docker run --rm -it --network=host -e SWAGGER_JSON=/dist/data/api.swagger.json -v "$(pwd)/dist:/dist" swaggerapi/swagger-ui:v3.45.0
+'''
+
 # Protobuf/openapi generator tasks
 
 [tasks.generate-protoc-protobuf]
@@ -209,6 +220,8 @@ cargo make go-tools-run -- protoc -I/usr/local/include -I/go/src -I/src/proto/pr
     logtostderr=true /src/proto/proto/api.proto
 '''
 
+# DEPEND: docker pull openapitools/openapi-generator-cli:v5.0.1
+# <https://hub.docker.com/r/openapitools/openapi-generator-cli>
 [tasks.generate-axios-client]
 description = "Generate axios client"
 category = "Petshop"
@@ -217,8 +230,6 @@ script = '''
 echo Generating axios client dist/axios
 rm -rf ./dist/axios
 mkdir -p ./dist/axios
-# DEPEND: docker pull openapitools/openapi-generator-cli:v5.0.1
-# <https://hub.docker.com/r/openapitools/openapi-generator-cli>
 docker run --rm -v "$(pwd):/workspace" --user "$(id -u):$(id -g)" openapitools/openapi-generator-cli:v5.0.1 \
     generate -i /workspace/dist/data/api.swagger.json \
     -g typescript-axios \
