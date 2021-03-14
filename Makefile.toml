@@ -1,4 +1,3 @@
-# TODO: Running in k8s examples?
 # TODO: OAuth2-proxy multiple provider support, html templates? (metrics support after next release)
 # TODO: Envoy MTLS authentication example(s), other options for auth?
 
@@ -540,8 +539,13 @@ echo Setting version to ${VERSION}
 sed -i -e "s/^version = .*/version = \"${VERSION}\"/" proto/Cargo.toml
 sed -i -e "s/^    version: .*/    version: \"${VERSION}\";/" proto/proto/api.proto
 sed -i -e "s/^version = .*/version = \"${VERSION}\"/" server/Cargo.toml
+
 sed -i -e "s/^  CURRENT_VERSION: .*/  CURRENT_VERSION: \"${VERSION}\"/" .github/workflows/ci.yml
+
 sed -i -e "s/^release = .*/release = '${VERSION}'/" docker/sphinx/conf.py
+
+sed -i -e "s/^version: .*/version: ${VERSION}/" examples/helm/Chart.yaml
+sed -i -e "s/^appVersion: .*/appVersion: \"${VERSION}\"/" examples/helm/Chart.yaml
 '''
 
 [tasks.dist-build]
@@ -574,6 +578,29 @@ dependencies = [
     "generate-client-flow-pre",
     "dist-clients-src"
 ]
+
+# MicroK8s tasks
+
+[tasks.microk8s-images]
+description = "Build and inject images into microk8s"
+category = "Petshop"
+workspace = false
+dependencies = [
+    "dist-ci-build"
+]
+script = '''
+echo IMAGE=k8s.io/mojzu/petshop-envoy:$VERSION
+docker tag petshop/envoy:latest k8s.io/mojzu/petshop-envoy:$VERSION
+
+echo IMAGE=k8s.io/mojzu/petshop-server:$VERSION
+docker tag petshop/server:latest k8s.io/mojzu/petshop-server:$VERSION
+
+docker save k8s.io/mojzu/petshop-envoy:$VERSION > dist/petshop-envoy.tar
+docker save k8s.io/mojzu/petshop-server:$VERSION > dist/petshop-server.tar
+
+microk8s ctr image import dist/petshop-envoy.tar
+microk8s ctr image import dist/petshop-server.tar
+'''
 
 # Default tasks
 

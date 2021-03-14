@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Add `swagger-ui` task to makefile, runs Swagger UI with the generated API definitions
 -   Refactoring proto crate to support multiple gRPC services
 -   Add Sphinx documentation builder
+-   Start Helm chart and MicroK8s example development
 
 ## [0.2.4] - 2021-03-11
 

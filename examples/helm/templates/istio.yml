@@ -1,0 +1,37 @@
+# TODO: Make this optional with envoy image alternative somehow?
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: {{ include "petshop.fullname" . }}
+  labels:
+    {{- include "petshop.labels" . | nindent 4 }}
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "petshop.fullname" . }}
+  labels:
+    {{- include "petshop.labels" . | nindent 4 }}
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - {{ include "petshop.fullname" . }}
+  http:
+  - name: {{ include "petshop.name" . }}
+    # TODO: Support grpc-json transcoding here
+    route:
+    - destination:
+        port:
+          number: 5501
+        host: petshop
