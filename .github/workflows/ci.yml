@@ -14,7 +14,7 @@ on:
 
 env:
   CLICOLOR_FORCE: 1
-  CURRENT_VERSION: "0.2.5"
+  CURRENT_VERSION: "0.3.0"
 
 jobs:
   rust-ci:
@@ -110,7 +110,7 @@ jobs:
           echo RELEASE_ARTIFACTS=$RELEASE_ARTIFACTS
 
           # Apply build version
-          cargo make dist-version $BUILD_VERSION
+          cargo make --env VERSION=$BUILD_VERSION dist-version
 
           # Save versions to environment
           echo "BUILD_VERSION=$BUILD_VERSION" >> $GITHUB_ENV

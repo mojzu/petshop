@@ -354,6 +354,7 @@ docker run --rm -it --network=host -e POSTGRES_PASSWORD=postgres postgres:13.2-a
 '''
 
 [env]
+VERSION = "0.3.0"
 RUST_LOG = "petshop_server=debug,tokio_postgres=debug"
 CONFIG_TRACING_JSON = "false"
 CONFIG_API_HOST = "0.0.0.0"
@@ -535,8 +536,7 @@ description = "Set crate and other version numbers"
 category = "Petshop"
 workspace = false
 script = '''
-echo Setting version to ${@}
-export VERSION=${@}
+echo Setting version to ${VERSION}
 sed -i -e "s/^version = .*/version = \"${VERSION}\"/" proto/Cargo.toml
 sed -i -e "s/^    version: .*/    version: \"${VERSION}\";/" proto/proto/api.proto
 sed -i -e "s/^version = .*/version = \"${VERSION}\"/" server/Cargo.toml

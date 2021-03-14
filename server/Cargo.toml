@@ -1,6 +1,6 @@
 [package]
 name = "petshop_server"
-version = "0.2.5"
+version = "0.3.0"
 description = "Server binary crate"
 authors = ["Sam Ward <mail@mojzu.net>"]
 edition = "2018"

@@ -101,14 +101,14 @@ cargo make dev-client-playground
 # Run integration test in development mode
 cargo make dev-integration-test
 
-# Set version numbers, tag versions in format `vX.Y.Z`
-cargo make dist-version $VERSION
+# Set version number in Makefile.toml [env], tag versions in format `vX.Y.Z`
+cargo make dist-version
 git tag v$VERSION
 ```
 
 Release checklist
 
--   [ ] Set version number using `cargo make dist-version $VERSION`
+-   [ ] Set version number using `cargo make dist-version`
 -   [ ] Update `CHANGELOG.md` file
 -   [ ] Commit changes and tag in format `vX.Y.Z`
 -   [ ] Push changes and tags to main branch
