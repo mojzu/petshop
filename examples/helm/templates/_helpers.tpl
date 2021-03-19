@@ -23,6 +23,14 @@ If release name contains chart name it will be used as a full name.
 {{- end }}
 {{- end }}
 
+{{- define "petshop.serverName" -}}
+{{- printf "%s-%s" (include "petshop.fullname" .) "server" | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{- define "petshop.envoyName" -}}
+{{- printf "%s-%s" (include "petshop.fullname" .) "envoy" | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
 {{/*
 Create chart name and version as used by the chart label.
 */}}
@@ -40,8 +48,6 @@ helm.sh/chart: {{ include "petshop.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-app: {{ include "petshop.name" . }}
-version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 
 {{/*
@@ -50,8 +56,16 @@ Selector labels
 {{- define "petshop.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "petshop.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
-app: {{ include "petshop.name" . }}
-version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+
+{{- define "petshop.serverSelectorLabels" -}}
+{{ include "petshop.selectorLabels" . }}
+app.kubernetes.io/selector: {{ include "petshop.serverName" . }}
+{{- end }}
+
+{{- define "petshop.envoySelectorLabels" -}}
+{{ include "petshop.selectorLabels" . }}
+app.kubernetes.io/selector: {{ include "petshop.envoyName" . }}
 {{- end }}
 
 {{/*

@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Refactoring proto crate to support multiple gRPC services
 -   Add Sphinx documentation builder
 -   Start Helm chart and MicroK8s example development
+-   Use Minikube for Helm example, use headless service instead of istio
 
 ## [0.2.4] - 2021-03-11
 

@@ -104,6 +104,9 @@ impl TryFrom<ConfigLoad> for Config {
                 csrf.header_name,
                 "X-XSRF-TOKEN".to_string(),
             );
+            // FIXME: This is not a particularly elegant way of having arrays in toml file
+            // but allowing passing an origin via environment variable for docker usage
+            // Is there a cleaner way to design this to keep both advantages?
             let mut allow_origins =
                 Config::opt_or_default("csrf.allow_origins", csrf.allow_origins, Vec::new());
             let allow_origin = Config::opt("csrf.allow_origin", csrf.allow_origin);

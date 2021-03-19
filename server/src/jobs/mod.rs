@@ -1,8 +1,7 @@
 //! # Jobs
 //!
-//! An example using cron to run jobs can be found in examples/cron
-//!
-//! TODO: Example integration with k8s
+//! Examples using cron in docker and minikube to run jobs can
+//! be found in the `examples` directory
 use crate::internal::*;
 
 /// Jobs

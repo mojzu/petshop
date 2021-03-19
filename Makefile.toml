@@ -1,6 +1,5 @@
 # TODO: OAuth2-proxy multiple provider support, html templates? (metrics support after next release)
 # TODO: Envoy MTLS authentication example(s), other options for auth?
-
 # TODO: Rust docs output in dist? cargo make --no-workspace docs-flow
 
 # Build docker image tasks
@@ -579,10 +578,10 @@ dependencies = [
     "dist-clients-src"
 ]
 
-# MicroK8s tasks
+# Minikube tasks
 
-[tasks.microk8s-images]
-description = "Build and inject images into microk8s"
+[tasks.minikube-images]
+description = "Build images for minikube example"
 category = "Petshop"
 workspace = false
 dependencies = [
@@ -598,8 +597,9 @@ docker tag petshop/server:latest k8s.io/mojzu/petshop-server:$VERSION
 docker save k8s.io/mojzu/petshop-envoy:$VERSION > dist/petshop-envoy.tar
 docker save k8s.io/mojzu/petshop-server:$VERSION > dist/petshop-server.tar
 
-microk8s ctr image import dist/petshop-envoy.tar
-microk8s ctr image import dist/petshop-server.tar
+minikube cache add k8s.io/mojzu/petshop-envoy:$VERSION
+minikube cache add k8s.io/mojzu/petshop-server:$VERSION
+minikube cache reload
 '''
 
 # Default tasks

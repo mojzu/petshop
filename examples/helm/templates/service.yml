@@ -1,19 +1,32 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "petshop.fullname" . }}
+  name: {{ include "petshop.serverName" . }}
+  labels:
+    {{- include "petshop.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - port: 5000
+      targetPort: http-api
+      protocol: TCP
+      name: http-api
+  selector:
+    {{- include "petshop.serverSelectorLabels" . | nindent 4 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "petshop.envoyName" . }}
   labels:
     {{- include "petshop.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.api_port }}
-      targetPort: http-api
+    - port: {{ .Values.service.port }}
+      targetPort: http
       protocol: TCP
-      name: http-api
-    - port: {{ .Values.service.internal_port }}
-      targetPort: http-internal
-      protocol: TCP
-      name: http-internal
+      name: http
   selector:
-    {{- include "petshop.selectorLabels" . | nindent 4 }}
+    {{- include "petshop.envoySelectorLabels" . | nindent 4 }}

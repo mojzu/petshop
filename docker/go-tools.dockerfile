@@ -1,6 +1,6 @@
-# DEPEND: docker pull golang:1.16.1-buster
+# DEPEND: docker pull golang:1.16.2-buster
 # <https://hub.docker.com/_/golang>
-FROM golang:1.16.1-buster
+FROM golang:1.16.2-buster
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
@@ -12,7 +12,7 @@ RUN apt-get update \
 
 # DEPEND: Install protocol buffers
 # <https://github.com/protocolbuffers/protobuf>
-RUN wget -O protoc.zip -q "https://github.com/protocolbuffers/protobuf/releases/download/v3.15.5/protoc-3.15.5-linux-x86_64.zip" \
+RUN wget -O protoc.zip -q "https://github.com/protocolbuffers/protobuf/releases/download/v3.15.6/protoc-3.15.6-linux-x86_64.zip" \
     && unzip -o protoc.zip -d /usr/local bin/protoc \
     && unzip -o protoc.zip -d /usr/local 'include/*' \
     && chmod +x /usr/local/bin/protoc \

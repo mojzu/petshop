@@ -30,6 +30,7 @@ Template for Rust API server with gRPC and OpenAPI (V2) interfaces
 -   Authentication example with [OAuth2 Proxy](https://oauth2-proxy.github.io/oauth2-proxy/) and [Envoy External Authorization](https://www.envoyproxy.io/docs/envoy/latest/api-v2/config/filter/http/ext_authz/v2/ext_authz.proto)
 -   Cron example to run periodic jobs for the server
 -   [GitHub Container Registry](https://docs.github.com/en/packages/guides/about-github-container-registry) example to use published images
+-   Kubernetes deployment example using [Helm](https://helm.sh/) and [minikube](https://minikube.sigs.k8s.io/docs/)
 -   [TechEmpower Benchmark Framework](https://www.techempower.com/benchmarks/) example ([2021-03-11 results](https://www.techempower.com/benchmarks/#section=test&shareid=c38a0145-e32f-452b-878f-b9456f0693e6))
 
 ## Quickstart

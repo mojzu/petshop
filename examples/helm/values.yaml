@@ -1,7 +1,13 @@
-replicaCount: 1
+serverReplicaCount: 1
 
-image:
+serverImage:
   repository: k8s.io/mojzu/petshop-server
+  pullPolicy: IfNotPresent
+
+envoyReplicaCount: 1
+
+envoyImage:
+  repository: k8s.io/mojzu/petshop-envoy
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -34,8 +40,7 @@ config: {}
 
 service:
   type: ClusterIP
-  api_port: 5000
-  internal_port: 5501
+  port: 8080
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

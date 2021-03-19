@@ -1,0 +1,47 @@
+# TODO: Disabled by .helmignore until postgres is available here
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ include "petshop.fullname" . }}
+  labels:
+    {{- include "petshop.labels" . | nindent 4 }}
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: "Never"
+          containers:
+            - name: {{ .Chart.Name }}
+              securityContext:
+                {{- toYaml .Values.securityContext | nindent 16 }}
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              command: ["petshop_server"]
+              args: ["-c", "/config/config.toml", "--job", "example"]
+              volumeMounts:
+                - name: config-volume
+                  mountPath: /config
+                  readOnly: true
+              resources:
+                {{- toYaml .Values.resources | nindent 16 }}
+          volumes:
+            - name: config-volume
+              secret:
+                secretName: {{ include "petshop.fullname" . }}
+                items:
+                  - key: config.toml
+                    path: config.toml
+          {{- with .Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}

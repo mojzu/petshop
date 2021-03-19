@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "petshop.fullname" . }}
+  name: {{ include "petshop.serverName" . }}
   labels:
     {{- include "petshop.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.serverReplicaCount }}
   selector:
     matchLabels:
-      {{- include "petshop.selectorLabels" . | nindent 6 }}
+      {{- include "petshop.serverSelectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -16,7 +16,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "petshop.selectorLabels" . | nindent 8 }}
+        {{- include "petshop.serverSelectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -29,8 +29,8 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.serverImage.repository }}:{{ default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.serverImage.pullPolicy }}
           ports:
             - name: http-api
               containerPort: 5000
@@ -60,6 +60,78 @@ spec:
             items:
               - key: config.toml
                 path: config.toml
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "petshop.envoyName" . }}
+  labels:
+    {{- include "petshop.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.envoyReplicaCount }}
+  selector:
+    matchLabels:
+      {{- include "petshop.envoySelectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "petshop.envoySelectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "petshop.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.envoyImage.repository }}:{{ default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.envoyImage.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 10000
+              protocol: TCP
+          volumeMounts:
+            - name: config-volume
+              mountPath: /config
+              readOnly: true
+          # TODO: Envoy health checking
+          # livenessProbe:
+          #   httpGet:
+          #     path: /liveness
+          #     port: internal
+          # readinessProbe:
+          #   httpGet:
+          #     path: /readiness
+          #     port: internal
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: config-volume
+          secret:
+            secretName: {{ include "petshop.fullname" . }}
+            items:
+              - key: envoy.yaml
+                path: envoy.yaml
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
