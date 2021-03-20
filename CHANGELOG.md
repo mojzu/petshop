@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Add Sphinx documentation builder
 -   Start Helm chart and MicroK8s example development
 -   Use Minikube for Helm example, use headless service instead of istio
+-   Add `.vscode/search` directory with label search files
+-   Make cron manifest functional in Helm example
+-   Add postgres, prometheus support to Helm example
 
 ## [0.2.4] - 2021-03-11
 

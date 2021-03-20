@@ -11,7 +11,7 @@ spec:
       {{- include "petshop.serverSelectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
+      {{- with .Values.serverPodAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -32,7 +32,7 @@ spec:
           image: "{{ .Values.serverImage.repository }}:{{ default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.serverImage.pullPolicy }}
           ports:
-            - name: http-api
+            - name: http
               containerPort: 5000
               protocol: TCP
             - name: http-internal
@@ -45,12 +45,11 @@ spec:
           livenessProbe:
             httpGet:
               path: /liveness
-              port: internal
-          # TODO: Disabled until postgres available
-          # readinessProbe:
-          #   httpGet:
-          #     path: /readiness
-          #     port: internal
+              port: http-internal
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: http-internal
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
@@ -86,7 +85,7 @@ spec:
       {{- include "petshop.envoySelectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
+      {{- with .Values.envoyPodAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -110,19 +109,21 @@ spec:
             - name: http
               containerPort: 10000
               protocol: TCP
+            - name: http-internal
+              containerPort: 9901
+              protocol: TCP
           volumeMounts:
             - name: config-volume
               mountPath: /config
               readOnly: true
-          # TODO: Envoy health checking
-          # livenessProbe:
-          #   httpGet:
-          #     path: /liveness
-          #     port: internal
-          # readinessProbe:
-          #   httpGet:
-          #     path: /readiness
-          #     port: internal
+          livenessProbe:
+            httpGet:
+              path: /server_info
+              port: http-internal
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http-internal
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:

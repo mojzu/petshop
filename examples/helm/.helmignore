@@ -21,7 +21,3 @@
 .idea/
 *.tmproj
 .vscode/
-
-# TODO: Enable these when working
-templates/cronjob.yml
-templates/istio.yml

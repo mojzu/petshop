@@ -23,7 +23,14 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-podAnnotations: {}
+serverPodAnnotations:
+  prometheus.io/port: "5501"
+  prometheus.io/scrape: "true"
+
+envoyPodAnnotations:
+  prometheus.io/port: "9901"
+  prometheus.io/path: "/stats/prometheus"
+  prometheus.io/scrape: "true"
 
 podSecurityContext: {}
   # fsGroup: 2000
@@ -36,11 +43,19 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-config: {}
+config:
+  metrics_name: "petshop_server"
+  csrf: {}
+  postgres:
+    user: "postgres"
+    password: "postgres"
+    dbname: "postgres"
+    host: "database-postgresql"
+    port: 5432
 
 service:
   type: ClusterIP
-  port: 8080
+  port: 10000
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

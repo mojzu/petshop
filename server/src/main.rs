@@ -73,7 +73,8 @@ async fn server_run(config: Config) -> Result<()> {
     let shutdown_rx2 = shutdown_tx.subscribe();
 
     // FIXME: Additional gRPC services after being defined in proto library
-    // must be added/implemented in this crate
+    // must be added/implemented in this crate, and added to the envoy
+    // configuration for JSON transcoding
 
     // Build gRPC health service
     let (mut health_reporter, health_service) = tonic_health::server::health_reporter();

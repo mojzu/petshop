@@ -20,6 +20,11 @@ alias kubectl='minikube kubectl --'
 kubectl version
 helm version
 
+# Install Postgres and Prometheus using charts
+helm install -f examples/helm/prometheus.yaml prometheus prometheus-community/prometheus
+helm install -f examples/helm/postgresql.yaml database bitnami/postgresql
+
+# Install petshop using local chart
 cargo make minikube-images
 minikube cache list
 
@@ -29,8 +34,9 @@ helm install --debug --dry-run petshop ./examples/helm
 helm install petshop ./examples/helm
 helm uninstall petshop
 
-# Follow helm notes on forwarding service port to host, then the client
-# playground endpoint can be changed to test it (port 8080)
+# Follow helm notes on forwarding service port to host, then test
+# using the client playground at http://localhost:1234
 
-# TODO: Add helm tests
+# TODO: Add helm tests?
+# TODO: Ingress istio, mtls examples?
 ```

@@ -27,6 +27,10 @@ If release name contains chart name it will be used as a full name.
 {{- printf "%s-%s" (include "petshop.fullname" .) "server" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
+{{- define "petshop.serverExampleJobName" -}}
+{{- printf "%s-%s" (include "petshop.fullname" .) "example-job" | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
 {{- define "petshop.envoyName" -}}
 {{- printf "%s-%s" (include "petshop.fullname" .) "envoy" | trunc 63 | trimSuffix "-" }}
 {{- end }}

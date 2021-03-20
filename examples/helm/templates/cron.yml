@@ -1,8 +1,7 @@
-# TODO: Disabled by .helmignore until postgres is available here
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: {{ include "petshop.fullname" . }}
+  name: {{ include "petshop.serverExampleJobName" . }}
   labels:
     {{- include "petshop.labels" . | nindent 4 }}
 spec:
@@ -16,8 +15,8 @@ spec:
             - name: {{ .Chart.Name }}
               securityContext:
                 {{- toYaml .Values.securityContext | nindent 16 }}
-              image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              image: "{{ .Values.serverImage.repository }}:{{ default .Chart.AppVersion }}"
+              imagePullPolicy: {{ .Values.serverImage.pullPolicy }}
               command: ["petshop_server"]
               args: ["-c", "/config/config.toml", "--job", "example"]
               volumeMounts:

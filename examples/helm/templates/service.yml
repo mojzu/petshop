@@ -9,9 +9,9 @@ spec:
   clusterIP: None
   ports:
     - port: 5000
-      targetPort: http-api
+      targetPort: http
       protocol: TCP
-      name: http-api
+      name: http
   selector:
     {{- include "petshop.serverSelectorLabels" . | nindent 4 }}
 ---
