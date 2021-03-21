@@ -21,8 +21,11 @@ kubectl version
 helm version
 
 # Install Postgres and Prometheus using charts
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm install -f examples/helm/prometheus.yaml prometheus prometheus-community/prometheus
+helm repo add bitnami https://charts.bitnami.com/bitnami
 helm install -f examples/helm/postgresql.yaml database bitnami/postgresql
+helm get all|notes database|prometheus
 
 # Install petshop using local chart
 cargo make minikube-images
