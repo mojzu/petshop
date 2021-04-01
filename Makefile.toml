@@ -211,7 +211,7 @@ cargo make go-tools-run -- protoc -I/usr/local/include -I/go/src -I/src/proto/pr
     logtostderr=true /src/proto/proto/api.proto
 '''
 
-# DEPEND: docker pull openapitools/openapi-generator-cli:v5.0.1
+# DEPEND: docker pull openapitools/openapi-generator-cli:v5.1.0
 # <https://hub.docker.com/r/openapitools/openapi-generator-cli>
 [tasks.generate-axios-client]
 description = "Generate axios client"
@@ -221,7 +221,7 @@ script = '''
 echo Generating axios client dist/axios
 rm -rf ./dist/axios
 mkdir -p ./dist/axios
-docker run --rm -v "$(pwd):/workspace" --user "$(id -u):$(id -g)" openapitools/openapi-generator-cli:v5.0.1 \
+docker run --rm -v "$(pwd):/workspace" --user "$(id -u):$(id -g)" openapitools/openapi-generator-cli:v5.1.0 \
     generate -i /workspace/dist/data/api.swagger.json \
     -g typescript-axios \
     -o /workspace/dist/axios
@@ -410,7 +410,7 @@ echo Running node-tools/client-playground
 cargo make node-tools -- npm run client-playground
 '''
 
-# DEPEND: docker pull swaggerapi/swagger-ui:v3.45.0
+# DEPEND: docker pull swaggerapi/swagger-ui:v3.46.0
 # <https://hub.docker.com/r/swaggerapi/swagger-ui>
 [tasks.dev-swagger-ui]
 description = "Run swagger-ui using generated definition"
@@ -420,7 +420,8 @@ dependencies = [
     "generate-protoc-openapi"
 ]
 script = '''
-docker run --rm -it --network=host -e SWAGGER_JSON=/dist/data/api.swagger.json -v "$(pwd)/dist:/dist" swaggerapi/swagger-ui:v3.45.0
+echo Running swaggerapi/swagger-ui at http://localhost:8080
+docker run --rm -it --network=host -e SWAGGER_JSON=/dist/data/api.swagger.json -v "$(pwd)/dist:/dist" swaggerapi/swagger-ui:v3.46.0
 '''
 
 [tasks.dev-integration-test]

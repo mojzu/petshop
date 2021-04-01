@@ -2,7 +2,7 @@
 # <https://hub.docker.com/_/buildpack-deps>
 FROM buildpack-deps:buster as build
 
-ENV OAUTH2_PROXY_VERSION="v7.0.1"
+ENV OAUTH2_PROXY_VERSION="v7.1.1"
 
 # DEPEND: Install Oauth2 Proxy
 # <https://github.com/oauth2-proxy/oauth2-proxy>
@@ -11,9 +11,9 @@ RUN curl -fsSLO --compressed "https://github.com/oauth2-proxy/oauth2-proxy/relea
 
 FROM petshop/client-playground:latest as build2
 
-# DEPEND: docker pull debian:10.8
+# DEPEND: docker pull debian:10.9
 # <https://hub.docker.com/_/debian>
-FROM debian:10.8
+FROM debian:10.9
 
 # Install packages
 RUN apt-get update \

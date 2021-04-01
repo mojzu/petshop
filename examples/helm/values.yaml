@@ -45,7 +45,9 @@ securityContext: {}
 
 config:
   metrics_name: "petshop_server"
-  csrf: {}
+  csrf:
+    allow_origins:
+      - "http://localhost"
   postgres:
     user: "postgres"
     password: "postgres"

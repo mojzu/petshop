@@ -1,6 +1,6 @@
-# DEPEND: docker pull rust:1.50.0-buster
+# DEPEND: docker pull rust:1.51.0-buster
 # <https://hub.docker.com/_/rust>
-FROM rust:1.50.0-buster
+FROM rust:1.51.0-buster
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive

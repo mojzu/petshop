@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Make cron manifest functional in Helm example
 -   Add postgres, prometheus support to Helm example
 -   Add CSRF options to envoy configuration files
+-   Update dependencies
 
 ## [0.2.4] - 2021-03-11
 
