@@ -16,6 +16,15 @@ services:
       dockerfile: server-oauth2-proxy.dockerfile
     image: petshop-auth/server-oauth2-proxy:latest
 
+  # Prometheus service
+  prometheus:
+    build:
+      context: .
+      dockerfile: prometheus.dockerfile
+    image: petshop-auth/prometheus:latest
+    ports:
+      - 9090:9090
+
   # Envoy service
   envoy:
     build:

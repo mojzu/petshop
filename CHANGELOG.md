@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Add postgres, prometheus support to Helm example
 -   Add CSRF options to envoy configuration files
 -   Update dependencies
+-   Add prometheus to `auth` example (disabled until oauth2-proxy #1132 is fixed)
 
 ## [0.2.4] - 2021-03-11
 

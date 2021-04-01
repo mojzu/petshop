@@ -1,4 +1,4 @@
-# TODO: OAuth2-proxy multiple provider support, html templates? (metrics support after next release)
+# TODO: OAuth2-proxy multiple provider support, html templates?
 # TODO: Envoy MTLS authentication example(s), other options for auth?
 # TODO: Rust docs output in dist? cargo make --no-workspace docs-flow
 
