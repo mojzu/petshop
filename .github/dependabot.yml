@@ -27,6 +27,9 @@ updates:
     directory: "/docker/node-tools"
     schedule:
       interval: "daily"
+    ignore:
+      # FIXME: These are nightly dependencies, don't want requests every day
+      - dependency-name: "@parcel*"
 
   # FIXME: Docker expects Dockerfile, possible to check .dockerfiles?
   # - package-ecosystem: "docker"
