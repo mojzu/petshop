@@ -14,8 +14,22 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    ignore:
+      # FIXME: See FIXME in cargo.toml for this crate
+      - dependency-name: "async-trait"
 
-  - package-ecosystem: "docker"
-    directory: "/"
+  - package-ecosystem: "gomod"
+    directory: "/docker/go-tools"
     schedule:
       interval: "daily"
+
+  - package-ecosystem: "npm"
+    directory: "/docker/node-tools"
+    schedule:
+      interval: "daily"
+
+  # FIXME: Docker expects Dockerfile, possible to check .dockerfiles?
+  # - package-ecosystem: "docker"
+  #   directory: "/"
+  #   schedule:
+  #     interval: "daily"

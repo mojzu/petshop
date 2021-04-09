@@ -12,7 +12,7 @@ path = "src/main.rs"
 [features]
 default = []
 
-# DEPEND: Update crate dependencies
+# DEPEND: Update crate dependencies (and cargo update)
 
 [dependencies]
 anyhow = "1.0"
@@ -29,7 +29,7 @@ hyper = "0.14"
 futures = { version = "0.3", default-features = false, features = ["alloc"] }
 tower = { version = "0.4" }
 
-validator = { version = "0.12", features = ["derive"] }
+validator = { version = "0.13", features = ["derive"] }
 base64 = "0.13"
 
 chrono = { version = "0.4", features = ["serde"] }
@@ -46,8 +46,8 @@ tracing-futures = "0.2"
 async-trait = "=0.1.17"
 
 prometheus = { version = "0.12", features = ["process"] }
-opentelemetry = { version = "0.12", features = ["metrics", "serialize"] }
-opentelemetry-prometheus = { version = "0.5" }
+opentelemetry = { version = "0.13", features = ["metrics", "serialize"] }
+opentelemetry-prometheus = { version = "0.6" }
 
 deadpool-postgres = "0.7"
 postgres-types = { version = "0.2", features = ["derive"] }

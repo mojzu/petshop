@@ -8,9 +8,11 @@ on:
     tags:
       - v*
 
-  pull_request:
-    branches:
-      - main
+  # FIXME: This runs on every dependabot pull request
+  # Disabled this so free limits aren't exceeded
+  # pull_request:
+  #   branches:
+  #     - main
 
 env:
   CLICOLOR_FORCE: 1
