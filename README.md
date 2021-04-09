@@ -16,6 +16,7 @@ Template for Rust API server with gRPC and OpenAPI (V2) interfaces
 -   Unit tests with Rust, integration tests with [Jasmine](https://jasmine.github.io/) (using generated clients)
 -   Continuous integration using [GitHub Actions](https://github.com/features/actions) and [cargo-make](https://github.com/sagiegurari/cargo-make)
 -   Docker image publishing to [GitHub Packages](https://github.com/features/packages)
+-   [Dependabot](https://dependabot.com/) configuration for some automated dependency updates
 -   Example proto definitions based (loosely) on [OpenAPI (V2) Petstore](https://petstore.swagger.io/#/)
 -   [Cargo workspace](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html) for multiple crates
 -   Configuration from file and/or environment variables using [config](https://github.com/mehcode/config-rs)
