@@ -1,6 +1,6 @@
-# DEPEND: docker pull python:3.9.2-buster
+# DEPEND: docker pull python:3.9.4-buster
 # <https://hub.docker.com/_/python>
-FROM python:3.9.2-buster
+FROM python:3.9.4-buster
 
 RUN pip install sphinx myst-parser sphinx-rtd-theme
 
