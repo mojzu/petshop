@@ -45,7 +45,7 @@ tracing-futures = "0.2"
 # FIXME: Using later versions here breaks tracing:instrument in tonic async trait
 async-trait = "=0.1.17"
 
-prometheus = { version = "0.11", features = ["process"] }
+prometheus = { version = "0.12", features = ["process"] }
 opentelemetry = { version = "0.12", features = ["metrics", "serialize"] }
 opentelemetry-prometheus = { version = "0.5" }
 
