@@ -946,7 +946,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7162eac03f0bf5edbe2f2d4f44279904f62c779cd1c8260456446db2e1bf200d"
 dependencies = [
  "opentelemetry",
- "prometheus",
+ "prometheus 0.11.0",
  "protobuf",
 ]
 
@@ -1066,7 +1066,7 @@ dependencies = [
  "opentelemetry-prometheus",
  "petshop_proto",
  "postgres-types",
- "prometheus",
+ "prometheus 0.12.0",
  "prost",
  "prost-types",
  "rand",
@@ -1246,6 +1246,21 @@ dependencies = [
  "hex",
  "lazy_static",
  "libc",
+]
+
+[[package]]
+name = "prometheus"
+version = "0.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5986aa8d62380092d2f50f8b1cdba9cb9b6731ffd4b25b51fd126b6c3e05b99c"
+dependencies = [
+ "cfg-if",
+ "fnv",
+ "lazy_static",
+ "parking_lot",
+ "protobuf",
+ "regex",
+ "thiserror",
 ]
 
 [[package]]
