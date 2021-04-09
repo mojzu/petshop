@@ -2,7 +2,7 @@
 # <https://hub.docker.com/_/buildpack-deps>
 FROM buildpack-deps:buster as build
 
-ENV OAUTH2_PROXY_VERSION="v7.1.1"
+ENV OAUTH2_PROXY_VERSION="v7.1.2"
 
 # DEPEND: Install Oauth2 Proxy
 # <https://github.com/oauth2-proxy/oauth2-proxy>
