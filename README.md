@@ -46,9 +46,7 @@ Install dependencies
 docker --version
 docker-compose --version
 cargo --version
-# DEPEND: Install cargo-make
-# <https://crates.io/crates/cargo-make>
-cargo install --force cargo-make --version "~0.32"
+cargo install --force cargo-make
 cargo make --version
 ```
 
