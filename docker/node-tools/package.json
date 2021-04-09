@@ -11,7 +11,7 @@
   "devDependencies": {
     "@parcel/optimizer-cssnano": "^2.0.0-nightly.605",
     "@parcel/optimizer-htmlnano": "^2.0.0-nightly.605",
-    "@parcel/packager-css": "^2.0.0-nightly.605",
+    "@parcel/packager-css": "^2.0.0-nightly.638",
     "@parcel/packager-html": "^2.0.0-nightly.605",
     "@parcel/transformer-css": "^2.0.0-nightly.605",
     "@parcel/transformer-html": "^2.0.0-nightly.605",
