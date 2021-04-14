@@ -1932,9 +1932,9 @@ dependencies = [
 
 [[package]]
 name = "tonic-health"
-version = "0.3.0"
+version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a93d6649c8f5436d65337af08887a516183a096d785ef1fc3acf69ed60dbec6b"
+checksum = "ee731ed39b584aa7fadc723eca93608c3de6ad316531d594632a2c85d28c4e59"
 dependencies = [
  "async-stream",
  "bytes",
