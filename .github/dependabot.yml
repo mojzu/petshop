@@ -15,7 +15,7 @@ updates:
     schedule:
       interval: "daily"
     ignore:
-      # FIXME: See FIXME in cargo.toml for this crate
+      # FIXME: See FIXME in Cargo.toml for this crate
       - dependency-name: "async-trait"
 
   - package-ecosystem: "gomod"
