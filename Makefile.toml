@@ -2,6 +2,23 @@
 # TODO: Envoy MTLS authentication example(s), other options for auth?
 # TODO: Rust docs output in dist? cargo make --no-workspace docs-flow
 
+[env]
+VERSION = "0.3.0"
+RUST_LOG = "petshop_server=debug,tokio_postgres=debug"
+CONFIG_TRACING_JSON = "false"
+CONFIG_API_HOST = "0.0.0.0"
+CONFIG_API_PORT = "5000"
+CONFIG_INTERNAL_HOST = "0.0.0.0"
+CONFIG_INTERNAL_PORT = "5501"
+CONFIG_METRICS_NAME = "petshop_server"
+CONFIG_CSRF__COOKIE_DOMAIN = "localhost"
+CONFIG_CSRF__ALLOW_ORIGIN = "http://localhost"
+CONFIG_POSTGRES__USER = "postgres"
+CONFIG_POSTGRES__PASSWORD = "postgres"
+CONFIG_POSTGRES__DBNAME = "postgres"
+CONFIG_POSTGRES__HOST = "localhost"
+CONFIG_POSTGRES__PORT = "5432"
+
 # Build docker image tasks
 
 [tasks.docker-build-go-tools]
@@ -352,23 +369,6 @@ script = '''
 echo Running postgres:13.2-alpine
 docker run --rm -it --network=host -e POSTGRES_PASSWORD=postgres postgres:13.2-alpine
 '''
-
-[env]
-VERSION = "0.3.0"
-RUST_LOG = "petshop_server=debug,tokio_postgres=debug"
-CONFIG_TRACING_JSON = "false"
-CONFIG_API_HOST = "0.0.0.0"
-CONFIG_API_PORT = "5000"
-CONFIG_INTERNAL_HOST = "0.0.0.0"
-CONFIG_INTERNAL_PORT = "5501"
-CONFIG_METRICS_NAME = "petshop_server"
-CONFIG_CSRF__COOKIE_DOMAIN = "localhost"
-CONFIG_CSRF__ALLOW_ORIGIN = "http://localhost"
-CONFIG_POSTGRES__USER = "postgres"
-CONFIG_POSTGRES__PASSWORD = "postgres"
-CONFIG_POSTGRES__DBNAME = "postgres"
-CONFIG_POSTGRES__HOST = "localhost"
-CONFIG_POSTGRES__PORT = "5432"
 
 [tasks.dev-server]
 description = "Build and run server"

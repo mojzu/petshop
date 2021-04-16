@@ -148,6 +148,9 @@ jobs:
 
       - name: Release Artifacts
         if: env.RELEASE_ARTIFACTS == 'yes'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "TODO: Create release (with changelog notes?) and add clients-src.tgz file here"
           ls ./dist/clients-src.tgz
+          hub release create -m "Create release test" -a ./dist/clients-src.tgz ${{ env.BUILD_VERSION }}
