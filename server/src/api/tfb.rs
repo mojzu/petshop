@@ -1,3 +1,5 @@
+//! # Techempower Framework Benchmark
+//!
 use crate::internal::*;
 use petshop_proto::api::tfb_server::Tfb;
 use petshop_proto::api::{Echo, Fortune, Queries, World};

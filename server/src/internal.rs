@@ -3,12 +3,11 @@
 //! Some library types made public for easier use in modules.
 //!
 //! Internal HTTP server request handlers.
+pub use crate::api::Api;
 pub use crate::config::Config;
-pub use crate::csrf::{Csrf, CsrfConfig, CsrfService};
 pub use crate::jobs::Jobs;
-pub use crate::metrics::{Metrics, MetricsService};
 pub use crate::postgres::{PostgresClient, PostgresPool};
-pub use crate::services::Api;
+pub use crate::services::{Csrf, CsrfConfig, CsrfService, Metrics, MetricsService};
 pub use anyhow::{Error, Result};
 pub use chrono::Utc;
 pub use std::convert::{TryFrom, TryInto};
@@ -18,6 +17,7 @@ pub use std::time::SystemTime;
 pub use url::Url;
 
 use hyper::{Body, Method, Request, Response, StatusCode};
+use prost::Message;
 
 /// Crate Name
 pub static NAME: &str = env!("CARGO_PKG_NAME");
@@ -28,13 +28,18 @@ pub static VERSION: &str = env!("CARGO_PKG_VERSION");
 /// Crate User Agent
 pub static USER_AGENT: &str = concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"),);
 
+pub static ERROR_GENERIC: &str = "Error";
+pub static ERROR_CSRF_CHECK: &str = "CsrfCheckError";
+pub static ERROR_USER_AUTHENTICATION: &str = "UserAuthenticationError";
+pub static ERROR_VALIDATION: &str = "ValidationError";
+
 pub type HttpStatus = http::StatusCode;
 
 pub type HttpHeaders = http::header::HeaderMap<http::header::HeaderValue>;
 
 /// Crate Errors
 #[derive(thiserror::Error, Debug)]
-pub enum XError {
+pub enum XErr {
     #[error("configuration error `{0}`")]
     Config(String),
 
@@ -47,6 +52,9 @@ pub enum XError {
     #[error("serde json error")]
     SerdeJson(#[from] serde_json::Error),
 
+    #[error("prost encode error")]
+    ProstEncode(#[from] prost::EncodeError),
+
     #[error("postgres config error")]
     PostgresConfig(#[from] deadpool_postgres::config::ConfigError),
 
@@ -57,7 +65,7 @@ pub enum XError {
     Postgres(#[from] tokio_postgres::Error),
 }
 
-impl XError {
+impl XErr {
     pub fn config(message: &str) -> Self {
         Self::Config(message.to_string())
     }
@@ -71,8 +79,8 @@ impl XError {
     }
 }
 
-impl From<XError> for tonic::Status {
-    fn from(err: XError) -> Self {
+impl From<XErr> for tonic::Status {
+    fn from(err: XErr) -> Self {
         // These errors come from modules like Postgres, where you
         // probably wouldn't want to include error details in the
         // response, log them here instead which will include
@@ -83,7 +91,7 @@ impl From<XError> for tonic::Status {
         let err: Error = err.into();
         warn!("{:#}", err);
 
-        tonic::Status::internal("error")
+        tonic::Status::internal(ERROR_GENERIC)
     }
 }
 
@@ -98,7 +106,7 @@ pub async fn http_request_handler(api: Api, req: Request<Body>) -> Result<Respon
         (&Method::GET, "/liveness") => liveness_request_response(),
         (&Method::GET, "/readiness") => readiness_request_response(&api).await,
         (&Method::GET, "/metrics") => metrics_request_response(&api),
-        (_, uri) => Err(XError::internal_uri(uri).into()),
+        (_, uri) => Err(XErr::internal_uri(uri).into()),
     }
     .or_else(|e| {
         // In case of an internal error do not send details
@@ -168,6 +176,48 @@ pub fn serde_into_prost_value(value: serde_json::Value) -> prost_types::Value {
         }
     };
     prost_types::Value { kind: Some(kind) }
+}
+
+/// Converts a serde derived Value into a prost Any
+pub fn serde_into_prost_any(value: serde_json::Value) -> Result<prost_types::Any, XErr> {
+    let value = serde_into_prost_value(value);
+    let mut value_buffer = bytes::BytesMut::new();
+
+    value.encode(&mut value_buffer).map_err(XErr::ProstEncode)?;
+
+    Ok(prost_types::Any {
+        type_url: "type.googleapis.com/google.protobuf.Value".to_string(),
+        value: value_buffer.freeze().to_vec(),
+    })
+}
+
+/// Builds tonic status using serialisable value for details, this works with envoy
+/// the envoy setting `convert_grpc_status` to provide json error responses
+pub fn tonic_status_with_details(
+    code: tonic::Code,
+    message: impl Into<String>,
+    value: impl serde::Serialize,
+) -> Result<tonic::Status, tonic::Status> {
+    let value = serde_json::to_value(value).map_err(XErr::SerdeJson)?;
+    let details = serde_into_prost_any(value)?;
+    let message: String = message.into();
+
+    let status = petshop_proto::google::rpc::Status {
+        code: code as i32,
+        message: message.clone(),
+        details: vec![details],
+    };
+
+    let mut status_buffer = bytes::BytesMut::with_capacity(4096);
+    status
+        .encode(&mut status_buffer)
+        .map_err(XErr::ProstEncode)?;
+
+    Ok(tonic::Status::with_details(
+        code,
+        message,
+        status_buffer.freeze(),
+    ))
 }
 
 /// Returns grpc-status code from response headers, if header is not present assumed to be 0

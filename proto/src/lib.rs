@@ -26,6 +26,10 @@ pub mod google {
     pub mod api {
         tonic::include_proto!("google.api");
     }
+    /// Proto definitions
+    pub mod rpc {
+        tonic::include_proto!("google.rpc");
+    }
 }
 
 /// Prost wrappers for validator library

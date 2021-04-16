@@ -63,11 +63,15 @@ static_resources:
                         - "api.Petshop"
                         - "api.Tfb"
                       match_incoming_request_route: true
+                      convert_grpc_status: true
                       print_options:
                         add_whitespace: true
                         always_print_primitive_fields: true
                         always_print_enums_as_ints: false
                         preserve_proto_field_names: false
+                      request_validation_options:
+                        reject_unknown_method: true
+                        reject_unknown_query_parameters: true
                   - name: envoy.filters.http.router
                     # disable dynamic stats?
 

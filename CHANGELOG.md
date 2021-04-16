@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Update dependencies
 -   Add prometheus to `auth` example (disabled until oauth2-proxy #1132 is fixed)
 -   Add dependabot configuration to test
+-   Refactored server crate structure
+-   Improved envoy transcoding support error handling and other configuration
 
 ## [0.2.4] - 2021-03-11
 

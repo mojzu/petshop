@@ -4,6 +4,7 @@ fn main() {
         //
         // It would be nicer to define these somewhere in the proto file, but that seems unlikely to be
         // supported in the near future
+        // <https://github.com/danburkert/prost/issues/338>
         //
         // Validator functions have to be wrapped to make them usable with the prost types, an alternative
         // way of doing this might be to implement the Validate trait manually on structs in lib.rs
@@ -19,6 +20,9 @@ fn main() {
             "api.User.name",
             "#[validate(custom = \"prost_validator::user_name\")]",
         )
-        .compile(&["proto/api.proto"], &["proto"])
+        .compile(
+            &["proto/api.proto", "proto/google/rpc/status.proto"],
+            &["proto"],
+        )
         .expect("tonic_build failed");
 }

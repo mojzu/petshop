@@ -23,7 +23,7 @@ pub struct PostgresClient {
 const CLIENT_CHECK: &str = "SELECT 1 + 1";
 
 impl PostgresPool {
-    pub fn from_config(config: &Config, metrics: Arc<Metrics>) -> Result<Self, XError> {
+    pub fn from_config(config: &Config, metrics: Arc<Metrics>) -> Result<Self, XErr> {
         let pool = config.postgres.create_pool(tokio_postgres::NoTls)?;
 
         // TODO: Check schema version here, how to work against external tools/changes?
@@ -33,7 +33,7 @@ impl PostgresPool {
 
     /// Returns an error if queries can not be served
     #[tracing::instrument(skip(self))]
-    pub async fn readiness(&self) -> Result<(), XError> {
+    pub async fn readiness(&self) -> Result<(), XErr> {
         let client_check = self.check().await;
         self.metrics.postgres_ready(client_check.is_ok());
         client_check?;
@@ -41,7 +41,7 @@ impl PostgresPool {
     }
 
     /// Wraps returning a client from pool to set ready metric
-    async fn check(&self) -> Result<(), XError> {
+    async fn check(&self) -> Result<(), XErr> {
         let client = self.pool.get().await?;
         let st = client.prepare(CLIENT_CHECK).await?;
         client.query_one(&st, &[]).await?;
@@ -49,7 +49,7 @@ impl PostgresPool {
     }
 
     /// Returns fortunes for TFB
-    pub async fn db_fortunes(&self) -> Result<Vec<Fortune>, XError> {
+    pub async fn db_fortunes(&self) -> Result<Vec<Fortune>, XErr> {
         let client = self.pool.get().await?;
         let st = client
             .prepare(
@@ -71,13 +71,13 @@ impl PostgresPool {
     }
 
     /// Returns random row in World table for TFB
-    pub async fn db_world(&self) -> Result<World, XError> {
+    pub async fn db_world(&self) -> Result<World, XErr> {
         let id: i32 = Self::db_random_id();
         self.db_world_by_id(id).await
     }
 
     /// Returns array of random rows from World table for TFB
-    pub async fn db_world_queries(&self, queries: i32) -> Result<Vec<World>, XError> {
+    pub async fn db_world_queries(&self, queries: i32) -> Result<Vec<World>, XErr> {
         use futures::stream::futures_unordered::FuturesUnordered;
         use futures::StreamExt;
 
@@ -90,7 +90,7 @@ impl PostgresPool {
         Ok(worlds?)
     }
 
-    pub async fn db_world_updates(&self, queries: i32) -> Result<Vec<World>, XError> {
+    pub async fn db_world_updates(&self, queries: i32) -> Result<Vec<World>, XErr> {
         let mut worlds = self.db_world_queries(queries).await?;
         let mut world_ids = vec![0; queries as usize];
         let mut random_numbers = vec![0; queries as usize];
@@ -126,7 +126,7 @@ impl PostgresPool {
         Ok(worlds)
     }
 
-    async fn db_world_by_id(&self, id: i32) -> Result<World, XError> {
+    async fn db_world_by_id(&self, id: i32) -> Result<World, XErr> {
         let client = self.pool.get().await?;
         let st = client
             .prepare(
@@ -153,7 +153,7 @@ impl PostgresPool {
 }
 
 impl PostgresClient {
-    pub async fn from_config(config: &Config) -> Result<Self, XError> {
+    pub async fn from_config(config: &Config) -> Result<Self, XErr> {
         let pg_config = config.postgres.get_pg_config()?;
         let (client, connection) = pg_config.connect(tokio_postgres::NoTls).await?;
 
@@ -166,7 +166,7 @@ impl PostgresClient {
         Ok(Self { client })
     }
 
-    pub async fn check(&self) -> Result<(), XError> {
+    pub async fn check(&self) -> Result<(), XErr> {
         let st = self.client.prepare(CLIENT_CHECK).await?;
         self.client.query_one(&st, &[]).await?;
         Ok(())

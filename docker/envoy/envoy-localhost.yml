@@ -33,6 +33,7 @@ static_resources:
                         allow_methods: POST, OPTIONS
                         allow_headers: authorization,keep-alive,user-agent,cache-control,content-type,content-transfer-encoding,x-accept-content-transfer-encoding,x-accept-response-streaming,x-user-agent,x-grpc-web,grpc-timeout,x-xsrf-token
                         expose_headers: grpc-status,grpc-message
+                        max_age: "1728000"
                         allow_credentials: true
                 http_filters:
                   - name: envoy.filters.http.cors
@@ -55,11 +56,16 @@ static_resources:
                         - "grpc.health.v1.Health"
                         - "api.Petshop"
                         - "api.Tfb"
+                      match_incoming_request_route: true
+                      convert_grpc_status: true
                       print_options:
                         add_whitespace: true
                         always_print_primitive_fields: true
                         always_print_enums_as_ints: false
                         preserve_proto_field_names: false
+                      request_validation_options:
+                        reject_unknown_method: true
+                        reject_unknown_query_parameters: true
                   - name: envoy.filters.http.router
 
   clusters:

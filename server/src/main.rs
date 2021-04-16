@@ -14,19 +14,18 @@ extern crate serde_json;
 #[macro_use]
 extern crate tracing;
 
+use crate::api::Api;
 use crate::config::Config;
 use crate::internal::*;
-use crate::services::Api;
 use clap::{App, Arg};
 use hyper::service::{make_service_fn, service_fn};
 use petshop_proto::api::{petshop_server::PetshopServer, tfb_server::TfbServer};
 use tokio::sync::broadcast;
 
+mod api;
 mod config;
-mod csrf;
 mod internal;
 mod jobs;
-mod metrics;
 mod postgres;
 mod services;
 

@@ -51,7 +51,7 @@ impl Csrf {
             "strict" => Ok(SameSite::Strict),
             "lax" => Ok(SameSite::Lax),
             "none" => Ok(SameSite::None),
-            _ => Err(XError::config("csrf.cookie_samesite is invalid").into()),
+            _ => Err(XErr::config("csrf.cookie_samesite is invalid").into()),
         }
     }
 
@@ -67,7 +67,7 @@ impl Csrf {
                 // FIXME: Would it be worth using an x-csrf-error header set by
                 // the request handler to log as an error here?
 
-                Err(tonic::Status::permission_denied("csrf check failed"))
+                Err(tonic::Status::permission_denied(ERROR_CSRF_CHECK))
             }
         } else {
             Ok(())

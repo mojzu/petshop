@@ -12,7 +12,7 @@ impl Jobs {
     pub async fn run(config: Config, job: &str) -> Result<()> {
         match job {
             "example" => Self::example(&config).await,
-            _ => Err(XError::jobs("job not found").into()),
+            _ => Err(XErr::jobs("job not found").into()),
         }
     }
 

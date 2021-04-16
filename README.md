@@ -32,7 +32,7 @@ Template for Rust API server with gRPC and OpenAPI (V2) interfaces
 -   Cron example to run periodic jobs for the server
 -   [GitHub Container Registry](https://docs.github.com/en/packages/guides/about-github-container-registry) example to use published images
 -   Kubernetes deployment example using [Helm](https://helm.sh/) and [minikube](https://minikube.sigs.k8s.io/docs/)
--   [TechEmpower Benchmark Framework](https://www.techempower.com/benchmarks/) example ([2021-03-21 results](https://www.techempower.com/benchmarks/#section=test&shareid=77068dde-2e7f-4374-a2c0-b863e7d0d914))
+-   [TechEmpower Benchmark Framework](https://www.techempower.com/benchmarks/) example ([2021-04-16 results](https://www.techempower.com/benchmarks/#section=test&shareid=4de2767b-8a2d-40f8-bfad-696389cc882a))
 
 ## Quickstart
 
