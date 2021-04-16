@@ -1,8 +1,8 @@
 FROM petshop/rust-cache:latest as build
 
-# DEPEND: docker pull alpine:3.12.6
+# DEPEND: docker pull alpine:3.13.5
 # <https://hub.docker.com/_/alpine>
-FROM alpine:3.12.6
+FROM alpine:3.13.5
 
 # Copy binaries
 COPY --from=build /build/target/release/petshop_server /usr/local/bin/petshop_server

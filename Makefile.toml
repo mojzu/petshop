@@ -342,6 +342,8 @@ echo Running petshop/envoy-localhost:latest
 docker run --rm -it --network=host petshop/envoy-localhost:latest
 '''
 
+# DEPEND: docker pull postgres:13.2-alpine
+# <https://hub.docker.com/_/postgres>
 [tasks.dev-postgres]
 description = "Run postgres docker image"
 category = "Petshop"
