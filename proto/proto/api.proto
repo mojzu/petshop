@@ -12,7 +12,7 @@ import "messages.proto";
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
   info: {
     title: "Petshop API";
-    version: "0.3.1";
+    version: "0.3.2";
     description: "";
   };
   host: "localhost:10000";
