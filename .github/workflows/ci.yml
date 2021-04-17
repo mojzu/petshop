@@ -16,7 +16,7 @@ on:
 
 env:
   CLICOLOR_FORCE: 1
-  CURRENT_VERSION: "0.3.0"
+  CURRENT_VERSION: "0.3.1"
 
 jobs:
   rust-ci:
@@ -151,6 +151,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "TODO: Create release (with changelog notes?) and add clients-src.tgz file here"
-          ls ./dist/clients-src.tgz
-          hub release create -m "Create release test" -a ./dist/clients-src.tgz ${{ env.BUILD_VERSION }}
+          hub release create -m "v${{ env.BUILD_VERSION }}" -m "TODO: Changelog text here?" \
+            -a ./dist/petshop-v${{ env.BUILD_VERSION }}.tgz \
+            v${{ env.BUILD_VERSION }}

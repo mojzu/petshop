@@ -1,4 +1,4 @@
-# auth
+# Authentication
 
 -   <https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/ext_authz_filter>
 

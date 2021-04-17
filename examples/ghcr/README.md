@@ -1,4 +1,4 @@
-# ghcr
+# GitHub Container Registry
 
 -   <https://github.com/users/mojzu/packages/container/package/petshop-server>
 -   <https://github.com/users/mojzu/packages/container/package/petshop-envoy>

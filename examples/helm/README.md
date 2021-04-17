@@ -1,4 +1,4 @@
-# helm
+# Helm Chart
 
 -   <https://minikube.sigs.k8s.io/docs/>
 -   <https://helm.sh/>

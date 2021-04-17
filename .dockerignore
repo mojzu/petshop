@@ -1,12 +1,10 @@
 # <https://docs.docker.com/engine/reference/builder/#dockerignore-file>
 /.git
-/docs
 /examples
 /target
 
-/dist/clients-src.tgz
-/dist/petshop-envoy.tar
-/dist/petshop-server.tar
+/dist/*.tgz
+/dist/*.tar
 
 /docker/node-tools/.cache
 /docker/node-tools/.parcel-cache

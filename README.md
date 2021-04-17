@@ -1,4 +1,4 @@
-# petshop
+# Petshop
 
 [![licence](https://img.shields.io/github/license/mojzu/petshop?label=licence)](https://github.com/mojzu/petshop/blob/master/LICENCE)
 [![CI](https://github.com/mojzu/petshop/workflows/CI/badge.svg?branch=main)](https://github.com/mojzu/petshop/actions/workflows/ci.yml)
@@ -27,7 +27,7 @@ Template for Rust API server with gRPC and OpenAPI (V2) interfaces
 -   [Prometheus metrics](https://prometheus.io/) endpoint
 -   [Kubernetes liveness and readiness](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/) endpoints
 -   Changelog placeholder file based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
--   HTML documentation builder using [Sphinx](https://www.sphinx-doc.org/en/master/)
+-   HTML manual builder using [Sphinx](https://www.sphinx-doc.org/en/master/)
 -   Authentication example with [OAuth2 Proxy](https://oauth2-proxy.github.io/oauth2-proxy/) and [Envoy External Authorization](https://www.envoyproxy.io/docs/envoy/latest/api-v2/config/filter/http/ext_authz/v2/ext_authz.proto)
 -   Cron example to run periodic jobs for the server
 -   [GitHub Container Registry](https://docs.github.com/en/packages/guides/about-github-container-registry) example to use published images

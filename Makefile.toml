@@ -1,9 +1,8 @@
 # TODO: OAuth2-proxy multiple provider support, html templates?
 # TODO: Envoy MTLS authentication example(s), other options for auth?
-# TODO: Rust docs output in dist? cargo make --no-workspace docs-flow
 
 [env]
-VERSION = "0.3.0"
+VERSION = "0.3.1"
 RUST_LOG = "petshop_server=debug,tokio_postgres=debug"
 CONFIG_TRACING_JSON = "false"
 CONFIG_API_HOST = "0.0.0.0"
@@ -235,18 +234,18 @@ description = "Generate axios client"
 category = "Petshop"
 workspace = false
 script = '''
-echo Generating axios client dist/axios
-rm -rf ./dist/axios
-mkdir -p ./dist/axios
+echo Generating axios client dist/clients/axios
+rm -rf ./dist/clients/axios
+mkdir -p ./dist/clients/axios
 docker run --rm -v "$(pwd):/workspace" --user "$(id -u):$(id -g)" openapitools/openapi-generator-cli:v5.1.0 \
     generate -i /workspace/dist/data/api.swagger.json \
     -g typescript-axios \
-    -o /workspace/dist/axios
-(cd ./dist/axios \
+    -o /workspace/dist/clients/axios
+(cd ./dist/clients/axios \
     && rm -rf .openapi-generator .gitignore .npmignore .openapi-generator-ignore git_push.sh)
 mkdir -p ./docker/node-tools/clients
 rm -rf ./docker/node-tools/clients/axios
-cp -r ./dist/axios ./docker/node-tools/clients/axios
+cp -r ./dist/clients/axios ./docker/node-tools/clients/axios
 '''
 
 [tasks.generate-grpc-web-client]
@@ -254,12 +253,12 @@ description = "Generate grpc-web client"
 category = "Petshop"
 workspace = false
 script = '''
-echo Generating grpc-web client dist/grpc-web
-rm -rf ./dist/grpc-web
-mkdir -p ./dist/grpc-web
+echo Generating grpc-web client dist/clients/grpc-web
+rm -rf ./dist/clients/grpc-web
+mkdir -p ./dist/clients/grpc-web
 cargo make go-tools-run -- protoc -I/usr/local/include -I/go/src -I/src/proto/proto \
-    --js_out=import_style=commonjs:/src/dist/grpc-web \
-    --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:/src/dist/grpc-web \
+    --js_out=import_style=commonjs:/src/dist/clients/grpc-web \
+    --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:/src/dist/clients/grpc-web \
     /src/proto/proto/api.proto \
     /src/proto/proto/messages.proto \
     /src/proto/proto/google/api/annotations.proto \
@@ -270,7 +269,7 @@ cargo make go-tools-run -- protoc -I/usr/local/include -I/go/src -I/src/proto/pr
     /src/proto/proto/protoc-gen-openapiv2/options/openapiv2.proto
 mkdir -p ./docker/node-tools/clients
 rm -rf ./docker/node-tools/clients/grpc-web
-cp -r ./dist/grpc-web ./docker/node-tools/clients/grpc-web
+cp -r ./dist/clients/grpc-web ./docker/node-tools/clients/grpc-web
 '''
 
 [tasks.generate-ng-swagger-client]
@@ -278,11 +277,11 @@ description = "Generate angular client"
 category = "Petshop"
 workspace = false
 script = '''
-echo Generating ng client dist/ng-swagger
-rm -rf ./dist/ng-swagger
-mkdir -p ./dist/ng-swagger
-cargo make node-tools-run -- ng-swagger-gen -i /home/node/dist/data/api.swagger.json -o /home/node/dist/ng-swagger
-cp ./docker/node-tools/ng-swagger/api-interceptor.ts ./dist/ng-swagger/api-interceptor.ts
+echo Generating ng client dist/clients/ng-swagger
+rm -rf ./dist/clients/ng-swagger
+mkdir -p ./dist/clients/ng-swagger
+cargo make node-tools-run -- ng-swagger-gen -i /home/node/dist/data/api.swagger.json -o /home/node/dist/clients/ng-swagger
+cp ./docker/node-tools/ng-swagger/api-interceptor.ts ./dist/clients/ng-swagger/api-interceptor.ts
 '''
 
 # FIXME: Prepends @ts-nocheck to file that causes tsc errors but is
@@ -292,15 +291,15 @@ description = "Generate angular client"
 category = "Petshop"
 workspace = false
 script = '''
-echo Generating ng client dist/ngx-grpc
-rm -rf ./dist/ngx-grpc
-mkdir -p ./dist/ngx-grpc
+echo Generating ng client dist/clients/ngx-grpc
+rm -rf ./dist/clients/ngx-grpc
+mkdir -p ./dist/clients/ngx-grpc
 cargo make node-tools-run -- protoc -I/usr/local/include -I/home/node/proto \
     --plugin=protoc-gen-ng=/usr/local/bin/protoc-gen-ng \
-    --ng_out=/home/node/dist/ngx-grpc /home/node/proto/api.proto
+    --ng_out=/home/node/dist/clients/ngx-grpc /home/node/proto/api.proto
 
-echo "// @ts-nocheck" | cat - ./dist/ngx-grpc/protoc-gen-openapiv2/options/openapiv2.pb.ts > /tmp/out \
-    && mv /tmp/out ./dist/ngx-grpc/protoc-gen-openapiv2/options/openapiv2.pb.ts
+echo "// @ts-nocheck" | cat - ./dist/clients/ngx-grpc/protoc-gen-openapiv2/options/openapiv2.pb.ts > /tmp/out \
+    && mv /tmp/out ./dist/clients/ngx-grpc/protoc-gen-openapiv2/options/openapiv2.pb.ts
 '''
 
 [tasks.generate-envoy-flow]
@@ -469,23 +468,14 @@ script = '''
 docker-compose -f docker-compose.ci.yml down
 '''
 
-# Documentation tasks
+# Manual tasks
 
-[tasks.docs-clean]
-description = "Clean documentation directory"
-category = "Petshop"
-workspace = false
-script = '''
-rm -rf ./docs
-'''
-
-[tasks.docs-sphinx]
-description = "Run sphinx documentation builder"
+[tasks.manual]
+description = "Run sphinx manual builder"
 category = "Petshop"
 workspace = false
 dependencies = [
     "docker-build-sphinx",
-    "docs-clean",
     # TODO: How to link between sphinx and rustdoc output?
     # "docs-flow",
 ]
@@ -526,7 +516,6 @@ category = "Petshop"
 workspace = false
 dependencies = [
     "clean",
-    "docs-clean",
 ]
 script = '''
 rm -rf ./dist
@@ -556,16 +545,17 @@ category = "Petshop"
 workspace = false
 dependencies = [
     "docker-build",
-    "generate-flow"
+    "generate-flow",
+    "manual"
 ]
 
-[tasks.dist-clients-src]
-description = "Compress generated definitions and clients into file"
+[tasks.dist-release-artifacts]
+description = "Compress generated definitions, clients and manual into file"
 category = "Petshop"
 workspace = false
 script = '''
-rm -rf ./dist/clients-src.tgz
-(cd ./dist && tar -cvzf clients-src.tgz data axios grpc-web ng-swagger ngx-grpc)
+rm -rf ./dist/petshop-v${VERSION}.tgz
+(cd ./dist && tar -cvzf petshop-v${VERSION}.tgz clients data manual)
 '''
 
 [tasks.dist-ci-build]
@@ -578,7 +568,8 @@ dependencies = [
     "docker-build-server",
     "generate-envoy-flow",
     "generate-client-flow-pre",
-    "dist-clients-src"
+    "manual",
+    "dist-release-artifacts"
 ]
 
 # Minikube tasks

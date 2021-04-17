@@ -1,4 +1,4 @@
-# tfb
+# TechEmpower Framework Benchmarks
 
 -   <https://github.com/TechEmpower/FrameworkBenchmarks>
 

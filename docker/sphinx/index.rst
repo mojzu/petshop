@@ -1,5 +1,5 @@
-Petshop Documentation
-=====================
+Petshop Manual |release|
+===============================
 
 .. toctree::
    :maxdepth: 2
@@ -15,6 +15,7 @@ Petshop Documentation
    examples/auth/README.md
    examples/cron/README.md
    examples/ghcr/README.md
+   examples/helm/README.md
    examples/tfb/README.md
 
 Indices and tables

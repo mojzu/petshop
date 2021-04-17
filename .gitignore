@@ -1,7 +1,4 @@
 # <https://git-scm.com/docs/gitignore>
+/.tmp
 /dist
 /target
-
-# FIXME: Sphinx generated docs are currently excluded from git
-# May be worth including for sphinx example with github site
-/docs
