@@ -33,6 +33,7 @@ minikube cache list
 
 helm ls
 helm show values ./examples/helm
+helm template ./examples/helm
 helm install --debug --dry-run petshop ./examples/helm
 helm install petshop ./examples/helm
 helm uninstall petshop

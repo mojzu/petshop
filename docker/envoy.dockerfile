@@ -7,7 +7,7 @@ RUN mkdir -p /config
 WORKDIR /config
 
 # Copy default configuration and protobuf definition file
-COPY ./docker/envoy/envoy.yml /config/envoy.yaml
+COPY ./docker/envoy/envoy.yaml /config/envoy.yaml
 COPY ./dist/data /data
 
 # Add opencontainers annotations

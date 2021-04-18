@@ -457,7 +457,7 @@ dependencies = [
     "generate-flow"
 ]
 script = '''
-docker-compose -f docker-compose.ci.yml ${@}
+docker-compose -f docker-compose.ci.yaml ${@}
 '''
 
 [tasks.compose-ci-down]
@@ -465,7 +465,7 @@ description = "Stop and remove docker-compose with CI compose file"
 category = "Petshop"
 workspace = false
 script = '''
-docker-compose -f docker-compose.ci.yml down
+docker-compose -f docker-compose.ci.yaml down
 '''
 
 # Manual tasks
