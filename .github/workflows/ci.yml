@@ -16,7 +16,7 @@ on:
 
 env:
   CLICOLOR_FORCE: 1
-  CURRENT_VERSION: "0.3.2"
+  CURRENT_VERSION: "0.3.3"
 
 jobs:
   rust-ci:
@@ -151,6 +151,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          hub release create -m "${{ env.BUILD_VERSION }}" -m "TODO: Changelog text here?" \
+          hub release create -m "${{ env.BUILD_VERSION }}" \
             -a ./dist/petshop-${{ env.BUILD_VERSION }}.tgz \
             v${{ env.BUILD_VERSION }}
