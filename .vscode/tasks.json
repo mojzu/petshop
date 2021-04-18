@@ -74,7 +74,14 @@
       "problemMatcher": []
     },
     {
-      "label": "manual",
+      "label": "documentation - rustdoc",
+      "detail": "Build rust docs",
+      "type": "shell",
+      "command": "cargo make docs",
+      "problemMatcher": []
+    },
+    {
+      "label": "documentation - manual",
       "detail": "Build manual using Sphinx",
       "type": "shell",
       "command": "cargo make manual",
