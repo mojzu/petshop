@@ -474,11 +474,17 @@ docker-compose -f docker-compose.ci.yml down
 description = "Run sphinx manual builder"
 category = "Petshop"
 workspace = false
-dependencies = [
-    "docker-build-sphinx",
-    # TODO: How to link between sphinx and rustdoc output?
-    # "docs-flow",
-]
+dependencies = ["docker-build-sphinx"]
+script = '''
+echo Running petshop/sphinx:latest
+docker run --rm -it -v "$(pwd):/src" --user "$(id -u):$(id -g)" petshop/sphinx:latest sphinx-make-html
+'''
+
+[tasks.manual-ci]
+description = "Run sphinx manual builder (CI)"
+category = "Petshop"
+workspace = false
+dependencies = ["docker-build-sphinx"]
 script = '''
 echo Running petshop/sphinx:latest
 docker run --rm -v "$(pwd):/src" --user "$(id -u):$(id -g)" petshop/sphinx:latest sphinx-make-html
@@ -554,12 +560,12 @@ description = "Compress generated definitions, clients and manual into file"
 category = "Petshop"
 workspace = false
 script = '''
-rm -rf ./dist/petshop-v${VERSION}.tgz
-(cd ./dist && tar -cvzf petshop-v${VERSION}.tgz clients data manual)
+rm -rf ./dist/petshop-${VERSION}.tgz
+(cd ./dist && tar -cvzf petshop-${VERSION}.tgz clients data manual)
 '''
 
 [tasks.dist-ci-build]
-description = "Build server and envoy docker images"
+description = "Build server and envoy docker images (CI)"
 category = "Petshop"
 workspace = false
 dependencies = [
@@ -568,7 +574,7 @@ dependencies = [
     "docker-build-server",
     "generate-envoy-flow",
     "generate-client-flow-pre",
-    "manual",
+    "manual-ci",
     "dist-release-artifacts"
 ]
 
