@@ -42,8 +42,9 @@ Install dependencies
 -   [Docker Compose](https://docs.docker.com/compose/)
 -   [Rust](https://www.rust-lang.org/)
 
+To check dependencies are installed
+
 ```shell
-# Check dependencies are installed
 docker --version
 docker-compose --version
 cargo --version
@@ -51,21 +52,33 @@ cargo install --force cargo-make
 cargo make --version
 ```
 
-Build all docker images and generated outputs
+Build all docker images and generated distribution files
 
 ```shell
 cargo make dist-build
 ```
 
-Run using docker-compose
+Run containers using docker-compose
 
 ```shell
 cargo make compose build
 cargo make compose up
-cargo make compose down
 ```
 
 Open the client playground at <http://localhost:1234>
+
+To stop containers
+
+```shell
+cargo make compose down
+```
+
+To update dependencies
+
+```shell
+rustup update
+cargo install --force cargo-make
+```
 
 ## Developer
 

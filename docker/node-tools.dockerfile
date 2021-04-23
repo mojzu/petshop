@@ -14,7 +14,7 @@ RUN wget -O protoc.zip -q "https://github.com/protocolbuffers/protobuf/releases/
 # DEPEND: Update package versions
 # <https://www.npmjs.com/package/ng-swagger-gen>
 # <https://www.npmjs.com/package/@ngx-grpc/protoc-gen-ng>
-RUN npm i -g ng-swagger-gen@2.3.1 @ngx-grpc/protoc-gen-ng@2.0.4 tslib
+RUN npm i -g ng-swagger-gen@2.3.1 @ngx-grpc/protoc-gen-ng@2.1.0 tslib
 
 # Install package dependencies
 COPY ./docker/node-tools/package.json /home/node/package.json

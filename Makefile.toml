@@ -2,7 +2,7 @@
 # TODO: Envoy MTLS authentication example(s), other options for auth?
 
 [env]
-VERSION = "0.3.3"
+VERSION = "0.3.4"
 RUST_LOG = "petshop_server=debug,tokio_postgres=debug"
 CONFIG_TRACING_JSON = "false"
 CONFIG_API_HOST = "0.0.0.0"
@@ -411,7 +411,7 @@ echo Running node-tools/client-playground
 cargo make node-tools -- npm run client-playground
 '''
 
-# DEPEND: docker pull swaggerapi/swagger-ui:v3.46.0
+# DEPEND: docker pull swaggerapi/swagger-ui:v3.47.1
 # <https://hub.docker.com/r/swaggerapi/swagger-ui>
 [tasks.dev-swagger-ui]
 description = "Run swagger-ui using generated definition"
@@ -422,7 +422,7 @@ dependencies = [
 ]
 script = '''
 echo Running swaggerapi/swagger-ui at http://localhost:8080
-docker run --rm -it --network=host -e SWAGGER_JSON=/dist/data/api.swagger.json -v "$(pwd)/dist:/dist" swaggerapi/swagger-ui:v3.46.0
+docker run --rm -it --network=host -e SWAGGER_JSON=/dist/data/api.swagger.json -v "$(pwd)/dist:/dist" swaggerapi/swagger-ui:v3.47.1
 '''
 
 [tasks.dev-integration-test]
