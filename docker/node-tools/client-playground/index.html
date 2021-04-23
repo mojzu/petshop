@@ -10,14 +10,14 @@
 
 <div class="example">
     <h1>Client Playground</h1>
-    <p>The variables <b>httpClient</b> and <b>grpcClient</b> are defined globally, use them in the web console</p>
+    <p>The variables <b>exampleHttpClient</b>, <b>exampleGrpcClient</b>, <b>petshopHttpClient</b>, <b>petshopGrpcClient</b> are defined globally, use them in the web console</p>
     <p>Or when using <b>dev-client-playground</b> changes to files in <b>docker/node-tools/client-playground</b> will be
         reloaded live</p>
 </div>
 
 <div class="example">
     <h2>Example 1 - PetPut</h2>
-    <h3>httpClient</h3>
+    <h3>petshopHttpClient</h3>
     <pre><code class="language-javascript">req = {
     id: 32,
     name: "Name1",
@@ -25,8 +25,8 @@
     photoUrls: ["Photo1"],
     tags: [{id: 45, name: "Tag1"}], status: "PENDING"
 };
-await httpClient.petshopPetPut(req);</code></pre>
-    <h3>grpcClient</h3>
+await petshopHttpClient.petshopPetPut(req);</code></pre>
+    <h3>petshopGrpcClient</h3>
     <pre><code class="language-javascript">category = (new Category()).setId(23).setName("Category1");
 tag = (new Tag()).setId(45).setName("Tag1");
 req = (new Pet())
@@ -36,71 +36,71 @@ req = (new Pet())
     .setCategory(category)
     .addPhotoUrls("PhotoUrl1")
     .setTagsList([tag]);
-await grpcClient.petPut(req);</code></pre>
+await petshopGrpcClient.petPut(req);</code></pre>
 </div>
 
 <div class="example">
     <h2>Example 2 - PetFindByStatus</h2>
-    <h3>httpClient</h3>
+    <h3>petshopHttpClient</h3>
     <pre><code class="language-javascript">req = {status: "PENDING"};
-await httpClient.petshopPetFindByStatus(req);</code></pre>
-    <h3>grpcClient</h3>
+await petshopHttpClient.petshopPetFindByStatus(req);</code></pre>
+    <h3>petshopGrpcClient</h3>
     <pre><code class="language-javascript">req = (new FindByStatus()).addStatus(Status.PENDING);
-await grpcClient.petFindByStatus(req);</code></pre>
+await petshopGrpcClient.petFindByStatus(req);</code></pre>
 </div>
 
 <div class="example">
     <h2>Example 3 - PetFindByTag</h2>
-    <h3>httpClient</h3>
+    <h3>petshopHttpClient</h3>
     <pre><code class="language-javascript">req = {tags: ["Tag1", "Tag2"]};
-await httpClient.petshopPetFindByTag(req);</code></pre>
-    <h3>grpcClient</h3>
+await petshopHttpClient.petshopPetFindByTag(req);</code></pre>
+    <h3>petshopGrpcClient</h3>
     <pre><code class="language-javascript">req = (new FindByTag()).setTagsList(["Tag1", "Tag2"]);
-await grpcClient.petFindByTag(req);</code></pre>
+await petshopGrpcClient.petFindByTag(req);</code></pre>
 </div>
 
 <div class="example">
     <h2>Example 4 - HttpBody</h2>
-    <h3>httpClient</h3>
+    <h3>exampleHttpClient</h3>
     <i>This response will be converted to text/html</i>
-    <pre><code class="language-javascript">await httpClient.petshopHttpBodyEx({});</code></pre>
-    <h3>grpcClient</h3>
+    <pre><code class="language-javascript">await exampleHttpClient.exampleHttpBody({});</code></pre>
+    <h3>exampleGrpcClient</h3>
     <i>This response will not be converted</i>
     <pre><code class="language-javascript">req = new Empty();
-await grpcClient.httpBodyEx(req);</code></pre>
+await exampleGrpcClient.httpBody(req);</code></pre>
 </div>
 
 <div class="example">
     <h2>Example 5 - Json</h2>
-    <h3>httpClient</h3>
+    <h3>exampleHttpClient</h3>
     <pre><code class="language-javascript">req = { arbitraryJson: true, nestedObject: { sub: "string" } };
-await httpClient.petshopJsonEx(req);</code></pre>
-    <h3>grpcClient</h3>
+await exampleHttpClient.exampleJson(req);</code></pre>
+    <h3>exampleGrpcClient</h3>
     <pre><code class="language-javascript">req = Struct.fromJavaScript({ arbitraryJson: true, nestedObject: { sub: "string" } });
-await grpcClient.jsonEx(req);</code></pre>
+await exampleGrpcClient.json(req);</code></pre>
 </div>
 
 <div class="example">
     <h2>Example 6 - Validation</h2>
-    <h3>httpClient</h3>
+    <h3>exampleHttpClient</h3>
     <pre><code class="language-javascript">req = { email: "notavalidemail", name: "validname" };
-await httpClient.petshopValidationEx(req);</code></pre>
+await exampleHttpClient.exampleValidation(req);</code></pre>
     <pre><code class="language-javascript">req = { email: "validemail@example.com", name: "validname" };
-await httpClient.petshopValidationEx(req);</code></pre>
-    <h3>grpcClient</h3>
+await exampleHttpClient.exampleValidation(req);</code></pre>
+    <h3>exampleGrpcClient</h3>
     <pre><code class="language-javascript">req = (new User()).setEmail("notavalidemail").setName("validname");
-await grpcClient.validationEx(req);</code></pre>
+await exampleGrpcClient.validation(req);</code></pre>
     <pre><code class="language-javascript">req = (new User()).setEmail("validemail@example.com").setName("validname");
-await grpcClient.validationEx(req);</code></pre>
+await exampleGrpcClient.validation(req);</code></pre>
 </div>
 
 <div class="example">
     <h2>Example 7 - Streaming</h2>
-    <h3>httpClient</h3>
-    <pre><code class="language-javascript">await httpClient.petshopStreamingEx({message:"message1"});</code></pre>
-    <h3>grpcClient</h3>
+    <h3>exampleHttpClient</h3>
+    <pre><code class="language-javascript">await exampleHttpClient.exampleStreaming({message:"message1"});</code></pre>
+    <h3>exampleGrpcClient</h3>
     <pre><code class="language-javascript">req = (new Echo()).setMessage("message1");
-stream = grpcClient.streamingEx(req);
+stream = exampleGrpcClient.streaming(req);
 stream.on('data', (res) => console.log("stream message", res.getMessage()));
 stream.on('status', (status) => console.log("stream status", status));
 stream.on('end', (end) => console.log("stream end"));</code></pre>
@@ -109,26 +109,26 @@ stream.on('end', (end) => console.log("stream end"));</code></pre>
 <div class="example">
     <h2>Example 8 - CSRF</h2>
     <i>Only works after CSRF token has been set (by another successful client request)</i>
-    <h3>httpClient</h3>
-    <pre><code class="language-javascript">await httpClient.petshopCsrfEx({});</code></pre>
-    <h3>grpcClient</h3>
+    <h3>exampleHttpClient</h3>
+    <pre><code class="language-javascript">await exampleHttpClient.exampleCsrf({});</code></pre>
+    <h3>exampleGrpcClient</h3>
     <pre><code class="language-javascript">req = new Empty();
-await grpcClient.csrfEx(req);</code></pre>
+await exampleGrpcClient.csrf(req);</code></pre>
 </div>
 
 <div class="example">
     <h2>Example 9 - Authentication</h2>
     <i>This only works with the <b>auth</b> example</i>
-    <h3>httpClient</h3>
+    <h3>exampleHttpClient</h3>
     <i>Authenticates using cookie provided by oauth2-proxy</i>
-    <pre><code class="language-javascript">await httpClient.petshopAuthenticationRequiredEx({});</code></pre>
-    <h3>grpcClient</h3>
+    <pre><code class="language-javascript">await exampleHttpClient.exampleAuthenticationRequired({});</code></pre>
+    <h3>exampleGrpcClient</h3>
     <i>Authenticates using cookie provided by oauth2-proxy</i>
     <pre><code class="language-javascript">req = new Empty();
-await grpcClient.authenticationRequiredEx(req);</code></pre>
-    <h3>apiHttpClient</h3>
+await exampleGrpcClient.authenticationRequired(req);</code></pre>
+    <h3>exampleApiHttpClient</h3>
     <i>Authenticates using authorization header</i>
-    <pre><code class="language-javascript">await apiHttpClient.petshopAuthenticationRequiredEx({});</code></pre>
+    <pre><code class="language-javascript">await exampleApiHttpClient.exampleAuthenticationRequired({});</code></pre>
 </div>
 
 <script src="script.ts"></script>

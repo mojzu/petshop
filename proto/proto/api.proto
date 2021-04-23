@@ -38,43 +38,43 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
   };
 };
 
-service Petshop {
+service Example {
   // HTTP body example
-  rpc HttpBodyEx (google.protobuf.Empty) returns (google.api.HttpBody) {
+  rpc HttpBody (google.protobuf.Empty) returns (google.api.HttpBody) {
     option (google.api.http) = {
-      post: "/api.Petshop/HttpBodyEx"
+      post: "/api.Example/HttpBody"
       body: "*"
     };
   }
 
   // Schemaless JSON example
-  rpc JsonEx (google.protobuf.Struct) returns (google.protobuf.Struct) {
+  rpc Json (google.protobuf.Struct) returns (google.protobuf.Struct) {
     option (google.api.http) = {
-      post: "/api.Petshop/JsonEx"
+      post: "/api.Example/Json"
       body: "*"
     };
   }
 
   // Authentication required example
-  rpc AuthenticationRequiredEx (google.protobuf.Empty) returns (User) {
+  rpc AuthenticationRequired (google.protobuf.Empty) returns (User) {
     option (google.api.http) = {
-      post: "/api.Petshop/AuthenticationRequiredEx"
+      post: "/api.Example/AuthenticationRequired"
       body: "*"
     };
   }
 
   // Validation example
-  rpc ValidationEx (User) returns (User) {
+  rpc Validation (User) returns (User) {
     option (google.api.http) = {
-      post: "/api.Petshop/ValidationEx"
+      post: "/api.Example/Validation"
       body: "*"
     };
   }
 
   // CSRF example
-  rpc CsrfEx (google.protobuf.Empty) returns (google.protobuf.Empty) {
+  rpc Csrf (google.protobuf.Empty) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      post: "/api.Petshop/CsrfEx"
+      post: "/api.Example/Csrf"
       body: "*"
     };
   }
@@ -82,13 +82,15 @@ service Petshop {
   // Server streaming example
   //
   // Bidirectional streaming is not supported in grpc-web
-  rpc StreamingEx (Echo) returns (stream Echo) {
+  rpc Streaming (Echo) returns (stream Echo) {
     option (google.api.http) = {
-      post: "/api.Petshop/StreamingEx"
+      post: "/api.Example/Streaming"
       body: "*"
     };
   }
+}
 
+service Petshop {
   rpc PetPost (Pet) returns (Pet) {
     option (google.api.http) = {
       post: "/api.Petshop/PetPost"

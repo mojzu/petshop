@@ -54,6 +54,7 @@ static_resources:
                       proto_descriptor: "/data/api.pb"
                       services:
                         - "grpc.health.v1.Health"
+                        - "api.Example"
                         - "api.Petshop"
                         - "api.Tfb"
                       match_incoming_request_route: true

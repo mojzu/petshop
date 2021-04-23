@@ -2,9 +2,11 @@
 //!
 use crate::internal::*;
 use petshop_proto::api::User;
+use std::fmt;
 use tokio::sync::broadcast;
 use tonic::{Code, Request, Status};
 
+mod example;
 mod petshop;
 mod tfb;
 
@@ -145,5 +147,11 @@ impl Api {
                 Err(status)
             }
         }
+    }
+}
+
+impl fmt::Debug for Api {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Api").finish()
     }
 }

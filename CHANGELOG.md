@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+-   Move example endpoints into their own gRPC service
+
 ## [0.3.3] - 2021-04-18
 
 -   Add version number to sphinx manual title

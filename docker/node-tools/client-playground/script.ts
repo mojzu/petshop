@@ -1,6 +1,6 @@
 import { Empty } from "google-protobuf/google/protobuf/empty_pb";
 import { Struct } from "google-protobuf/google/protobuf/struct_pb";
-import { Configuration, PetshopApi } from "../clients/axios";
+import { Configuration, PetshopApi, ExampleApi } from "../clients/axios";
 import {
     Category,
     Echo,
@@ -11,17 +11,28 @@ import {
     Status,
     Tag,
 } from "../clients/grpc-web/messages_pb";
-import { PetshopPromiseClient } from "../clients/grpc-web/api_grpc_web_pb";
+import {
+    PetshopPromiseClient,
+    ExamplePromiseClient,
+} from "../clients/grpc-web/api_grpc_web_pb";
 import { HttpBody } from "../clients/grpc-web/google/api/httpbody_pb";
 
-window["HttpClientClass"] = PetshopApi;
-window["httpClient"] = new PetshopApi(
+window["ExampleHttpClientClass"] = ExampleApi;
+window["exampleHttpClient"] = new ExampleApi(
     new Configuration({
         baseOptions: { withCredentials: true },
         basePath: "http://localhost:10000",
     })
 );
-window["apiHttpClient"] = new PetshopApi(
+window["PetshopHttpClientClass"] = PetshopApi;
+window["petshopHttpClient"] = new PetshopApi(
+    new Configuration({
+        baseOptions: { withCredentials: true },
+        basePath: "http://localhost:10000",
+    })
+);
+
+window["exampleApiHttpClient"] = new ExampleApi(
     new Configuration({
         // FIXME: Use axios baseOptions here instead of apiKey/username/password
         // properties on config, typescript-axios does not use them
@@ -52,9 +63,17 @@ CsrfInterceptor.prototype.intercept = function (request, invoker) {
     }
     return invoker(request);
 };
-
-window["GrpcClientClass"] = PetshopPromiseClient;
-window["grpcClient"] = new PetshopPromiseClient(
+window["ExampleGrpcClientClass"] = ExamplePromiseClient;
+window["exampleGrpcClient"] = new ExamplePromiseClient(
+    "http://localhost:10000",
+    null,
+    {
+        withCredentials: true,
+        unaryInterceptors: [new CsrfInterceptor()],
+    }
+);
+window["PetshopGrpcClientClass"] = PetshopPromiseClient;
+window["petshopGrpcClient"] = new PetshopPromiseClient(
     "http://localhost:10000",
     null,
     {
