@@ -7,7 +7,7 @@ pub use crate::api::Api;
 pub use crate::config::Config;
 pub use crate::jobs::Jobs;
 pub use crate::postgres::{PostgresClient, PostgresPool};
-pub use crate::services::{Csrf, CsrfConfig, CsrfService, Metrics, MetricsService};
+pub use crate::services::{Auth, Csrf, CsrfConfig, CsrfService, Metrics, MetricsService};
 pub use anyhow::{Error, Result};
 pub use chrono::Utc;
 pub use std::convert::{TryFrom, TryInto};
@@ -30,7 +30,7 @@ pub static USER_AGENT: &str = concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_P
 
 pub static ERROR_GENERIC: &str = "Error";
 pub static ERROR_CSRF_CHECK: &str = "CsrfCheckError";
-pub static ERROR_USER_AUTHENTICATION: &str = "UserAuthenticationError";
+pub static ERROR_AUTHENTICATION: &str = "AuthenticationError";
 pub static ERROR_VALIDATION: &str = "ValidationError";
 
 pub type HttpStatus = http::StatusCode;

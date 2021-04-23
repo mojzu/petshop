@@ -48,7 +48,7 @@ impl Example for Api {
         request: Request<()>,
     ) -> Result<Response<User>, Status> {
         info!("authentication_required request");
-        let user = self.auth_required(&request)?;
+        let user = self.auth.api_or_user(&request).await?;
         Ok(Response::new(user))
     }
 
@@ -66,8 +66,10 @@ impl Example for Api {
     async fn csrf(&self, request: Request<()>) -> Result<Response<()>, Status> {
         info!("csrf request");
 
+        // FIXME: This isn't a particularly convenient interface, could perform these checks
+        // in a service depending on HTTP method rules, but the gRPC mapping may be a little
+        // too fuzzy to depend on that
         self.csrf.request_check(&request)?;
-
         self.csrf.response_used(Response::new(()))
     }
 

@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 -   Move example endpoints into their own gRPC service
+-   Move authentication example code into server Auth service module
 
 ## [0.3.3] - 2021-04-18
 
