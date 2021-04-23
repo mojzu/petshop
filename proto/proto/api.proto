@@ -71,6 +71,14 @@ service Example {
     };
   }
 
+  // Client example
+  rpc ClientGet (Get) returns (google.api.HttpBody) {
+    option (google.api.http) = {
+      post: "/api.Example/ClientGet"
+      body: "*"
+    };
+  }
+
   // CSRF example
   rpc Csrf (google.protobuf.Empty) returns (google.protobuf.Empty) {
     option (google.api.http) = {

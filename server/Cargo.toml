@@ -24,13 +24,16 @@ prost = "0.7"
 prost-types = "0.7"
 tokio = { version = "1.4", features = ["macros", "rt-multi-thread", "signal"] }
 tokio-stream = { version = "0.1", features = ["net"] }
-tonic = "0.4"
+tonic = { version = "0.4", features = ["tls"] }
 tonic-health = "0.3"
 hyper = "0.14"
 futures = { version = "0.3", default-features = false, features = ["alloc"] }
 tower = { version = "0.4" }
 
 validator = { version = "0.13", features = ["derive"] }
+
+http = "0.2"
+hyper-rustls = "0.22"
 
 chrono = { version = "0.4", features = ["serde"] }
 clap = "2.33"
@@ -54,7 +57,6 @@ postgres-types = { version = "0.2", features = ["derive"] }
 tokio-postgres = { version = "0.7", features = ["with-chrono-0_4", "with-uuid-0_8", "with-serde_json-1"] }
 
 rand = "0.8"
-http = "0.2"
 cookie = "0.15"
 time = "0.2"
 url = { version = "2.2", features = ["serde"] }

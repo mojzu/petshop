@@ -10,6 +10,7 @@ import {
     Pet,
     Status,
     Tag,
+    Get,
 } from "../clients/grpc-web/messages_pb";
 import {
     PetshopPromiseClient,
@@ -94,3 +95,4 @@ window["Status"] = Status;
 window["Tag"] = Tag;
 window["Echo"] = Echo;
 window["User"] = User;
+window["Get"] = Get;

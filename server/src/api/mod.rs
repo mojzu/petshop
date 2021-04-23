@@ -16,6 +16,7 @@ pub struct Api {
     pub metrics: Arc<Metrics>,
     pub postgres: Arc<PostgresPool>,
     pub auth: Arc<Auth>,
+    pub clients: Arc<Clients>,
     pub csrf: Arc<Csrf>,
 
     /// This is only here for TFB fortunes endpoint
@@ -45,6 +46,7 @@ impl Api {
         let postgres = Arc::new(PostgresPool::from_config(config, metrics.clone())?);
 
         let auth = Arc::new(Auth::from_config(config, postgres.clone()));
+        let clients = Arc::new(Clients::from_config(config));
         let csrf = Arc::new(Csrf::from_config(config, metrics.clone()));
 
         let mut tfb_handlebars = handlebars::Handlebars::new();
@@ -57,6 +59,7 @@ impl Api {
             metrics,
             postgres,
             auth,
+            clients,
             csrf,
             tfb_handlebars: Arc::new(tfb_handlebars),
         })

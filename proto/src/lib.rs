@@ -53,6 +53,8 @@ pub mod prost_validator {
             Err(ValidationError::new("user_name_invalid"))
         }
     }
+
+    // TODO: Uri validator for Get, replace url with http::uri?
 }
 
 #[cfg(test)]

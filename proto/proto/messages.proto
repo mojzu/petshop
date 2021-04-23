@@ -4,6 +4,10 @@ option go_package = "petshop/petshop";
 
 import "google/api/field_behavior.proto";
 
+message Get {
+  string uri = 1;
+}
+
 message User {
   string email = 1;
   string name = 2;

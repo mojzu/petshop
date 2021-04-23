@@ -2,7 +2,7 @@
 //!
 use crate::internal::*;
 use petshop_proto::api::example_server::Example;
-use petshop_proto::api::{Echo, User};
+use petshop_proto::api::{Echo, Get, User};
 use petshop_proto::google::api::HttpBody;
 use prost_types::Struct;
 use tokio::sync::mpsc;
@@ -60,6 +60,34 @@ impl Example for Api {
         self.validate(&user)?;
 
         Ok(Response::new(user))
+    }
+
+    #[tracing::instrument(skip(self))]
+    async fn client_get(&self, request: Request<Get>) -> Result<Response<HttpBody>, Status> {
+        info!("client_get request");
+
+        let get = request.into_inner();
+        let res = self.clients.get(&get.uri).await?;
+
+        let content_type = res.headers().get(http::header::CONTENT_TYPE);
+        let content_type = match content_type {
+            Some(content_type) => match content_type.to_str() {
+                Ok(content_type) => content_type.to_string(),
+                Err(_) => "text/html".to_string(),
+            },
+            None => "text/html".to_string(),
+        };
+        let data: Vec<u8> = hyper::body::to_bytes(res.into_body())
+            .await
+            .map_err(XErr::Hyper)?
+            .to_vec();
+
+        let body = HttpBody {
+            content_type,
+            data,
+            extensions: vec![],
+        };
+        Ok(Response::new(body))
     }
 
     #[tracing::instrument(skip(self))]
