@@ -159,7 +159,7 @@ impl PostgresClient {
 
         tokio::spawn(async move {
             if let Err(err) = connection.await {
-                warn!("connection error: {}", err);
+                warn!("connection error: {:#}", err);
             }
         });
 

@@ -36,6 +36,7 @@ pub struct Csrf {
 }
 
 const X_CSRF_MATCH: &str = "x-csrf-match";
+const X_CSRF_ERROR: &str = "x-csrf-error";
 const X_CSRF_USED: &str = "x-csrf-used";
 
 impl Csrf {
@@ -64,8 +65,13 @@ impl Csrf {
                 Ok(())
             } else {
                 self.metrics.csrf_error_counter_inc();
-                // FIXME: Would it be worth using an x-csrf-error header set by
-                // the request handler to log as an error here?
+
+                // If error header is set, log it now
+                if let Some(error) = request.metadata().get(X_CSRF_ERROR) {
+                    if let Ok(error) = error.to_str() {
+                        warn!("csrf check error: {}", error);
+                    }
+                }
 
                 Err(tonic::Status::permission_denied(ERROR_CSRF_CHECK))
             }
@@ -138,9 +144,15 @@ impl Csrf {
                         };
 
                         if allow_origin {
-                            headers.append(X_CSRF_MATCH, "1".parse().unwrap());
+                            headers.insert(X_CSRF_MATCH, "1".parse().unwrap());
+                        } else {
+                            headers.insert(X_CSRF_ERROR, "origin not allowed".parse().unwrap());
                         }
+                    } else {
+                        headers.insert(X_CSRF_ERROR, "tokens do not match".parse().unwrap());
                     }
+                } else {
+                    headers.insert(X_CSRF_ERROR, "tokens not found".parse().unwrap());
                 }
 
                 // Return the csrf token, it will be reused on the
