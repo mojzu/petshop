@@ -7,7 +7,9 @@ pub use crate::api::Api;
 pub use crate::config::Config;
 pub use crate::jobs::Jobs;
 pub use crate::postgres::{PostgresClient, PostgresPool};
-pub use crate::services::{Auth, Clients, Csrf, CsrfConfig, CsrfService, Metrics, MetricsService};
+pub use crate::services::{
+    Auth, Clients, ClientsConfig, Csrf, CsrfConfig, CsrfService, Metrics, MetricsService,
+};
 pub use anyhow::{Error, Result};
 pub use chrono::Utc;
 pub use std::convert::{TryFrom, TryInto};
@@ -64,11 +66,8 @@ pub enum XErr {
     #[error("postgres error")]
     Postgres(#[from] tokio_postgres::Error),
 
-    #[error("http error")]
-    Http(#[from] http::Error),
-
-    #[error("hyper error")]
-    Hyper(#[from] hyper::Error),
+    #[error("reqwest error")]
+    Reqwest(#[from] reqwest::Error),
 }
 
 impl XErr {

@@ -135,9 +135,9 @@ await exampleGrpcClient.authenticationRequired(req);</code></pre>
     <h2>Example 10 - Client</h2>
     <i>Makes HTTP GET request using server Clients module and returns response as HttpBody</i>
     <h3>exampleHttpClient</h3>
-    <pre><code class="language-javascript">await exampleHttpClient.exampleClientGet({ uri: "https://google.com" });</code></pre>
+    <pre><code class="language-javascript">await exampleHttpClient.exampleClientGet({ url: "https://google.com" });</code></pre>
     <h3>exampleGrpcClient</h3>
-    <pre><code class="language-javascript">req = (new Get()).setUri("https://google.com");
+    <pre><code class="language-javascript">req = (new Get()).setUrl("https://google.com");
 await exampleGrpcClient.clientGet(req);</code></pre>
 </div>
 

@@ -1,32 +1,40 @@
 //! # Clients
 use crate::internal::*;
-use http::{header, Request, Response};
-use hyper::{client, Body};
-use hyper_rustls::HttpsConnector;
+use reqwest::Response;
+use std::time::Duration;
+
+/// Clients Configuration
+#[derive(Debug, Clone)]
+pub struct ClientsConfig {
+    pub http_timeout_seconds: u64,
+}
 
 /// Clients
 pub struct Clients {
-    http: client::Client<HttpsConnector<client::HttpConnector>, Body>,
+    _config: ClientsConfig,
+    http: reqwest::Client,
 }
 
 impl Clients {
-    pub fn from_config(_config: &Config) -> Self {
-        // TODO: Configurable client options from config
-        let http = client::Client::builder().build(HttpsConnector::with_native_roots());
+    pub fn from_config(config: &Config) -> Result<Self, XErr> {
+        let config = config.clients.clone();
 
-        Self { http }
+        let http = reqwest::ClientBuilder::new()
+            .user_agent(USER_AGENT)
+            .timeout(Duration::from_secs(config.http_timeout_seconds))
+            .use_rustls_tls()
+            .build()?;
+
+        Ok(Self {
+            _config: config,
+            http,
+        })
     }
 
-    /// Returns response from a GET request to uri
-    pub async fn get(&self, uri: &str) -> Result<Response<Body>, XErr> {
-        // TODO: Cleanup this, add other methods, utility functions for json, etc?
-        let mut req = Request::get(uri);
-        if let Some(headers) = req.headers_mut() {
-            headers.insert(header::USER_AGENT, USER_AGENT.parse().unwrap());
-        }
-        let req = req.body(Body::empty())?;
-
-        let res = self.http.request(req).await?;
+    /// Returns response from a GET request to url
+    pub async fn get(&self, url: &str) -> Result<Response, XErr> {
+        let req = self.http.get(url);
+        let res = req.send().await?;
         Ok(res)
     }
 }

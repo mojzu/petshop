@@ -67,7 +67,8 @@ impl Example for Api {
         info!("client_get request");
 
         let get = request.into_inner();
-        let res = self.clients.get(&get.uri).await?;
+        self.validate(&get)?;
+        let res = self.clients.get(&get.url).await?;
 
         let content_type = res.headers().get(http::header::CONTENT_TYPE);
         let content_type = match content_type {
@@ -77,10 +78,7 @@ impl Example for Api {
             },
             None => "text/html".to_string(),
         };
-        let data: Vec<u8> = hyper::body::to_bytes(res.into_body())
-            .await
-            .map_err(XErr::Hyper)?
-            .to_vec();
+        let data: Vec<u8> = res.bytes().await.map_err(XErr::Reqwest)?.to_vec();
 
         let body = HttpBody {
             content_type,

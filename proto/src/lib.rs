@@ -54,7 +54,13 @@ pub mod prost_validator {
         }
     }
 
-    // TODO: Uri validator for Get, replace url with http::uri?
+    pub fn url(s: &str) -> Result<(), ValidationError> {
+        if validator::validate_url(s) {
+            Ok(())
+        } else {
+            Err(ValidationError::new("url_invalid"))
+        }
+    }
 }
 
 #[cfg(test)]

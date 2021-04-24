@@ -20,6 +20,11 @@ fn main() {
             "api.User.name",
             "#[validate(custom = \"prost_validator::user_name\")]",
         )
+        .type_attribute("api.Get", "#[derive(Validate)]")
+        .field_attribute(
+            "api.Get.url",
+            "#[validate(custom = \"prost_validator::url\")]",
+        )
         .compile(
             &["proto/api.proto", "proto/google/rpc/status.proto"],
             &["proto"],

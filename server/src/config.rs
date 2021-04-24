@@ -17,7 +17,13 @@ pub struct Config {
     pub internal_addr: SocketAddr,
     pub metrics_name: String,
     pub csrf: Option<CsrfConfig>,
+    pub clients: ClientsConfig,
     pub postgres: deadpool_postgres::Config,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct ClientsConfigLoad {
+    http_timeout_seconds: Option<u64>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -48,6 +54,7 @@ struct ConfigLoad {
     internal_host: Option<String>,
     internal_port: Option<u16>,
     metrics_name: Option<String>,
+    clients: Option<ClientsConfigLoad>,
     csrf: Option<CsrfConfigLoad>,
     postgres: Option<deadpool_postgres::Config>,
 }
@@ -72,6 +79,23 @@ impl TryFrom<ConfigLoad> for Config {
         let internal_addr: SocketAddr = format!("{}:{}", internal_host, internal_port).parse()?;
         let metrics_name =
             Config::opt_or_default("metrics_name", value.metrics_name, NAME.to_string());
+
+        let clients = if let Some(clients) = value.clients {
+            let http_timeout_seconds = Self::opt_or_default(
+                "clients.http_timeout_seconds",
+                clients.http_timeout_seconds,
+                60,
+            );
+            ClientsConfig {
+                http_timeout_seconds,
+            }
+        } else {
+            let http_timeout_seconds =
+                Self::opt_or_default("clients.http_timeout_seconds", None, 60);
+            ClientsConfig {
+                http_timeout_seconds,
+            }
+        };
 
         let csrf = if let Some(csrf) = value.csrf {
             let cookie_name = Config::opt_or_default(
@@ -157,6 +181,7 @@ impl TryFrom<ConfigLoad> for Config {
             api_addr,
             internal_addr,
             metrics_name,
+            clients,
             csrf,
             postgres,
         })

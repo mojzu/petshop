@@ -46,7 +46,7 @@ impl Api {
         let postgres = Arc::new(PostgresPool::from_config(config, metrics.clone())?);
 
         let auth = Arc::new(Auth::from_config(config, postgres.clone()));
-        let clients = Arc::new(Clients::from_config(config));
+        let clients = Arc::new(Clients::from_config(config)?);
         let csrf = Arc::new(Csrf::from_config(config, metrics.clone()));
 
         let mut tfb_handlebars = handlebars::Handlebars::new();
