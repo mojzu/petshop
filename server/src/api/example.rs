@@ -89,6 +89,21 @@ impl Example for Api {
     }
 
     #[tracing::instrument(skip(self))]
+    async fn webhook(&self, request: Request<HttpBody>) -> Result<Response<()>, Status> {
+        let req = request.into_inner();
+        info!("webhook request {}", req.content_type);
+
+        if req.content_type == "application/x-www-form-urlencoded" {
+            let req: serde_json::Value =
+                serde_urlencoded::from_bytes(&req.data).map_err(XErr::SerdeUrlencoded)?;
+            info!("webhook data {}", req);
+        }
+        // FIXME: Handle multipart form data here? Example for mailgun/other api webhook support?
+
+        Ok(Response::new(()))
+    }
+
+    #[tracing::instrument(skip(self))]
     async fn csrf(&self, request: Request<()>) -> Result<Response<()>, Status> {
         info!("csrf request");
 

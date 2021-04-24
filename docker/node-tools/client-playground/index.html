@@ -141,6 +141,13 @@ await exampleGrpcClient.authenticationRequired(req);</code></pre>
 await exampleGrpcClient.clientGet(req);</code></pre>
 </div>
 
+<div class="example">
+    <h2>Example 11 - Webhooks</h2>
+    <i>Accepts HTTP requests such as urlencoded form data, see output in server logs</i>
+    <h3>curl</h3>
+    <pre><code class="language-shell">curl -X POST -d "arg1=exampledata" -d "arg2=moreexampledata" localhost:10000/api.Example/Webhook</code></pre>
+</div>
+
 <script src="script.ts"></script>
 <script src="../node_modules/prismjs/prism.js"></script>
 </body>

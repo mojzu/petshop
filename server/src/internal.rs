@@ -54,6 +54,9 @@ pub enum XErr {
     #[error("serde json error")]
     SerdeJson(#[from] serde_json::Error),
 
+    #[error("serde urlencoded error")]
+    SerdeUrlencoded(#[from] serde_urlencoded::de::Error),
+
     #[error("prost encode error")]
     ProstEncode(#[from] prost::EncodeError),
 

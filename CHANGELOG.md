@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Move authentication example code into server Auth service module
 -   Add server Clients service module and example endpoint
 -   Improve CSRF service request handler error output
+-   Add webhook endpoint and example in client playground
 
 ## [0.3.3] - 2021-04-18
 

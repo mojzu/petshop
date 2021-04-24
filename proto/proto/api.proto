@@ -79,6 +79,14 @@ service Example {
     };
   }
 
+  // Webhook example
+  rpc Webhook (google.api.HttpBody) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/api.Example/Webhook"
+      body: "*"
+    };
+  }
+
   // CSRF example
   rpc Csrf (google.protobuf.Empty) returns (google.protobuf.Empty) {
     option (google.api.http) = {
