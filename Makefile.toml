@@ -447,27 +447,6 @@ script = '''
 docker-compose ${@}
 '''
 
-[tasks.compose-ci]
-description = "Build generated outputs and run docker-compose with CI compose file"
-category = "Petshop"
-workspace = false
-dependencies = [
-    "docker-build-tools",
-    "docker-build-rust-cache",
-    "generate-flow"
-]
-script = '''
-docker-compose -f docker-compose.ci.yaml ${@}
-'''
-
-[tasks.compose-ci-down]
-description = "Stop and remove docker-compose with CI compose file"
-category = "Petshop"
-workspace = false
-script = '''
-docker-compose -f docker-compose.ci.yaml down
-'''
-
 # Manual tasks
 
 [tasks.manual]
@@ -478,16 +457,6 @@ dependencies = ["docker-build-sphinx"]
 script = '''
 echo Running petshop/sphinx:latest
 docker run --rm -it -v "$(pwd):/src" --user "$(id -u):$(id -g)" petshop/sphinx:latest sphinx-make-html
-'''
-
-[tasks.manual-ci]
-description = "Run sphinx manual builder (CI)"
-category = "Petshop"
-workspace = false
-dependencies = ["docker-build-sphinx"]
-script = '''
-echo Running petshop/sphinx:latest
-docker run --rm -v "$(pwd):/src" --user "$(id -u):$(id -g)" petshop/sphinx:latest sphinx-make-html
 '''
 
 # Distribution tasks
@@ -564,7 +533,40 @@ rm -rf ./dist/petshop-${VERSION}.tgz
 (cd ./dist && tar -cvzf petshop-${VERSION}.tgz clients data manual)
 '''
 
-[tasks.dist-ci-build]
+# Continuous integration tasks
+
+[tasks.ci-compose]
+description = "Build generated outputs and run docker-compose with CI compose file"
+category = "Petshop"
+workspace = false
+dependencies = [
+    "docker-build-tools",
+    "docker-build-rust-cache",
+    "generate-flow"
+]
+script = '''
+docker-compose -f docker-compose.ci.yaml ${@}
+'''
+
+[tasks.ci-compose-down]
+description = "Stop and remove docker-compose with CI compose file"
+category = "Petshop"
+workspace = false
+script = '''
+docker-compose -f docker-compose.ci.yaml down
+'''
+
+[tasks.ci-manual]
+description = "Run sphinx manual builder (CI)"
+category = "Petshop"
+workspace = false
+dependencies = ["docker-build-sphinx"]
+script = '''
+echo Running petshop/sphinx:latest
+docker run --rm -v "$(pwd):/src" --user "$(id -u):$(id -g)" petshop/sphinx:latest sphinx-make-html
+'''
+
+[tasks.ci-dist-build]
 description = "Build server and envoy docker images (CI)"
 category = "Petshop"
 workspace = false
@@ -574,7 +576,7 @@ dependencies = [
     "docker-build-server",
     "generate-envoy-flow",
     "generate-client-flow-pre",
-    "manual-ci",
+    "ci-manual",
     "dist-release-artifacts"
 ]
 
@@ -585,7 +587,7 @@ description = "Build images for minikube example"
 category = "Petshop"
 workspace = false
 dependencies = [
-    "dist-ci-build"
+    "ci-dist-build"
 ]
 script = '''
 echo IMAGE=k8s.io/mojzu/petshop-envoy:$VERSION

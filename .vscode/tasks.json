@@ -109,10 +109,24 @@
       "problemMatcher": []
     },
     {
-      "label": "compose ci - run",
+      "label": "ci - compose run",
       "detail": "Build generated outputs and run docker-compose with CI compose file",
       "type": "shell",
-      "command": "cargo make compose-ci run sut && cargo make compose down",
+      "command": "cargo make ci-compose run sut && cargo make ci-compose-down",
+      "problemMatcher": []
+    },
+    {
+      "label": "ci - dist build",
+      "detail": "Build all docker images and generated outputs for CI",
+      "type": "shell",
+      "command": "cargo make ci-dist-build",
+      "problemMatcher": []
+    },
+    {
+      "label": "ci - manual",
+      "detail": "Build manual using Sphinx for CI",
+      "type": "shell",
+      "command": "cargo make ci-manual",
       "problemMatcher": []
     },
     {

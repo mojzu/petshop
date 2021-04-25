@@ -121,13 +121,13 @@ jobs:
 
       - name: Run CI
         run: |
-          cargo make compose-ci run sut
-          cargo make compose-ci-down
+          cargo make ci-compose run sut
+          cargo make ci-compose-down
 
       - name: Build Images
         if: github.event_name == 'push'
         run: |
-          cargo make dist-ci-build
+          cargo make ci-dist-build
 
       - name: Setup GitHub Packages
         if: github.event_name == 'push'

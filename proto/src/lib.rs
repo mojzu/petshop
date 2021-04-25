@@ -68,10 +68,6 @@ mod tests {
     use super::api::*;
     use validator::Validate;
 
-    // FIXME: Unit test example, can also use doctests here but not in the
-    // server crate (because it's a binary), worth splitting server
-    // functionality into a library?
-
     #[test]
     fn user_validate_test() {
         let user = User {

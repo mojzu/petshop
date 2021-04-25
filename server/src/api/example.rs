@@ -109,7 +109,7 @@ impl Example for Api {
 
         // FIXME: This isn't a particularly convenient interface, could perform these checks
         // in a service depending on HTTP method rules, but the gRPC mapping may be a little
-        // too fuzzy to depend on that
+        // too fuzzy to use that
         self.csrf.request_check(&request)?;
         self.csrf.response_used(Response::new(()))
     }
