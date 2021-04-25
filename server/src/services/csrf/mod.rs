@@ -39,6 +39,11 @@ const X_CSRF_MATCH: &str = "x-csrf-match";
 const X_CSRF_ERROR: &str = "x-csrf-error";
 const X_CSRF_USED: &str = "x-csrf-used";
 
+/// CSRF Token
+pub struct CsrfToken {
+    value: String,
+}
+
 impl Csrf {
     pub fn from_config(config: &Config, metrics: Arc<Metrics>) -> Self {
         Self {
@@ -47,6 +52,7 @@ impl Csrf {
         }
     }
 
+    /// Used in config to parse string to type
     pub fn samesite_from_string(s: String) -> Result<SameSite> {
         match s.to_lowercase().as_ref() {
             "strict" => Ok(SameSite::Strict),
@@ -96,7 +102,7 @@ impl Csrf {
     }
 
     /// Used in service to check request headers for CSRF match
-    pub fn service_request_handler(&self, headers: &mut HttpHeaders) -> Option<String> {
+    pub fn service_request_handler(&self, headers: &mut HttpHeaders) -> Option<CsrfToken> {
         // If configuration is None, csrf is disabled
         match self.config.as_ref() {
             Some(config) => {
@@ -105,16 +111,18 @@ impl Csrf {
                 //
                 // This does require some kind of initialisation by the client to
                 // make a first request that does not require csrf verification
-                let csrf_token = cookie_value(headers, config.cookie_name.as_str());
+                let csrf_token = CsrfToken::from_cookie_value(headers, config.cookie_name.as_str());
 
                 // Get csrf token from header, this is set by the client
-                let x_csrf_token = header_remove_value(headers, config.header_name.as_str());
+                let x_csrf_token =
+                    CsrfToken::from_removed_header_value(headers, config.header_name.as_str());
 
                 // Check if cookie and header csrf tokens match, if they do
                 // set a header on the request which can be checked in
                 // the tonic request handler
                 //
                 // FIXME: Use HMAC based token pattern here?
+                // <https://rust-lang-nursery.github.io/rust-cookbook/cryptography/hashing.html#sign-and-verify-a-message-with-hmac-digest>
                 if let (Some(csrf_token), Some(x_csrf_token)) =
                     (csrf_token.as_ref(), x_csrf_token.as_ref())
                 {
@@ -166,7 +174,7 @@ impl Csrf {
     /// Used in service to check response headers for CSRF used
     pub fn service_response_handler(
         &self,
-        csrf_token: Option<String>,
+        csrf_token: Option<CsrfToken>,
         status: HttpStatus,
         headers: &mut HttpHeaders,
     ) {
@@ -183,13 +191,13 @@ impl Csrf {
                 // Always refresh the token if it has been used, else reuse
                 // the token or generate one if it wasn't present
                 let csrf_token = if csrf_used {
-                    random_string(config.token_length)
+                    CsrfToken::from_random_string(config.token_length)
                 } else {
-                    csrf_token.unwrap_or_else(|| random_string(config.token_length))
+                    csrf_token.unwrap_or_else(|| CsrfToken::from_random_string(config.token_length))
                 };
 
                 // Create cookie and set on response
-                let cookie = Cookie::build(config.cookie_name.as_str(), csrf_token)
+                let cookie = Cookie::build(config.cookie_name.as_str(), csrf_token.as_str())
                     .domain(config.cookie_domain.as_str())
                     .path(config.cookie_path.as_str())
                     .secure(config.cookie_secure)
@@ -239,24 +247,51 @@ fn match_allow_origin(origin: Url, allow_origin: &[Url]) -> bool {
     false
 }
 
-/// Get cookie of name from headers and return value as string option
-fn cookie_value(headers: &HttpHeaders, cookie_name: &str) -> Option<String> {
-    match headers.get(http::header::COOKIE) {
-        Some(header) => match header.to_str() {
-            Ok(header) => {
-                let cookies: Vec<&str> = header.split_whitespace().collect();
-                for cookie in cookies {
-                    if let Ok(cookie) = Cookie::parse(cookie) {
-                        if cookie.name().to_lowercase() == cookie_name.to_lowercase() {
-                            return Some(cookie.value().into());
+impl CsrfToken {
+    /// Generate new token from random string
+    fn from_random_string(token_length: usize) -> Self {
+        let value = random_string(token_length);
+        Self { value }
+    }
+
+    /// Get cookie of name from headers and parse value into token
+    fn from_cookie_value(headers: &HttpHeaders, cookie_name: &str) -> Option<Self> {
+        match headers.get(http::header::COOKIE) {
+            Some(header) => match header.to_str() {
+                Ok(header) => {
+                    let cookies: Vec<&str> = header.split_whitespace().collect();
+                    for cookie in cookies {
+                        if let Ok(cookie) = Cookie::parse(cookie) {
+                            if cookie.name().to_lowercase() == cookie_name.to_lowercase() {
+                                let value: String = cookie.value().into();
+                                return Some(Self { value });
+                            }
                         }
                     }
+                    None
                 }
-                None
-            }
-            Err(_) => None,
-        },
-        None => None,
+                Err(_) => None,
+            },
+            None => None,
+        }
+    }
+
+    /// Remove header of name from headers and parse value into token
+    fn from_removed_header_value(headers: &mut HttpHeaders, header_name: &str) -> Option<Self> {
+        match header_remove_value(headers, header_name) {
+            Some(value) => Some(Self { value }),
+            None => None,
+        }
+    }
+
+    fn as_str(&self) -> &str {
+        &self.value
+    }
+}
+
+impl PartialEq for CsrfToken {
+    fn eq(&self, other: &Self) -> bool {
+        self.value == other.value
     }
 }
 
