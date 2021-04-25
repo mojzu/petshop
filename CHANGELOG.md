@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Improve CSRF service request handler error output
 -   Add webhook endpoint and example in client playground
 -   Refactor CSRF service module to improve internal representation of tokens
+-   Add receiving webhooks example
 
 ## [0.3.3] - 2021-04-18
 

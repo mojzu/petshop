@@ -17,6 +17,7 @@ Petshop Manual
    examples/ghcr/README.md
    examples/helm/README.md
    examples/tfb/README.md
+   examples/webhooks/README.md
 
 Indices
 =======
