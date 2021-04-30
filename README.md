@@ -33,7 +33,7 @@ Template for Rust API server with gRPC and OpenAPI (V2) interfaces
 -   [GitHub Container Registry](https://docs.github.com/en/packages/guides/about-github-container-registry) example to use published images
 -   Kubernetes deployment example using [Helm](https://helm.sh/) and [minikube](https://minikube.sigs.k8s.io/docs/)
 -   [TechEmpower Benchmark Framework](https://www.techempower.com/benchmarks/) example ([2021-04-16 results](https://www.techempower.com/benchmarks/#section=test&shareid=4de2767b-8a2d-40f8-bfad-696389cc882a))
--   Receiving [GitHub webhooks](https://docs.github.com/en/developers/webhooks-and-events/about-webhooks)
+-   Receiving [GitHub webhooks](https://docs.github.com/en/developers/webhooks-and-events/about-webhooks) example
 
 ## Quickstart
 
