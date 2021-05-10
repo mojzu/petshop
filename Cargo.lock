@@ -266,6 +266,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "crossbeam-channel"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "06ed27e177f16d65f0f0c22a213e17c696ace5dd64b14258b52f9417ccb52db4"
+dependencies = [
+ "cfg-if",
+ "crossbeam-utils",
+]
+
+[[package]]
 name = "crossbeam-queue"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -968,7 +978,22 @@ version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b91cea1dfd50064e52db033179952d18c770cbc5dfefc8eba45d619357ba3914"
 dependencies = [
+ "dashmap",
+ "fnv",
+ "futures",
+ "js-sys",
+ "lazy_static",
+ "thiserror",
+]
+
+[[package]]
+name = "opentelemetry"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "492848ff47f11b7f9de0443b404e2c5775f695e1af6b7076ca25f999581d547a"
+dependencies = [
  "async-trait",
+ "crossbeam-channel",
  "dashmap",
  "fnv",
  "futures",
@@ -987,7 +1012,7 @@ version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7162eac03f0bf5edbe2f2d4f44279904f62c779cd1c8260456446db2e1bf200d"
 dependencies = [
- "opentelemetry",
+ "opentelemetry 0.13.0",
  "prometheus",
  "protobuf",
 ]
@@ -1104,7 +1129,7 @@ dependencies = [
  "handlebars",
  "http",
  "hyper",
- "opentelemetry",
+ "opentelemetry 0.14.0",
  "opentelemetry-prometheus",
  "petshop_proto",
  "postgres-types",
