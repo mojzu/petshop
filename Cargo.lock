@@ -982,12 +982,26 @@ dependencies = [
 ]
 
 [[package]]
-name = "opentelemetry-prometheus"
-version = "0.6.0"
+name = "opentelemetry"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7162eac03f0bf5edbe2f2d4f44279904f62c779cd1c8260456446db2e1bf200d"
+checksum = "492848ff47f11b7f9de0443b404e2c5775f695e1af6b7076ca25f999581d547a"
 dependencies = [
- "opentelemetry",
+ "dashmap",
+ "fnv",
+ "futures",
+ "js-sys",
+ "lazy_static",
+ "thiserror",
+]
+
+[[package]]
+name = "opentelemetry-prometheus"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f41760047df46012aaf2bb87fec0efed4d97f7a6af6825858c3b4d9438dadb94"
+dependencies = [
+ "opentelemetry 0.14.0",
  "prometheus",
  "protobuf",
 ]
@@ -1104,7 +1118,7 @@ dependencies = [
  "handlebars",
  "http",
  "hyper",
- "opentelemetry",
+ "opentelemetry 0.13.0",
  "opentelemetry-prometheus",
  "petshop_proto",
  "postgres-types",

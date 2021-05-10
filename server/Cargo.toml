@@ -51,7 +51,7 @@ async-trait = "=0.1.17"
 
 prometheus = { version = "0.12", features = ["process"] }
 opentelemetry = { version = "0.13", features = ["metrics", "serialize"] }
-opentelemetry-prometheus = { version = "0.6" }
+opentelemetry-prometheus = { version = "0.7" }
 
 deadpool-postgres = "0.7"
 postgres-types = { version = "0.2", features = ["derive"] }
