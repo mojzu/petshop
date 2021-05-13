@@ -1,6 +1,6 @@
-# DEPEND: docker pull rust:1.51.0-buster
+# DEPEND: docker pull rust:1.52.1-buster
 # <https://hub.docker.com/_/rust>
-FROM rust:1.51.0-buster
+FROM rust:1.52.1-buster
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
@@ -17,7 +17,7 @@ RUN rustup update 2>&1 \
 
 # DEPEND: Install cargo-make
 # <https://crates.io/crates/cargo-make>
-RUN cargo install --force cargo-make --version "~0.32"
+RUN cargo install --force cargo-make --version "~0.33"
 
 RUN mkdir -p /src
 WORKDIR /src

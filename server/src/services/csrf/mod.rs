@@ -278,10 +278,7 @@ impl CsrfToken {
 
     /// Remove header of name from headers and parse value into token
     fn from_removed_header_value(headers: &mut HttpHeaders, header_name: &str) -> Option<Self> {
-        match header_remove_value(headers, header_name) {
-            Some(value) => Some(Self { value }),
-            None => None,
-        }
+        header_remove_value(headers, header_name).map(|value| Self { value })
     }
 
     fn as_str(&self) -> &str {

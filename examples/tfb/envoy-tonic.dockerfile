@@ -1,6 +1,6 @@
-# DEPEND: docker pull envoyproxy/envoy-alpine:v1.18.2
+# DEPEND: docker pull envoyproxy/envoy-alpine:v1.18.3
 # <https://hub.docker.com/r/envoyproxy/envoy-alpine>
-FROM envoyproxy/envoy-alpine:v1.18.2
+FROM envoyproxy/envoy-alpine:v1.18.3
 
 # Create configuration directory
 RUN mkdir -p /config
