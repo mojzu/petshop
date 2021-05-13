@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.3.4] - 2021-05-13
 
 -   Move example endpoints into their own gRPC service
 -   Move authentication example code into server Auth service module
@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Add webhook endpoint and example in client playground
 -   Refactor CSRF service module to improve internal representation of tokens
 -   Add receiving webhooks example
--   Update node and rust dependencies
+-   Update docker, node and rust dependencies
 
 ## [0.3.3] - 2021-04-18
 
