@@ -2,7 +2,7 @@
 # TODO: Envoy MTLS authentication example(s), other options for auth?
 
 [env]
-VERSION = "0.3.4"
+VERSION = "0.3.5"
 RUST_LOG = "petshop_server=debug,tokio_postgres=debug"
 CONFIG_TRACING_JSON = "false"
 CONFIG_API_HOST = "0.0.0.0"

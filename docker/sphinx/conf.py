@@ -19,7 +19,7 @@ import sphinx_rtd_theme
 # -- Project information -----------------------------------------------------
 
 # The full version, including alpha/beta/rc tags
-release = '0.3.4'
+release = '0.3.5'
 
 project = 'Petshop {0}'.format(release)
 copyright = '2021, Sam Ward'
