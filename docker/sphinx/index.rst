@@ -19,6 +19,12 @@ Petshop Manual
    examples/tfb/README.md
    examples/webhooks/README.md
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Developer
+
+   manual/windows.md
+
 Indices
 =======
 
