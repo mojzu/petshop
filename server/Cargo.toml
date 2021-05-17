@@ -22,7 +22,7 @@ bytes = "1.0"
 petshop_proto = { path = "../proto" }
 prost = "0.7"
 prost-types = "0.7"
-tokio = { version = "1.4", features = ["macros", "rt-multi-thread", "signal"] }
+tokio = { version = "1.6", features = ["macros", "rt-multi-thread", "signal"] }
 tokio-stream = { version = "0.1", features = ["net"] }
 tonic = { version = "0.4", features = ["tls"] }
 tonic-health = "0.3"
@@ -50,8 +50,8 @@ tracing-futures = "0.2"
 async-trait = "=0.1.17"
 
 prometheus = { version = "0.12", features = ["process"] }
-opentelemetry = { version = "0.13", features = ["metrics", "serialize"] }
-opentelemetry-prometheus = { version = "0.6" }
+opentelemetry = { version = "0.14", features = ["metrics", "serialize"] }
+opentelemetry-prometheus = { version = "0.7" }
 
 deadpool-postgres = "0.7"
 postgres-types = { version = "0.2", features = ["derive"] }

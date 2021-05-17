@@ -176,7 +176,15 @@ impl TryFrom<ConfigLoad> for Config {
             ));
         }
 
-        Ok(Config { tracing_json, api_addr, internal_addr, metrics_name, csrf, clients, postgres })
+        Ok(Config {
+            tracing_json,
+            api_addr,
+            internal_addr,
+            metrics_name,
+            csrf,
+            clients,
+            postgres,
+        })
     }
 }
 
