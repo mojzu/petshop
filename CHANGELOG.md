@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Bump version number
 -   Update node and rust dependencies
 -   Add Windows development setup guide to manual
+-   Update node and GitHub actions versions
 
 ## [0.3.4] - 2021-05-13
 

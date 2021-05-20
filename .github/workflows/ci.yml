@@ -31,24 +31,24 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.4
 
       - name: Install rust
-        uses: actions-rs/toolchain@v1
+        uses: actions-rs/toolchain@v1.0.7
         with:
           toolchain: ${{ matrix.rust }}
           profile: minimal
           override: true
 
       - name: Install cargo-make
-        uses: actions-rs/cargo@v1
+        uses: actions-rs/cargo@v1.0.3
         with:
           command: install
           args: --debug cargo-make
 
       - name: Run CI
         if: matrix.rust != 'nightly'
-        uses: actions-rs/cargo@v1
+        uses: actions-rs/cargo@v1.0.3
         with:
           command: make
           args: ci-flow
@@ -56,7 +56,7 @@ jobs:
       - name: Run CI (Allow Failures)
         if: matrix.rust == 'nightly'
         continue-on-error: true
-        uses: actions-rs/cargo@v1
+        uses: actions-rs/cargo@v1.0.3
         with:
           command: make
           args: ci-flow
@@ -68,17 +68,17 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.4
 
       - name: Install rust
-        uses: actions-rs/toolchain@v1
+        uses: actions-rs/toolchain@v1.0.7
         with:
           toolchain: stable
           profile: minimal
           override: true
 
       - name: Install cargo-make
-        uses: actions-rs/cargo@v1
+        uses: actions-rs/cargo@v1.0.3
         with:
           command: install
           args: --debug cargo-make
