@@ -209,17 +209,6 @@ dependencies = [
 
 [[package]]
 name = "config"
-version = "0.10.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "19b076e143e1d9538dde65da30f8481c2a6c44040edb8e02b9bf1351edb92ce3"
-dependencies = [
- "lazy_static",
- "nom",
- "serde 1.0.126",
-]
-
-[[package]]
-name = "config"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1b1b9d958c2b1368a663f05538fc1b5975adce1e19f435acceae987aceeeb369"
@@ -279,16 +268,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "crossbeam-queue"
-version = "0.3.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0f6cb3c7f5b8e51bc3ebb73a2327ad4abdbd119dc13223f14f961d2f38486756"
-dependencies = [
- "cfg-if",
- "crossbeam-utils",
-]
-
-[[package]]
 name = "crossbeam-utils"
 version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -321,13 +300,12 @@ dependencies = [
 
 [[package]]
 name = "deadpool"
-version = "0.7.0"
+version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3d126179d86aee4556e54f5f3c6bf6d9884e7cc52cef82f77ee6f90a7747616d"
+checksum = "a2d41e5afb1b1e89cc7204eb9ca99e05ba6fc810962957e7fe285d5024ed5890"
 dependencies = [
  "async-trait",
- "config 0.10.1",
- "crossbeam-queue",
+ "config",
  "num_cpus",
  "serde 1.0.126",
  "tokio",
@@ -335,12 +313,12 @@ dependencies = [
 
 [[package]]
 name = "deadpool-postgres"
-version = "0.7.0"
+version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5452506f60a0ceca624c4becc948f9f0ae67f35fc0ae471b9dcb841d110cf70a"
+checksum = "c6a7a0d594ffdbe16b2d21d45084b1ac9eb8e6da35030c6ccdd4ec7b47a97d39"
 dependencies = [
  "async-trait",
- "config 0.10.1",
+ "config",
  "deadpool",
  "futures",
  "log",
@@ -1113,7 +1091,7 @@ dependencies = [
  "bytes",
  "chrono",
  "clap",
- "config 0.11.0",
+ "config",
  "cookie",
  "deadpool-postgres",
  "futures",
