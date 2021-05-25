@@ -24,7 +24,7 @@
     "google-protobuf": "^3.17.0",
     "grpc-web": "^1.2.1",
     "jasmine": "^3.7.0",
-    "parcel": "^2.0.0-nightly.676",
+    "parcel": "^2.0.0-nightly.686",
     "postcss": "^8.2.15",
     "prismjs": "^1.23.0",
     "ts-node": "^9.1.1",
