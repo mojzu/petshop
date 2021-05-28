@@ -358,15 +358,15 @@ echo Running petshop/envoy-localhost:latest
 docker run --rm -it --network=host petshop/envoy-localhost:latest
 '''
 
-# DEPEND: docker pull postgres:13.2-alpine
+# DEPEND: docker pull postgres:13.3-alpine
 # <https://hub.docker.com/_/postgres>
 [tasks.dev-postgres]
 description = "Run postgres docker image"
 category = "Petshop"
 workspace = false
 script = '''
-echo Running postgres:13.2-alpine
-docker run --rm -it --network=host -e POSTGRES_PASSWORD=postgres postgres:13.2-alpine
+echo Running postgres:13.3-alpine
+docker run --rm -it --network=host -e POSTGRES_PASSWORD=postgres postgres:13.3-alpine
 '''
 
 [tasks.dev-server]
@@ -411,7 +411,7 @@ echo Running node-tools/client-playground
 cargo make node-tools -- npm run client-playground
 '''
 
-# DEPEND: docker pull swaggerapi/swagger-ui:v3.48.0
+# DEPEND: docker pull swaggerapi/swagger-ui:v3.49.0
 # <https://hub.docker.com/r/swaggerapi/swagger-ui>
 [tasks.dev-swagger-ui]
 description = "Run swagger-ui using generated definition"
@@ -422,7 +422,7 @@ dependencies = [
 ]
 script = '''
 echo Running swaggerapi/swagger-ui at http://localhost:8080
-docker run --rm -it --network=host -e SWAGGER_JSON=/dist/data/api.swagger.json -v "$(pwd)/dist:/dist" swaggerapi/swagger-ui:v3.48.0
+docker run --rm -it --network=host -e SWAGGER_JSON=/dist/data/api.swagger.json -v "$(pwd)/dist:/dist" swaggerapi/swagger-ui:v3.49.0
 '''
 
 [tasks.dev-integration-test]

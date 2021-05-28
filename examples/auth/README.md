@@ -6,8 +6,8 @@
 cargo make dist-build
 
 cd examples/auth
-# Copy `oauth2-proxy.template.cfg` to `client-oauth2-proxy.cfg` and `server-oauth2-proxy.cfg` and edit as required
-# Configuration fields to change: http_address, upstreams, provider
+# Copy `docker/oauth2-proxy/oauth2-proxy.template.cfg` to `client-oauth2-proxy.cfg` and `server-oauth2-proxy.cfg` and edit as required
+# Configuration fields to change: http_address, upstreams, provider, cookie_secret (search `EXAMPLE` in template file)
 # <https://oauth2-proxy.github.io/oauth2-proxy/docs/configuration/oauth_provider>
 # <https://oauth2-proxy.github.io/oauth2-proxy/docs/configuration/overview>
 

@@ -8,7 +8,8 @@ use std::fmt;
 
 /// Postgres Pool
 pub struct PostgresPool {
-    pool: deadpool_postgres::Pool,
+    // TODO: Improved TLS options for this connection
+    pool: deadpool_postgres::Pool<tokio_postgres::NoTls>,
     metrics: Arc<Metrics>,
 }
 

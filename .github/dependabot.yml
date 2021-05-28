@@ -30,6 +30,7 @@ updates:
     ignore:
       # FIXME: These are nightly dependencies, don't want requests every day
       - dependency-name: "@parcel*"
+      - dependency-name: "parcel*"
 
   # FIXME: Docker expects Dockerfile, possible to check .dockerfiles?
   # - package-ecosystem: "docker"

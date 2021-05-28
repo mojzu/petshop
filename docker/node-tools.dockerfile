@@ -1,10 +1,10 @@
-# DEPEND: docker pull node:16.1.0-buster
+# DEPEND: docker pull node:16.2.0-buster
 # <https://hub.docker.com/_/node/>
-FROM node:16.1.0-buster
+FROM node:16.2.0-buster
 
 # DEPEND: Install protocol buffers
 # <https://github.com/protocolbuffers/protobuf>
-RUN wget -O protoc.zip -q "https://github.com/protocolbuffers/protobuf/releases/download/v3.17.0/protoc-3.17.0-linux-x86_64.zip" \
+RUN wget -O protoc.zip -q "https://github.com/protocolbuffers/protobuf/releases/download/v3.17.1/protoc-3.17.1-linux-x86_64.zip" \
     && unzip -o protoc.zip -d /usr/local bin/protoc \
     && unzip -o protoc.zip -d /usr/local 'include/*' \
     && chmod +x /usr/local/bin/protoc \
