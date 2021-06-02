@@ -313,9 +313,9 @@ dependencies = [
 
 [[package]]
 name = "deadpool-postgres"
-version = "0.8.0"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c6a7a0d594ffdbe16b2d21d45084b1ac9eb8e6da35030c6ccdd4ec7b47a97d39"
+checksum = "1586368a579e26f158266d0a415bcb5df04a64b65913b2a31715d97987bd4d44"
 dependencies = [
  "async-trait",
  "config",
