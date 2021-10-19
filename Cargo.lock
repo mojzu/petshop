@@ -300,29 +300,23 @@ dependencies = [
 
 [[package]]
 name = "deadpool"
-version = "0.8.0"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a2d41e5afb1b1e89cc7204eb9ca99e05ba6fc810962957e7fe285d5024ed5890"
+checksum = "137f7a694f9395431e6c5d4f2026defef6002310577d76c7c80619ed626b681b"
 dependencies = [
  "async-trait",
- "config",
  "num_cpus",
- "serde 1.0.126",
  "tokio",
 ]
 
 [[package]]
 name = "deadpool-postgres"
-version = "0.8.0"
+version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c6a7a0d594ffdbe16b2d21d45084b1ac9eb8e6da35030c6ccdd4ec7b47a97d39"
+checksum = "1cc2abb17cabadc3bbb405be6291d6016f6fb85091a7b8c4f4b84f44fab07282"
 dependencies = [
- "async-trait",
- "config",
  "deadpool",
- "futures",
  "log",
- "serde 1.0.126",
  "tokio",
  "tokio-postgres",
 ]
